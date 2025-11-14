@@ -1,37 +1,25 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
+import type { Exercise } from "@shared/schema";
+import { exercises } from "./exercises-data";
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getAllExercises(): Promise<Exercise[]>;
+  getExerciseById(id: string): Promise<Exercise | undefined>;
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<string, User>;
+  private exercises: Map<string, Exercise>;
 
   constructor() {
-    this.users = new Map();
+    this.exercises = new Map();
+    exercises.forEach(ex => this.exercises.set(ex.id, ex));
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async getAllExercises(): Promise<Exercise[]> {
+    return Array.from(this.exercises.values());
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
-  }
-
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async getExerciseById(id: string): Promise<Exercise | undefined> {
+    return this.exercises.get(id);
   }
 }
 

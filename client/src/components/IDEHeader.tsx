@@ -1,0 +1,124 @@
+import { Play, HelpCircle, RotateCcw, Moon, Sun } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useEffect, useState } from "react";
+
+interface IDEHeaderProps {
+  exerciseName: string;
+  exerciseMode: "compile" | "test";
+  hint: string;
+  onRunCode: () => void;
+  onReset: () => void;
+  isCompiling: boolean;
+}
+
+export function IDEHeader({
+  exerciseName,
+  exerciseMode,
+  hint,
+  onRunCode,
+  onReset,
+  isCompiling,
+}: IDEHeaderProps) {
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+      document.documentElement.classList.toggle("dark", savedTheme === "dark");
+    } else {
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+  };
+
+  return (
+    <header className="h-14 border-b border-border bg-background px-6 flex items-center justify-between flex-shrink-0" data-testid="header-ide">
+      <div className="flex items-center gap-4">
+        <h1 className="text-lg font-semibold text-foreground">Rustlings IDE</h1>
+        <div className="h-6 w-px bg-border" />
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-medium text-foreground truncate max-w-xs" data-testid="text-exercise-name">
+            {exerciseName || "No exercise selected"}
+          </h2>
+          {exerciseName && (
+            <Badge variant="outline" className="text-xs capitalize" data-testid="badge-mode">
+              {exerciseMode}
+            </Badge>
+          )}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <Button
+          onClick={onRunCode}
+          disabled={isCompiling || !exerciseName}
+          className="gap-2"
+          data-testid="button-run-code"
+        >
+          <Play className="h-4 w-4" />
+          {isCompiling ? "Compiling..." : "Run Code"}
+        </Button>
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              disabled={!exerciseName}
+              className="gap-2"
+              data-testid="button-show-hint"
+            >
+              <HelpCircle className="h-4 w-4" />
+              Hint
+            </Button>
+          </DialogTrigger>
+          <DialogContent data-testid="dialog-hint">
+            <DialogHeader>
+              <DialogTitle>Exercise Hint</DialogTitle>
+              <DialogDescription className="text-sm mt-4 whitespace-pre-wrap">
+                {hint || "No hint available for this exercise."}
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+
+        <Button
+          variant="outline"
+          onClick={onReset}
+          disabled={!exerciseName}
+          className="gap-2"
+          data-testid="button-reset-code"
+        >
+          <RotateCcw className="h-4 w-4" />
+          Reset
+        </Button>
+
+        <div className="h-6 w-px bg-border mx-1" />
+
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={toggleTheme}
+          data-testid="button-theme-toggle"
+        >
+          {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        </Button>
+      </div>
+    </header>
+  );
+}
