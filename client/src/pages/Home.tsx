@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { ExerciseNavigator } from "@/components/ExerciseNavigator";
 import { CodeEditor } from "@/components/CodeEditor";
 import { ConsolePanel } from "@/components/ConsolePanel";
 import { IDEHeader } from "@/components/IDEHeader";
+import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Loader2 } from "lucide-react";
 import type { Exercise, CompilationResult, Progress } from "@shared/schema";
@@ -15,6 +16,8 @@ export default function Home() {
   const [originalCode, setOriginalCode] = useState("");
   const [compilationResult, setCompilationResult] = useState<CompilationResult | null>(null);
   const [progress, setProgress] = useState<Progress>({ completedExercises: [] });
+  const [showShortcutsDialog, setShowShortcutsDialog] = useState(false);
+  const filterInputRef = useRef<HTMLInputElement>(null);
 
   const { data: exercises, isLoading } = useQuery<Exercise[]>({
     queryKey: ["/api/exercises"],
@@ -72,6 +75,20 @@ export default function Home() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore shortcuts when typing in input fields (except for '?' which shows help)
+      const isInputField = (e.target as HTMLElement)?.tagName === 'INPUT' || 
+                          (e.target as HTMLElement)?.tagName === 'TEXTAREA';
+      
+      // '?' to show keyboard shortcuts (works even in input fields)
+      if (e.key === '?' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        setShowShortcutsDialog(true);
+        return;
+      }
+      
+      // Skip other shortcuts when in input fields
+      if (isInputField) return;
+      
       // Cmd/Ctrl + Enter to run code
       if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
         e.preventDefault();
@@ -87,11 +104,33 @@ export default function Home() {
           handleReset();
         }
       }
+      
+      // Alt + N for next exercise
+      if (e.altKey && e.key === "n") {
+        e.preventDefault();
+        if (hasNextExercise) {
+          handleNextExercise();
+        }
+      }
+      
+      // Alt + P for previous exercise
+      if (e.altKey && e.key === "p") {
+        e.preventDefault();
+        if (hasPreviousExercise) {
+          handlePreviousExercise();
+        }
+      }
+      
+      // Cmd/Ctrl + K to focus filter
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        filterInputRef.current?.focus();
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentExercise, code, compileMutation.isPending]);
+  }, [currentExercise, code, compileMutation.isPending, hasNextExercise, hasPreviousExercise]);
 
   const handleSelectExercise = (exercise: Exercise) => {
     setCurrentExercise(exercise);
@@ -191,6 +230,7 @@ export default function Home() {
       <ResizablePanelGroup direction="horizontal" className="flex-1" autoSaveId="rustlings-panel-layout">
         <ResizablePanel defaultSize={20} minSize={15} maxSize={30} id="navigator">
           <ExerciseNavigator
+            ref={filterInputRef}
             exercises={exercises || []}
             currentExerciseId={currentExercise?.id || null}
             completedExercises={progress.completedExercises}
@@ -219,6 +259,11 @@ export default function Home() {
           />
         </ResizablePanel>
       </ResizablePanelGroup>
+
+      <KeyboardShortcutsDialog
+        open={showShortcutsDialog}
+        onOpenChange={setShowShortcutsDialog}
+      />
     </div>
   );
 }

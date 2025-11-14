@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { Search, CheckCircle2, Circle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -15,13 +15,14 @@ interface ExerciseNavigatorProps {
   onSelectExercise: (exercise: Exercise) => void;
 }
 
-export function ExerciseNavigator({
-  exercises,
-  currentExerciseId,
-  completedExercises,
-  onSelectExercise,
-}: ExerciseNavigatorProps) {
-  const [searchQuery, setSearchQuery] = useState("");
+export const ExerciseNavigator = forwardRef<HTMLInputElement, ExerciseNavigatorProps>(
+  function ExerciseNavigator({
+    exercises,
+    currentExerciseId,
+    completedExercises,
+    onSelectExercise,
+  }, ref) {
+    const [searchQuery, setSearchQuery] = useState("");
 
   const groupedExercises = exercises.reduce((acc, exercise) => {
     if (!acc[exercise.topic]) {
@@ -59,6 +60,7 @@ export function ExerciseNavigator({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
+            ref={ref}
             placeholder="Filter exercises..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -135,4 +137,4 @@ export function ExerciseNavigator({
       </div>
     </div>
   );
-}
+});
