@@ -139,8 +139,8 @@ export default function Home() {
         isCompiling={compileMutation.isPending}
       />
 
-      <ResizablePanelGroup direction="horizontal" className="flex-1">
-        <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
+      <ResizablePanelGroup direction="horizontal" className="flex-1" autoSaveId="rustlings-panel-layout">
+        <ResizablePanel defaultSize={20} minSize={15} maxSize={30} id="navigator">
           <ExerciseNavigator
             exercises={exercises || []}
             currentExerciseId={currentExercise?.id || null}
@@ -151,7 +151,7 @@ export default function Home() {
 
         <ResizableHandle className="w-1 bg-border hover:bg-primary transition-colors" data-testid="handle-left" />
 
-        <ResizablePanel defaultSize={50} minSize={30}>
+        <ResizablePanel defaultSize={50} minSize={30} id="editor">
           <CodeEditor
             value={code}
             onChange={(value) => setCode(value || "")}
@@ -162,7 +162,7 @@ export default function Home() {
 
         <ResizableHandle className="w-1 bg-border hover:bg-primary transition-colors" data-testid="handle-right" />
 
-        <ResizablePanel defaultSize={30} minSize={20}>
+        <ResizablePanel defaultSize={30} minSize={20} id="console">
           <ConsolePanel
             compilationResult={compilationResult}
             isCompiling={compileMutation.isPending}
