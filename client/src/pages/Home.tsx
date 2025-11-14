@@ -5,6 +5,7 @@ import { CodeEditor } from "@/components/CodeEditor";
 import { ConsolePanel } from "@/components/ConsolePanel";
 import { IDEHeader } from "@/components/IDEHeader";
 import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
+import { CelebrationAnimation } from "@/components/CelebrationAnimation";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Loader2 } from "lucide-react";
 import type { Exercise, CompilationResult, Progress } from "@shared/schema";
@@ -17,6 +18,7 @@ export default function Home() {
   const [compilationResult, setCompilationResult] = useState<CompilationResult | null>(null);
   const [progress, setProgress] = useState<Progress>({ completedExercises: [] });
   const [showShortcutsDialog, setShowShortcutsDialog] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
   const filterInputRef = useRef<HTMLInputElement>(null);
 
   const { data: exercises, isLoading } = useQuery<Exercise[]>({
@@ -31,15 +33,28 @@ export default function Home() {
       setCompilationResult(result);
       
       if (result.success && currentExercise) {
+        // Check both state and localStorage to ensure we have the latest completion status
+        const savedProgress = localStorage.getItem("rustlings-progress");
+        const currentCompleted = savedProgress 
+          ? JSON.parse(savedProgress).completedExercises || []
+          : progress.completedExercises;
+        
+        const isFirstCompletion = !currentCompleted.includes(currentExercise.id);
+        
         const newProgress = {
           ...progress,
-          completedExercises: progress.completedExercises.includes(currentExercise.id)
-            ? progress.completedExercises
-            : [...progress.completedExercises, currentExercise.id],
+          completedExercises: currentCompleted.includes(currentExercise.id)
+            ? currentCompleted
+            : [...currentCompleted, currentExercise.id],
           currentExercise: currentExercise.id,
         };
         setProgress(newProgress);
         localStorage.setItem("rustlings-progress", JSON.stringify(newProgress));
+        
+        // Show celebration animation only on first completion
+        if (isFirstCompletion) {
+          setShowCelebration(true);
+        }
       }
     },
   });
@@ -71,6 +86,13 @@ export default function Home() {
       setCompilationResult(null);
     }
   }, [currentExercise]);
+
+  // Calculate navigation state for use in keyboard shortcuts
+  const currentExerciseIndex = exercises && currentExercise
+    ? exercises.findIndex(ex => ex.id === currentExercise.id)
+    : -1;
+  const hasNextExercise = currentExerciseIndex >= 0 && currentExerciseIndex < (exercises?.length || 0) - 1;
+  const hasPreviousExercise = currentExerciseIndex > 0;
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -195,12 +217,6 @@ export default function Home() {
     }
   };
 
-  const currentExerciseIndex = exercises && currentExercise
-    ? exercises.findIndex(ex => ex.id === currentExercise.id)
-    : -1;
-  const hasNextExercise = currentExerciseIndex >= 0 && currentExerciseIndex < (exercises?.length || 0) - 1;
-  const hasPreviousExercise = currentExerciseIndex > 0;
-
   if (isLoading) {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-background" data-testid="loading-app">
@@ -263,6 +279,14 @@ export default function Home() {
       <KeyboardShortcutsDialog
         open={showShortcutsDialog}
         onOpenChange={setShowShortcutsDialog}
+      />
+
+      <CelebrationAnimation
+        show={showCelebration}
+        exerciseName={currentExercise?.name || ""}
+        onDismiss={() => setShowCelebration(false)}
+        onNextExercise={handleNextExercise}
+        hasNextExercise={hasNextExercise}
       />
     </div>
   );
