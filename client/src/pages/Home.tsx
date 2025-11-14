@@ -41,6 +41,10 @@ export default function Home() {
         
         const isFirstCompletion = !currentCompleted.includes(currentExercise.id);
         
+        console.log('[Celebration] Exercise completed:', currentExercise.id);
+        console.log('[Celebration] Currently completed:', currentCompleted);
+        console.log('[Celebration] Is first completion:', isFirstCompletion);
+        
         const newProgress = {
           ...progress,
           completedExercises: currentCompleted.includes(currentExercise.id)
@@ -53,7 +57,10 @@ export default function Home() {
         
         // Show celebration animation only on first completion
         if (isFirstCompletion) {
+          console.log('[Celebration] Showing celebration overlay');
           setShowCelebration(true);
+        } else {
+          console.log('[Celebration] Skipping celebration (already completed)');
         }
       }
     },
