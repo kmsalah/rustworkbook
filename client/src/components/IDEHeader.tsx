@@ -1,4 +1,4 @@
-import { Play, HelpCircle, RotateCcw, Moon, Sun } from "lucide-react";
+import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -18,6 +18,10 @@ interface IDEHeaderProps {
   onRunCode: () => void;
   onReset: () => void;
   isCompiling: boolean;
+  onPreviousExercise?: () => void;
+  onNextExercise?: () => void;
+  hasPreviousExercise?: boolean;
+  hasNextExercise?: boolean;
 }
 
 export function IDEHeader({
@@ -27,6 +31,10 @@ export function IDEHeader({
   onRunCode,
   onReset,
   isCompiling,
+  onPreviousExercise,
+  onNextExercise,
+  hasPreviousExercise = false,
+  hasNextExercise = false,
 }: IDEHeaderProps) {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
@@ -53,6 +61,16 @@ export function IDEHeader({
         <h1 className="text-lg font-semibold text-foreground">Rustlings IDE</h1>
         <div className="h-6 w-px bg-border" />
         <div className="flex items-center gap-2">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={onPreviousExercise}
+            disabled={!hasPreviousExercise}
+            className="h-8 w-8"
+            data-testid="button-previous-exercise"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
           <h2 className="text-sm font-medium text-foreground truncate max-w-xs" data-testid="text-exercise-name">
             {exerciseName || "No exercise selected"}
           </h2>
@@ -61,6 +79,16 @@ export function IDEHeader({
               {exerciseMode}
             </Badge>
           )}
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={onNextExercise}
+            disabled={!hasNextExercise}
+            className="h-8 w-8"
+            data-testid="button-next-exercise"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 

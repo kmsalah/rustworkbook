@@ -95,6 +95,13 @@ export default function Home() {
 
   const handleSelectExercise = (exercise: Exercise) => {
     setCurrentExercise(exercise);
+    // Save current exercise to progress
+    const newProgress = {
+      ...progress,
+      currentExercise: exercise.id,
+    };
+    setProgress(newProgress);
+    localStorage.setItem("rustlings-progress", JSON.stringify(newProgress));
   };
 
   const handleRunCode = () => {
@@ -117,6 +124,44 @@ export default function Home() {
     setCompilationResult(null);
   };
 
+  const handleNextExercise = () => {
+    if (!exercises || !currentExercise) return;
+    const currentIndex = exercises.findIndex(ex => ex.id === currentExercise.id);
+    if (currentIndex >= 0 && currentIndex < exercises.length - 1) {
+      const nextExercise = exercises[currentIndex + 1];
+      setCurrentExercise(nextExercise);
+      // Save to progress
+      const newProgress = {
+        ...progress,
+        currentExercise: nextExercise.id,
+      };
+      setProgress(newProgress);
+      localStorage.setItem("rustlings-progress", JSON.stringify(newProgress));
+    }
+  };
+
+  const handlePreviousExercise = () => {
+    if (!exercises || !currentExercise) return;
+    const currentIndex = exercises.findIndex(ex => ex.id === currentExercise.id);
+    if (currentIndex > 0) {
+      const prevExercise = exercises[currentIndex - 1];
+      setCurrentExercise(prevExercise);
+      // Save to progress
+      const newProgress = {
+        ...progress,
+        currentExercise: prevExercise.id,
+      };
+      setProgress(newProgress);
+      localStorage.setItem("rustlings-progress", JSON.stringify(newProgress));
+    }
+  };
+
+  const currentExerciseIndex = exercises && currentExercise
+    ? exercises.findIndex(ex => ex.id === currentExercise.id)
+    : -1;
+  const hasNextExercise = currentExerciseIndex >= 0 && currentExerciseIndex < (exercises?.length || 0) - 1;
+  const hasPreviousExercise = currentExerciseIndex > 0;
+
   if (isLoading) {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-background" data-testid="loading-app">
@@ -137,6 +182,10 @@ export default function Home() {
         onRunCode={handleRunCode}
         onReset={handleReset}
         isCompiling={compileMutation.isPending}
+        onPreviousExercise={handlePreviousExercise}
+        onNextExercise={handleNextExercise}
+        hasPreviousExercise={hasPreviousExercise}
+        hasNextExercise={hasNextExercise}
       />
 
       <ResizablePanelGroup direction="horizontal" className="flex-1" autoSaveId="rustlings-panel-layout">
