@@ -156,6 +156,7 @@ export default function Home() {
             value={code}
             onChange={(value) => setCode(value || "")}
             fileName={currentExercise?.name ? `${currentExercise.name}.rs` : "untitled.rs"}
+            compilationResult={compilationResult}
           />
         </ResizablePanel>
 

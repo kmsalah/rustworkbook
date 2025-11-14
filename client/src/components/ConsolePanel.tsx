@@ -61,6 +61,14 @@ function parseCompilerErrors(stderr: string): CompilerError[] {
 
 export function ConsolePanel({ compilationResult, isCompiling, onClear }: ConsolePanelProps) {
   const hasOutput = compilationResult !== null;
+  
+  // Count errors and warnings for badge (from stderr even if successful)
+  const problems = compilationResult && compilationResult.stderr
+    ? parseCompilerErrors(compilationResult.stderr)
+    : [];
+  const errorCount = problems.filter(p => p.type.startsWith('error')).length;
+  const warningCount = problems.filter(p => p.type.startsWith('warning')).length;
+  const totalProblems = problems.length;
 
   return (
     <div className="flex flex-col h-full bg-card border-l border-card-border" data-testid="container-console">
@@ -71,9 +79,21 @@ export function ConsolePanel({ compilationResult, isCompiling, onClear }: Consol
               <Terminal className="h-3 w-3 mr-1" />
               Output
             </TabsTrigger>
-            <TabsTrigger value="problems" className="text-xs" data-testid="tab-problems">
+            <TabsTrigger value="problems" className="text-xs relative" data-testid="tab-problems">
               <AlertCircle className="h-3 w-3 mr-1" />
               Problems
+              {totalProblems > 0 && (
+                <span 
+                  className={`ml-1.5 px-1.5 py-0.5 rounded text-xs font-medium ${
+                    errorCount > 0 
+                      ? 'bg-destructive text-destructive-foreground' 
+                      : 'bg-amber-500 text-white dark:bg-amber-600'
+                  }`} 
+                  data-testid="badge-error-count"
+                >
+                  {totalProblems}
+                </span>
+              )}
             </TabsTrigger>
           </TabsList>
           
@@ -137,7 +157,7 @@ export function ConsolePanel({ compilationResult, isCompiling, onClear }: Consol
         <TabsContent value="problems" className="flex-1 m-0 p-0">
           <ScrollArea className="h-full">
             <div className="p-4">
-              {!hasOutput || compilationResult.success ? (
+              {!hasOutput || totalProblems === 0 ? (
                 <div className="text-sm text-muted-foreground flex items-start gap-2" data-testid="text-no-problems">
                   <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0 text-green-600 dark:text-green-500" />
                   <div>
@@ -147,24 +167,41 @@ export function ConsolePanel({ compilationResult, isCompiling, onClear }: Consol
                 </div>
               ) : (
                 <div className="space-y-3" data-testid="container-problems-list">
-                  {parseCompilerErrors(compilationResult.stderr).map((error, i) => (
-                    <div key={i} className="border-l-2 border-destructive bg-muted rounded-md p-3" data-testid={`problem-${i}`}>
-                      <div className="flex items-start gap-2 mb-2">
-                        <XCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
-                        <div className="flex-1">
-                          <div className="font-medium text-sm text-destructive">{error.type}</div>
-                          {error.location && (
-                            <div className="text-xs text-muted-foreground mt-1" data-testid={`problem-location-${i}`}>
-                              {error.location}
-                            </div>
+                  {problems.map((problem, i) => {
+                    const isError = problem.type.startsWith('error');
+                    return (
+                      <div 
+                        key={i} 
+                        className={`border-l-2 bg-muted rounded-md p-3 ${
+                          isError ? 'border-destructive' : 'border-amber-500 dark:border-amber-600'
+                        }`}
+                        data-testid={`problem-${i}`}
+                      >
+                        <div className="flex items-start gap-2 mb-2">
+                          {isError ? (
+                            <XCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
+                          ) : (
+                            <AlertCircle className="h-4 w-4 text-amber-500 dark:text-amber-600 flex-shrink-0 mt-0.5" />
                           )}
+                          <div className="flex-1">
+                            <div className={`font-medium text-sm ${
+                              isError ? 'text-destructive' : 'text-amber-600 dark:text-amber-500'
+                            }`}>
+                              {problem.type}
+                            </div>
+                            {problem.location && (
+                              <div className="text-xs text-muted-foreground mt-1" data-testid={`problem-location-${i}`}>
+                                {problem.location}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-xs font-mono text-foreground whitespace-pre-wrap pl-6">
+                          {problem.message}
                         </div>
                       </div>
-                      <div className="text-xs font-mono text-foreground whitespace-pre-wrap pl-6">
-                        {error.message}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
