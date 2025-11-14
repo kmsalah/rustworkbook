@@ -72,14 +72,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const { code, mode } = result.data;
 
+      // Normalize whitespace: replace non-breaking spaces and other Unicode spaces with regular spaces
+      // This handles cases where Monaco Editor or copy-paste operations insert Unicode spaces
+      const normalizedCode = code
+        .replace(/\u00A0/g, ' ')  // Non-breaking space (U+00A0)
+        .replace(/\u2007/g, ' ')  // Figure space (U+2007)
+        .replace(/\u202F/g, ' ')  // Narrow no-break space (U+202F)
+        .replace(/[\u2000-\u200B]/g, ' '); // Various Unicode spaces
+
       // Create a temporary directory for the Rust file
       const tempDir = join(tmpdir(), `rustlings-${Date.now()}-${Math.random().toString(36).substring(7)}`);
       await mkdir(tempDir, { recursive: true });
       const tempFile = join(tempDir, "temp.rs");
 
       try {
-        // Write code to temporary file
-        await writeFile(tempFile, code, "utf-8");
+        // Write normalized code to temporary file
+        await writeFile(tempFile, normalizedCode, "utf-8");
 
         let output = "";
         let stderr = "";
