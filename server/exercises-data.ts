@@ -511,4 +511,373 @@ mod tests {
 }
 `,
   },
+  
+  // Modules exercises (Chapter 14)
+  {
+    id: "modules1",
+    name: "modules1",
+    path: "exercises/modules/modules1.rs",
+    topic: "modules",
+    mode: "compile",
+    hint: "Everything is private in Rust by default. Use the 'pub' keyword to make the make_sausage function public.",
+    code: `// modules1.rs
+//
+// Make me compile!
+
+mod sausage_factory {
+    // Don't let anybody outside of this module see this!
+    fn get_secret_recipe() -> String {
+        String::from("Ginger")
+    }
+
+    fn make_sausage() {
+        get_secret_recipe();
+        println!("sausage!");
+    }
+}
+
+fn main() {
+    sausage_factory::make_sausage();
+}
+`,
+  },
+  {
+    id: "modules2",
+    name: "modules2",
+    path: "exercises/modules/modules2.rs",
+    topic: "modules",
+    mode: "compile",
+    hint: "The 'use' keyword with 'as' allows you to bring module paths into scope and rename them. Replace the ??? with appropriate names.",
+    code: `// modules2.rs
+//
+// Fix these 'use' statements to make the code compile.
+
+mod delicious_snacks {
+    // TODO: Fix these use statements
+    use self::fruits::PEAR as ???
+    use self::veggies::CUCUMBER as ???
+
+    mod fruits {
+        pub const PEAR: &'static str = "Pear";
+        pub const APPLE: &'static str = "Apple";
+    }
+
+    mod veggies {
+        pub const CUCUMBER: &'static str = "Cucumber";
+        pub const CARROT: &'static str = "Carrot";
+    }
+}
+
+fn main() {
+    println!(
+        "favorite snacks: {} and {}",
+        delicious_snacks::fruit,
+        delicious_snacks::veggie
+    );
+}
+`,
+  },
+  {
+    id: "modules3",
+    name: "modules3",
+    path: "exercises/modules/modules3.rs",
+    topic: "modules",
+    mode: "compile",
+    hint: "Use the 'use' keyword to bring SystemTime and UNIX_EPOCH from the std::time module into scope.",
+    code: `// modules3.rs
+//
+// Bring SystemTime and UNIX_EPOCH from the std::time module into your scope.
+
+// TODO: Complete this use statement
+use ???
+
+fn main() {
+    match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(n) => println!("1970-01-01 00:00:00 UTC was {} seconds ago!", n.as_secs()),
+        Err(_) => panic!("SystemTime before UNIX EPOCH!"),
+    }
+}
+`,
+  },
+  
+  // Hashmaps exercises (Chapter 15)
+  {
+    id: "hashmaps1",
+    name: "hashmaps1",
+    path: "exercises/hashmaps/hashmaps1.rs",
+    topic: "hashmaps",
+    mode: "test",
+    hint: "Take a look at the test code. Use HashMap from std::collections to store fruits.",
+    code: `// hashmaps1.rs
+//
+// A basket of fruits in the form of a hash map needs to be defined.
+
+use std::collections::HashMap;
+
+fn fruit_basket() -> HashMap<String, u32> {
+    let mut basket = // TODO: declare your hash map here.
+
+    basket.insert(String::from("banana"), 2);
+
+    // TODO: Put more fruits in your basket here.
+
+    basket
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn at_least_three_types_of_fruits() {
+        let basket = fruit_basket();
+        assert!(basket.len() >= 3);
+    }
+
+    #[test]
+    fn at_least_five_fruits() {
+        let basket = fruit_basket();
+        assert!(basket.values().sum::<u32>() >= 5);
+    }
+}
+`,
+  },
+  {
+    id: "lifetimes1",
+    name: "lifetimes1",
+    path: "exercises/lifetimes/lifetimes1.rs",
+    topic: "lifetimes",
+    mode: "compile",
+    hint: "Add lifetime annotations to help the compiler understand the relationship between the input and output references.",
+    code: `// lifetimes1.rs
+//
+// Fix this function with proper lifetime annotations.
+
+fn longest(x: &str, y: &str) -> &str {
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
+}
+
+fn main() {
+    let string1 = String::from("abcd");
+    let string2 = "xyz";
+
+    let result = longest(string1.as_str(), string2);
+    println!("The longest string is {}", result);
+}
+`,
+  },
+  {
+    id: "tests1",
+    name: "tests1",
+    path: "exercises/tests/tests1.rs",
+    topic: "tests",
+    mode: "test",
+    hint: "You don't even need to write any code to test -- make the assert pass with a boolean value!",
+    code: `// tests1.rs
+//
+// Tests are important to ensure that your code does what you think it should do.
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn you_can_assert() {
+        assert!();
+    }
+}
+`,
+  },
+  {
+    id: "iterators1",
+    name: "iterators1",
+    path: "exercises/iterators/iterators1.rs",
+    topic: "iterators",
+    mode: "compile",
+    hint: "Step 1: Apply the .iter() method to create an iterator. Step 2: Use Some() to wrap the expected values.",
+    code: `// iterators1.rs
+//
+// Iterators are essential for working with collections.
+
+fn main() {
+    let my_fav_fruits = vec!["banana", "custard apple", "avocado", "peach", "raspberry"];
+
+    let mut my_iterable_fav_fruits = ???;   // TODO: Step 1
+
+    assert_eq!(my_iterable_fav_fruits.next(), Some(&"banana"));
+    assert_eq!(my_iterable_fav_fruits.next(), ???);     // TODO: Step 2
+    assert_eq!(my_iterable_fav_fruits.next(), Some(&"avocado"));
+    assert_eq!(my_iterable_fav_fruits.next(), ???);     // TODO: Step 3
+    assert_eq!(my_iterable_fav_fruits.next(), Some(&"raspberry"));
+    assert_eq!(my_iterable_fav_fruits.next(), ???);     // TODO: Step 4
+}
+`,
+  },
+  {
+    id: "threads1",
+    name: "threads1",
+    path: "exercises/threads/threads1.rs",
+    topic: "threads",
+    mode: "compile",
+    hint: "Use handle.join().unwrap() to wait for each thread and collect its return value.",
+    code: `// threads1.rs
+//
+// Spawn multiple threads and collect their results.
+
+use std::thread;
+use std::time::{Duration, Instant};
+
+fn main() {
+    let mut handles = vec![];
+    for i in 0..10 {
+        handles.push(thread::spawn(move || {
+            let start = Instant::now();
+            thread::sleep(Duration::from_millis(250));
+            println!("thread {} is complete", i);
+            start.elapsed().as_millis()
+        }));
+    }
+
+    let mut results: Vec<u128> = vec![];
+    for handle in handles {
+        // TODO: Collect the results from each thread
+    }
+
+    if results.len() != 10 {
+        panic!("Oh no! All the spawned threads did not finish!");
+    }
+
+    for (i, result) in results.into_iter().enumerate() {
+        println!("thread {} took {}ms", i, result);
+    }
+}
+`,
+  },
+  {
+    id: "box1",
+    name: "box1",
+    path: "exercises/smart_pointers/box1.rs",
+    topic: "smart_pointers",
+    mode: "test",
+    hint: "Box provides indirection and a pointer to the heap for recursive types. Wrap the List type in Box to fix the infinite size issue.",
+    code: `// box1.rs
+//
+// Fix the recursive type by using Box.
+
+#[derive(PartialEq, Debug)]
+pub enum List {
+    Cons(i32, List),
+    Nil,
+}
+
+fn main() {
+    println!("This is an empty cons list: {:?}", create_empty_list());
+    println!("This is a non-empty cons list: {:?}", create_non_empty_list());
+}
+
+pub fn create_empty_list() -> List {
+    List::Nil
+}
+
+pub fn create_non_empty_list() -> List {
+    List::Cons(1, create_empty_list())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_create_empty_list() {
+        assert_eq!(List::Nil, create_empty_list())
+    }
+
+    #[test]
+    fn test_create_non_empty_list() {
+        assert_ne!(create_empty_list(), create_non_empty_list())
+    }
+}
+`,
+  },
+  {
+    id: "macros1",
+    name: "macros1",
+    path: "exercises/macros/macros1.rs",
+    topic: "macros",
+    mode: "compile",
+    hint: "When you call a macro, you need to add an exclamation mark after its name!",
+    code: `// macros1.rs
+//
+// Call the macro correctly!
+
+macro_rules! my_macro {
+    () => {
+        println!("Check out my macro!");
+    };
+}
+
+fn main() {
+    my_macro();
+}
+`,
+  },
+  {
+    id: "from_into",
+    name: "from_into",
+    path: "exercises/conversions/from_into.rs",
+    topic: "conversions",
+    mode: "test",
+    hint: "Split the string on commas, extract name and age, and parse the age. Return default on any errors.",
+    code: `// from_into.rs
+//
+// The From trait is used for value-to-value conversions.
+
+#[derive(Debug)]
+struct Person {
+    name: String,
+    age: usize,
+}
+
+impl Default for Person {
+    fn default() -> Person {
+        Person {
+            name: String::from("John"),
+            age: 30,
+        }
+    }
+}
+
+// Complete this implementation
+impl From<&str> for Person {
+    fn from(s: &str) -> Person {
+    }
+}
+
+fn main() {
+    let p1 = Person::from("Mark,20");
+    let p2: Person = "Gerald,70".into();
+    println!("{:?}", p1);
+    println!("{:?}", p2);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_default() {
+        let dp = Person::default();
+        assert_eq!(dp.name, "John");
+        assert_eq!(dp.age, 30);
+    }
+    #[test]
+    fn test_good_convert() {
+        let p = Person::from("Mark,20");
+        assert_eq!(p.name, "Mark");
+        assert_eq!(p.age, 20);
+    }
+}
+`,
+  },
 ];

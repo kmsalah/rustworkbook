@@ -56,6 +56,8 @@ Preferred communication style: Simple, everyday language.
 
 **Exercise Storage**: In-memory storage using Map data structure
 - All exercise data is hardcoded in `server/exercises-data.ts`
+- **30 exercises** covering chapters 1-22 of the Rustlings curriculum
+- Topics: intro, variables, functions, if, primitive_types, vecs, move_semantics, structs, enums, strings, options, error_handling, modules, hashmaps, lifetimes, tests, iterators, threads, smart_pointers, macros, conversions
 - No database required for exercise content
 - DatabaseStorage class implements IStorage interface with database-backed progress tracking
 
