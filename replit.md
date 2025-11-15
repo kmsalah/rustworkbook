@@ -57,34 +57,58 @@ Preferred communication style: Simple, everyday language.
 **Exercise Storage**: In-memory storage using Map data structure
 - All exercise data is hardcoded in `server/exercises-data.ts`
 - No database required for exercise content
-- MemStorage class implements IStorage interface for potential future database migration
+- DatabaseStorage class implements IStorage interface with database-backed progress tracking
 
-**Progress Tracking**: Browser localStorage
-- Progress data (completed exercises, current exercise) stored client-side
-- Persists across page refreshes
-- No user authentication or server-side progress tracking
+**Progress Tracking**: PostgreSQL database (per-user)
+- User progress stored in `user_progress` table with unique constraint on `(userId, exerciseId)`
+- Tracks completed exercises per authenticated user
+- Synchronized with client-side display in real-time via TanStack Query
+- Last-viewed exercise cached in localStorage for session persistence
 
-**Database Configuration**: PostgreSQL schema defined with Drizzle ORM
+**Database Schema**: PostgreSQL with Drizzle ORM
+- `users` table: Stores user accounts (id, email, firstName, lastName, profileImageUrl)
+- `sessions` table: Stores express-session data for authentication
+- `user_progress` table: Tracks completed exercises per user
 - Schema defined in `shared/schema.ts`
-- Drizzle configuration points to PostgreSQL via `DATABASE_URL` environment variable
-- **Current Status**: Database not actively used; schema exists for future features like user accounts or server-side progress tracking
+- Migrations applied via `npm run db:push`
 
 **Key Architectural Decisions**:
-- **Why No Database**: Simplifies deployment and reduces infrastructure requirements for basic learning tool
-- **Why localStorage for Progress**: Enables progress tracking without authentication overhead
-- **Future Consideration**: Database schema exists for migration path when multi-user or cloud sync features are needed
+- **Why Database**: Enables multi-user progress tracking with authentication
+- **Why Per-User Progress**: Each user has independent progress tracking
+- **Why Unique Constraint**: Prevents duplicate progress entries for same exercise
 
 ### Authentication and Authorization
 
-**Current Implementation**: No authentication system
-- Application operates in single-user mode
-- No user accounts, login, or session management
-- Progress tracking is purely client-side
+**Implementation**: Replit Auth (OpenID Connect)
+- **Provider**: Replit's built-in authentication service
+- **Supported Methods**: Google, GitHub, X (Twitter), Apple, email/password
+- **Session Management**: PostgreSQL-backed sessions via `connect-pg-simple`
+- **Token Handling**: Automatic token refresh with persistence
 
-**Security Model**: Trust-based
-- Assumes trusted users in controlled environments
-- Code execution happens server-side without user isolation
-- See SECURITY.md for deployment constraints
+**Authentication Flow**:
+1. Unauthenticated users land on landing page (/)
+2. Click "Get Started" redirects to `/api/login`
+3. Replit Auth handles authentication
+4. Callback to `/api/callback` creates session
+5. User redirected to IDE (/ide)
+
+**Route Protection**:
+- `/` (Landing): Accessible to all, redirects authenticated users to `/ide`
+- `/ide` (IDE): Protected, redirects unauthenticated users to `/`
+- Protected API endpoints: `/api/progress`, `/api/compile` require authentication
+
+**Security Features**:
+- HTTPS-only cookies in production
+- Session storage in PostgreSQL (not in-memory)
+- CSRF protection via session middleware
+- Single canonical OIDC strategy (no host header injection)
+- Token refresh with automatic persistence
+
+**Key Architectural Decisions**:
+- **Why Replit Auth**: Managed authentication with zero setup for users
+- **Why OpenID Connect**: Industry-standard protocol with token refresh
+- **Why Database Sessions**: Enables session persistence across server restarts
+- **Session Cookie Security**: Secure flag only enabled in production (allows local development)
 
 ### Code Validation and Compilation
 

@@ -1,3 +1,4 @@
+// Referenced from Replit Auth blueprint
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
@@ -7,10 +8,55 @@ import { promisify } from "util";
 import { writeFile, unlink, mkdir } from "fs/promises";
 import { join } from "path";
 import { tmpdir } from "os";
+import { setupAuth, isAuthenticated } from "./replitAuth";
 
 const execAsync = promisify(exec);
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Auth middleware - must be called first
+  await setupAuth(app);
+
+  // Auth routes - return user data or authentication status
+  app.get('/api/auth/user', async (req: any, res) => {
+    try {
+      // Check if user is authenticated without rejecting
+      if (!req.isAuthenticated() || !req.user?.claims?.sub) {
+        return res.json(null);
+      }
+      
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // Progress tracking routes (protected)
+  app.get('/api/progress', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const completedExercises = await storage.getUserProgress(userId);
+      res.json({ completedExercises });
+    } catch (error) {
+      console.error("Error fetching progress:", error);
+      res.status(500).json({ error: "Failed to fetch progress" });
+    }
+  });
+
+  app.post('/api/progress/:exerciseId', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { exerciseId } = req.params;
+      await storage.markExerciseComplete(userId, exerciseId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error marking exercise complete:", error);
+      res.status(500).json({ error: "Failed to mark exercise complete" });
+    }
+  });
+
   // Get all exercises
   app.get("/api/exercises", async (req, res) => {
     try {
@@ -52,7 +98,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Compile Rust code
+  // Compile Rust code (protected)
   // SECURITY WARNING: This endpoint executes user-supplied Rust code on the server.
   // For production use or untrusted environments, this MUST be sandboxed using:
   // - Docker containers with seccomp profiles and resource limits
@@ -62,7 +108,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // - Personal/local development environments
   // - Trusted single-user educational tools
   // - Internal learning platforms with authenticated, trusted users
-  app.post("/api/compile", async (req, res) => {
+  app.post("/api/compile", isAuthenticated, async (req, res) => {
     try {
       const result = compileRequestSchema.safeParse(req.body);
       if (!result.success) {

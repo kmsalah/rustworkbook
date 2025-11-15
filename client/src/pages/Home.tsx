@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { ExerciseNavigator } from "@/components/ExerciseNavigator";
 import { CodeEditor } from "@/components/CodeEditor";
 import { ConsolePanel } from "@/components/ConsolePanel";
@@ -8,21 +9,72 @@ import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
 import { CelebrationAnimation } from "@/components/CelebrationAnimation";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Loader2 } from "lucide-react";
-import type { Exercise, CompilationResult, Progress } from "@shared/schema";
+import type { Exercise, CompilationResult, User } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/useAuth";
+import { isUnauthorizedError } from "@/lib/authUtils";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Home() {
+  const { isAuthenticated, isLoading, user: authUser } = useAuth();
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
+
+  // Redirect unauthenticated users to landing page
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      setLocation("/");
+    }
+  }, [isAuthenticated, isLoading, setLocation]);
+
   const [currentExercise, setCurrentExercise] = useState<Exercise | null>(null);
   const [code, setCode] = useState("");
   const [originalCode, setOriginalCode] = useState("");
   const [compilationResult, setCompilationResult] = useState<CompilationResult | null>(null);
-  const [progress, setProgress] = useState<Progress>({ completedExercises: [] });
   const [showShortcutsDialog, setShowShortcutsDialog] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const filterInputRef = useRef<HTMLInputElement>(null);
+  const user = authUser as User | undefined;
 
-  const { data: exercises, isLoading } = useQuery<Exercise[]>({
+  const { data: exercises, isLoading: exercisesLoading } = useQuery<Exercise[]>({
     queryKey: ["/api/exercises"],
+  });
+
+  // Load user progress from database - only when authenticated
+  const { data: progressData, isLoading: progressLoading } = useQuery<{ completedExercises: string[] }>({
+    queryKey: ["/api/progress"],
+    enabled: isAuthenticated,
+    retry: false,
+  });
+
+  const completedExercises = progressData?.completedExercises || [];
+  const dataLoading = exercisesLoading || progressLoading;
+
+  const markCompleteMutation = useMutation({
+    mutationFn: async (exerciseId: string) => {
+      return apiRequest("POST", `/api/progress/${exerciseId}`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/progress"] });
+    },
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Error",
+        description: "Failed to save progress. Please try again.",
+        variant: "destructive",
+      });
+    },
   });
 
   const compileMutation = useMutation({
@@ -33,27 +85,14 @@ export default function Home() {
       setCompilationResult(result);
       
       if (result.success && currentExercise) {
-        // Check both state and localStorage to ensure we have the latest completion status
-        const savedProgress = localStorage.getItem("rustlings-progress");
-        const currentCompleted = savedProgress 
-          ? JSON.parse(savedProgress).completedExercises || []
-          : progress.completedExercises;
-        
-        const isFirstCompletion = !currentCompleted.includes(currentExercise.id);
+        const isFirstCompletion = !completedExercises.includes(currentExercise.id);
         
         console.log('[Celebration] Exercise completed:', currentExercise.id);
-        console.log('[Celebration] Currently completed:', currentCompleted);
+        console.log('[Celebration] Currently completed:', completedExercises);
         console.log('[Celebration] Is first completion:', isFirstCompletion);
         
-        const newProgress = {
-          ...progress,
-          completedExercises: currentCompleted.includes(currentExercise.id)
-            ? currentCompleted
-            : [...currentCompleted, currentExercise.id],
-          currentExercise: currentExercise.id,
-        };
-        setProgress(newProgress);
-        localStorage.setItem("rustlings-progress", JSON.stringify(newProgress));
+        // Mark as complete in database
+        markCompleteMutation.mutate(currentExercise.id);
         
         // Show celebration animation only on first completion
         if (isFirstCompletion) {
@@ -64,27 +103,37 @@ export default function Home() {
         }
       }
     },
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      setCompilationResult({
+        success: false,
+        output: "",
+        stderr: error instanceof Error ? error.message : "Unknown compilation error",
+        exitCode: 1,
+      });
+    },
   });
 
   useEffect(() => {
-    const savedProgress = localStorage.getItem("rustlings-progress");
-    if (savedProgress) {
-      try {
-        setProgress(JSON.parse(savedProgress));
-      } catch (e) {
-        console.error("Failed to parse saved progress:", e);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
     if (exercises && exercises.length > 0 && !currentExercise) {
-      const lastExercise = progress.currentExercise
-        ? exercises.find(ex => ex.id === progress.currentExercise)
+      // Load last viewed exercise from localStorage (for session persistence)
+      const lastViewedId = localStorage.getItem("rustlings-last-exercise");
+      const lastExercise = lastViewedId
+        ? exercises.find(ex => ex.id === lastViewedId)
         : null;
       setCurrentExercise(lastExercise || exercises[0]);
     }
-  }, [exercises, currentExercise, progress.currentExercise]);
+  }, [exercises, currentExercise]);
 
   useEffect(() => {
     if (currentExercise) {
@@ -163,13 +212,8 @@ export default function Home() {
 
   const handleSelectExercise = (exercise: Exercise) => {
     setCurrentExercise(exercise);
-    // Save current exercise to progress
-    const newProgress = {
-      ...progress,
-      currentExercise: exercise.id,
-    };
-    setProgress(newProgress);
-    localStorage.setItem("rustlings-progress", JSON.stringify(newProgress));
+    // Save last viewed exercise to localStorage for session persistence
+    localStorage.setItem("rustlings-last-exercise", exercise.id);
   };
 
   const handleRunCode = () => {
@@ -198,13 +242,7 @@ export default function Home() {
     if (currentIndex >= 0 && currentIndex < exercises.length - 1) {
       const nextExercise = exercises[currentIndex + 1];
       setCurrentExercise(nextExercise);
-      // Save to progress
-      const newProgress = {
-        ...progress,
-        currentExercise: nextExercise.id,
-      };
-      setProgress(newProgress);
-      localStorage.setItem("rustlings-progress", JSON.stringify(newProgress));
+      localStorage.setItem("rustlings-last-exercise", nextExercise.id);
     }
   };
 
@@ -214,17 +252,11 @@ export default function Home() {
     if (currentIndex > 0) {
       const prevExercise = exercises[currentIndex - 1];
       setCurrentExercise(prevExercise);
-      // Save to progress
-      const newProgress = {
-        ...progress,
-        currentExercise: prevExercise.id,
-      };
-      setProgress(newProgress);
-      localStorage.setItem("rustlings-progress", JSON.stringify(newProgress));
+      localStorage.setItem("rustlings-last-exercise", prevExercise.id);
     }
   };
 
-  if (isLoading) {
+  if (dataLoading) {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-background" data-testid="loading-app">
         <div className="flex flex-col items-center gap-4">
@@ -248,6 +280,7 @@ export default function Home() {
         onNextExercise={handleNextExercise}
         hasPreviousExercise={hasPreviousExercise}
         hasNextExercise={hasNextExercise}
+        user={user}
       />
 
       <ResizablePanelGroup direction="horizontal" className="flex-1" autoSaveId="rustlings-panel-layout">
@@ -256,7 +289,7 @@ export default function Home() {
             ref={filterInputRef}
             exercises={exercises || []}
             currentExerciseId={currentExercise?.id || null}
-            completedExercises={progress.completedExercises}
+            completedExercises={completedExercises}
             onSelectExercise={handleSelectExercise}
           />
         </ResizablePanel>

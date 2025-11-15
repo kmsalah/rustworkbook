@@ -1,6 +1,15 @@
-import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight } from "lucide-react";
+import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +19,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
+import type { User } from "@shared/schema";
 
 interface IDEHeaderProps {
   exerciseName: string;
@@ -22,6 +32,7 @@ interface IDEHeaderProps {
   onNextExercise?: () => void;
   hasPreviousExercise?: boolean;
   hasNextExercise?: boolean;
+  user?: User;
 }
 
 export function IDEHeader({
@@ -35,6 +46,7 @@ export function IDEHeader({
   onNextExercise,
   hasPreviousExercise = false,
   hasNextExercise = false,
+  user,
 }: IDEHeaderProps) {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
@@ -146,6 +158,43 @@ export function IDEHeader({
         >
           {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </Button>
+
+        {user && (
+          <>
+            <div className="h-6 w-px bg-border mx-1" />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 px-2 gap-2" data-testid="button-user-menu">
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage src={user.profileImageUrl || undefined} alt={user.email || "User"} />
+                    <AvatarFallback>
+                      {user.firstName?.[0] || user.email?.[0] || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm">
+                    {user.firstName || user.email || "User"}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" data-testid="menu-user">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                {user.email && (
+                  <DropdownMenuLabel className="font-normal text-xs text-muted-foreground">
+                    {user.email}
+                  </DropdownMenuLabel>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => window.location.href = "/api/logout"}
+                  data-testid="menuitem-logout"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Log Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
+        )}
       </div>
     </header>
   );
