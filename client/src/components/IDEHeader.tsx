@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
 import type { User } from "@shared/schema";
+import logoUrl from "@/assets/rustlings-logo.png";
 
 interface IDEHeaderProps {
   exerciseName: string;
@@ -70,7 +71,12 @@ export function IDEHeader({
   return (
     <header className="h-14 border-b border-border bg-background px-6 flex items-center justify-between flex-shrink-0" data-testid="header-ide">
       <div className="flex items-center gap-4">
-        <h1 className="text-lg font-semibold text-foreground">Rustlings IDE</h1>
+        <img 
+          src={logoUrl} 
+          alt="Rustlings IDE" 
+          className="h-8 w-auto"
+          data-testid="img-logo"
+        />
         <div className="h-6 w-px bg-border" />
         <div className="flex items-center gap-2">
           <Button
