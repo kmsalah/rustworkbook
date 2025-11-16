@@ -13,13 +13,24 @@ describe('Compilation API Endpoints', () => {
   });
 
   describe('POST /api/compile - Authentication', () => {
-    it('should require authentication', async () => {
+    it('should allow anonymous for first 3 exercises', async () => {
       await request(app)
         .post('/api/compile')
         .send({
           code: 'fn main() { println!("test"); }',
           mode: 'compile',
           exerciseId: 'intro1',
+        })
+        .expect(200);
+    });
+    
+    it('should require authentication for other exercises', async () => {
+      await request(app)
+        .post('/api/compile')
+        .send({
+          code: 'fn main() { println!("test"); }',
+          mode: 'compile',
+          exerciseId: 'functions1', // Not in the free tier
         })
         .expect(401);
     });

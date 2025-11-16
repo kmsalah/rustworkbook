@@ -12,13 +12,25 @@ describe('/api/compile Endpoint (E2E)', () => {
     await registerRoutes(app);
   });
 
-  it('should require authentication', async () => {
+  it('should allow anonymous for first 3 exercises', async () => {
     const response = await request(app)
       .post('/api/compile')
       .send({
         code: 'fn main() { println!("test"); }',
         mode: 'compile',
         exerciseId: 'intro1',
+      });
+
+    expect(response.status).toBe(200);
+  });
+  
+  it('should require authentication for premium exercises', async () => {
+    const response = await request(app)
+      .post('/api/compile')
+      .send({
+        code: 'fn main() { println!("test"); }',
+        mode: 'compile',
+        exerciseId: 'functions1',
       });
 
     expect(response.status).toBeGreaterThanOrEqual(400);

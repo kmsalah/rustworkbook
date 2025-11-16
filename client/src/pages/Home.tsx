@@ -108,13 +108,12 @@ export default function Home() {
         if (currentExercise && !freeExercises.includes(currentExercise.id)) {
           toast({
             title: "Sign in Required",
-            description: "Please sign in to access exercises beyond the free tier.",
+            description: "Please sign in to access exercises beyond the free tier. Redirecting to login...",
             variant: "default",
-            action: {
-              label: "Sign In",
-              onClick: () => window.location.href = "/api/login",
-            },
-          } as any);
+          });
+          setTimeout(() => {
+            window.location.href = "/api/login";
+          }, 2000);
         } else {
           toast({
             title: "Authentication Error",
