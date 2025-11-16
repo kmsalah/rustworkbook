@@ -3,20 +3,9 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { compileRequestSchema } from "@shared/schema";
-import { exec } from "child_process";
-import { promisify } from "util";
-import { writeFile, unlink, mkdir, rm } from "fs/promises";
-import { join } from "path";
-import { tmpdir } from "os";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { 
-  compileRateLimiter, 
-  anonymousRateLimiter, 
-  validateCode, 
-  SecurityMonitor 
-} from "./security";
-
-const execAsync = promisify(exec);
+import { compileRateLimiter, anonymousRateLimiter, SecurityMonitor } from "./security";
+import { pistonClient } from "./piston";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware - must be called first
@@ -104,17 +93,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Compile Rust code (protected with multi-layered security)
-  // Security measures implemented:
+  // Compile Rust code using Piston API (production-grade sandboxed execution)
+  // Security: Perfect isolation via Piston's containerized execution
   // ✅ Authentication required (Replit Auth)
   // ✅ Rate limiting (10 req/min per user)
-  // ✅ Code validation (size limits, dangerous pattern detection)
-  // ✅ Resource limits (30s compile, 10s execution timeout)
-  // ✅ Process isolation (temporary directories, cleanup)
-  // ✅ Monitoring and logging (security alerts)
-  // 
-  // Acceptable for: Authenticated educational platforms with paying users
-  // Risk level: Low-Medium (users are authenticated, monitored, rate-limited)
+  // ✅ Piston API sandboxing (Docker containers, resource limits)
+  // ✅ No server-side code execution
+  // ✅ Monitoring and logging
   app.post("/api/compile", anonymousRateLimiter, isAuthenticated, compileRateLimiter, async (req, res) => {
     try {
       const result = compileRequestSchema.safeParse(req.body);
@@ -126,20 +111,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { code, mode } = result.data;
       const userId = (req as any).user?.claims?.sub;
 
-      // Validate code for security
-      const validation = validateCode(code);
-      if (!validation.valid) {
-        SecurityMonitor.logCompilation(userId, false);
-        res.status(400).json({ 
-          success: false,
-          error: validation.error,
-          output: "",
-          stderr: validation.error || "Code validation failed",
-          exitCode: 1
-        });
-        return;
-      }
-
       // Normalize whitespace: replace non-breaking spaces and other Unicode spaces with regular spaces
       // This handles cases where Monaco Editor or copy-paste operations insert Unicode spaces
       const normalizedCode = code
@@ -148,107 +119,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .replace(/\u202F/g, ' ')  // Narrow no-break space (U+202F)
         .replace(/[\u2000-\u200B]/g, ' '); // Various Unicode spaces
 
-      // Create a temporary directory for the Rust file
-      const tempDir = join(tmpdir(), `rustlings-${Date.now()}-${Math.random().toString(36).substring(7)}`);
-      await mkdir(tempDir, { recursive: true });
-      const tempFile = join(tempDir, "temp.rs");
+      // Use Piston API for secure, sandboxed compilation
+      const pistonResult = await pistonClient.compileRust(normalizedCode, mode);
 
-      try {
-        // Write normalized code to temporary file
-        await writeFile(tempFile, normalizedCode, "utf-8");
+      // Log compilation attempt for monitoring
+      SecurityMonitor.logCompilation(userId, pistonResult.success);
 
-        let output = "";
-        let stderr = "";
-        let exitCode = 0;
-        let success = false;
-
-        if (mode === "compile") {
-          // Just compile the code
-          try {
-            const { stdout, stderr: stderrOutput } = await execAsync(
-              `rustc --crate-type bin "${tempFile}" -o "${join(tempDir, "output")}"`,
-              { 
-                cwd: tempDir,
-                timeout: 30000, // 30 second timeout
-              }
-            );
-            output = stdout;
-            stderr = stderrOutput;
-            success = true;
-            
-            // If compilation succeeded, try to run the binary
-            if (success) {
-              try {
-                const { stdout: runOutput } = await execAsync(
-                  `"${join(tempDir, "output")}"`,
-                  { 
-                    cwd: tempDir,
-                    timeout: 10000, // 10 second timeout for running
-                  }
-                );
-                output = runOutput;
-              } catch (runError: any) {
-                // Running failed, but compilation succeeded
-                stderr = runError.stderr || runError.message;
-                output = runError.stdout || "";
-              }
-            }
-          } catch (error: any) {
-            stderr = error.stderr || error.message;
-            output = error.stdout || "";
-            exitCode = error.code || 1;
-            success = false;
-          }
-        } else {
-          // Test mode - run cargo test
-          // Create a minimal Cargo.toml
-          const cargoToml = `[package]
-name = "rustlings-test"
-version = "0.1.0"
-edition = "2021"
-
-[[bin]]
-name = "test"
-path = "temp.rs"
-`;
-          await writeFile(join(tempDir, "Cargo.toml"), cargoToml, "utf-8");
-
-          try {
-            const { stdout, stderr: stderrOutput } = await execAsync(
-              `cargo test --color never`,
-              { 
-                cwd: tempDir,
-                timeout: 60000, // 60 second timeout for tests
-              }
-            );
-            output = stdout;
-            stderr = stderrOutput;
-            success = true;
-          } catch (error: any) {
-            stderr = error.stderr || error.message;
-            output = error.stdout || "";
-            exitCode = error.code || 1;
-            success = false;
-          }
-        }
-
-        // Log compilation attempt for monitoring
-        SecurityMonitor.logCompilation(userId, success);
-
-        res.json({
-          success,
-          output,
-          stderr,
-          exitCode,
-        });
-      } finally {
-        // Clean up temporary directory and all files
-        try {
-          await rm(tempDir, { recursive: true, force: true });
-        } catch (cleanupError) {
-          console.error("Failed to cleanup temp directory:", cleanupError);
-        }
-      }
+      res.json(pistonResult);
     } catch (error) {
       console.error("Error compiling code:", error);
       res.status(500).json({ 
