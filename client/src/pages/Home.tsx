@@ -20,12 +20,7 @@ export default function Home() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
-  // Redirect unauthenticated users to landing page
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      setLocation("/");
-    }
-  }, [isAuthenticated, isLoading, setLocation]);
+  // Allow anonymous users - no redirect
 
   const [currentExercise, setCurrentExercise] = useState<Exercise | null>(null);
   const [code, setCode] = useState("");
@@ -85,34 +80,51 @@ export default function Home() {
       setCompilationResult(result);
       
       if (result.success && currentExercise) {
-        const isFirstCompletion = !completedExercises.includes(currentExercise.id);
-        
-        console.log('[Celebration] Exercise completed:', currentExercise.id);
-        console.log('[Celebration] Currently completed:', completedExercises);
-        console.log('[Celebration] Is first completion:', isFirstCompletion);
-        
-        // Mark as complete in database
-        markCompleteMutation.mutate(currentExercise.id);
-        
-        // Show celebration animation only on first completion
-        if (isFirstCompletion) {
-          console.log('[Celebration] Showing celebration overlay');
-          setShowCelebration(true);
-        } else {
-          console.log('[Celebration] Skipping celebration (already completed)');
+        // Only save progress for authenticated users
+        if (isAuthenticated) {
+          const isFirstCompletion = !completedExercises.includes(currentExercise.id);
+          
+          console.log('[Celebration] Exercise completed:', currentExercise.id);
+          console.log('[Celebration] Currently completed:', completedExercises);
+          console.log('[Celebration] Is first completion:', isFirstCompletion);
+          
+          // Mark as complete in database
+          markCompleteMutation.mutate(currentExercise.id);
+          
+          // Show celebration animation only on first completion
+          if (isFirstCompletion) {
+            console.log('[Celebration] Showing celebration overlay');
+            setShowCelebration(true);
+          } else {
+            console.log('[Celebration] Skipping celebration (already completed)');
+          }
         }
       }
     },
     onError: (error) => {
       if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
+        // Check if this is a free exercise that should have worked
+        const freeExercises = ['intro1', 'intro2', 'variables1'];
+        if (currentExercise && !freeExercises.includes(currentExercise.id)) {
+          toast({
+            title: "Sign in Required",
+            description: "Please sign in to access exercises beyond the free tier.",
+            variant: "default",
+            action: {
+              label: "Sign In",
+              onClick: () => window.location.href = "/api/login",
+            },
+          } as any);
+        } else {
+          toast({
+            title: "Authentication Error",
+            description: "Please sign in and try again.",
+            variant: "destructive",
+          });
+          setTimeout(() => {
+            window.location.href = "/api/login";
+          }, 2000);
+        }
         return;
       }
       setCompilationResult({

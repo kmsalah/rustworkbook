@@ -1,4 +1,4 @@
-import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
+import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -149,6 +149,16 @@ export function IDEHeader({
         </Button>
 
         <div className="h-6 w-px bg-border mx-1" />
+
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={() => window.location.href = "/about"}
+          data-testid="button-about"
+          title="About"
+        >
+          <Info className="h-4 w-4" />
+        </Button>
 
         <Button
           size="icon"

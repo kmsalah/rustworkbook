@@ -95,12 +95,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Compile Rust code using Piston API (production-grade sandboxed execution)
   // Security: Perfect isolation via Piston's containerized execution
-  // ✅ Authentication required (Replit Auth)
+  // ✅ Authentication required for exercises after first 3
   // ✅ Rate limiting (10 req/min per user)
   // ✅ Piston API sandboxing (Docker containers, resource limits)
   // ✅ No server-side code execution
   // ✅ Monitoring and logging
-  app.post("/api/compile", anonymousRateLimiter, isAuthenticated, compileRateLimiter, async (req, res) => {
+  
+  // Custom middleware: allow anonymous for first 3 exercises only
+  const conditionalAuth = (req: any, res: any, next: any) => {
+    const freeExercises = ['intro1', 'intro2', 'variables1'];
+    const exerciseId = req.body?.exerciseId;
+    
+    // If it's a free exercise, skip authentication
+    if (exerciseId && freeExercises.includes(exerciseId)) {
+      return next();
+    }
+    
+    // Otherwise require authentication
+    return isAuthenticated(req, res, next);
+  };
+  
+  app.post("/api/compile", anonymousRateLimiter, conditionalAuth, compileRateLimiter, async (req, res) => {
     try {
       const result = compileRequestSchema.safeParse(req.body);
       if (!result.success) {
