@@ -1,4 +1,4 @@
-import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, Info } from "lucide-react";
+import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, Info, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -169,41 +169,73 @@ export function IDEHeader({
           {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </Button>
 
-        {user && (
-          <>
-            <div className="h-6 w-px bg-border mx-1" />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 px-2 gap-2" data-testid="button-user-menu">
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src={user.profileImageUrl || undefined} alt={user.email || "User"} />
-                    <AvatarFallback>
-                      {user.firstName?.[0] || user.email?.[0] || "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm">
-                    {user.firstName || user.email || "User"}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" data-testid="menu-user">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                {user.email && (
-                  <DropdownMenuLabel className="font-normal text-xs text-muted-foreground">
-                    {user.email}
-                  </DropdownMenuLabel>
-                )}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => window.location.href = "/api/logout"}
-                  data-testid="menuitem-logout"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Log Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </>
+        <div className="h-6 w-px bg-border mx-1" />
+        
+        {user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 px-2 gap-2" data-testid="button-user-menu">
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={user.profileImageUrl || undefined} alt={user.email || "User"} />
+                  <AvatarFallback>
+                    {user.firstName?.[0] || user.email?.[0] || "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-sm">
+                  {user.firstName || user.email || "User"}
+                </span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" data-testid="menu-user">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              {user.email && (
+                <DropdownMenuLabel className="font-normal text-xs text-muted-foreground">
+                  {user.email}
+                </DropdownMenuLabel>
+              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => window.location.href = "/api/logout"}
+                data-testid="menuitem-logout"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Log Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Button
+            variant="ghost"
+            className="h-8 px-2 gap-2"
+            onClick={() => {
+              // Open login in a popup window
+              const width = 500;
+              const height = 600;
+              const left = window.screen.width / 2 - width / 2;
+              const top = window.screen.height / 2 - height / 2;
+              
+              const popup = window.open(
+                "/api/login",
+                "replit-login",
+                `width=${width},height=${height},left=${left},top=${top},toolbar=0,location=0,menubar=0,scrollbars=1`
+              );
+              
+              // Check periodically if the popup is closed
+              if (popup) {
+                const checkPopup = setInterval(() => {
+                  if (popup.closed) {
+                    clearInterval(checkPopup);
+                    // Reload the page to refresh auth state
+                    window.location.reload();
+                  }
+                }, 500);
+              }
+            }}
+            data-testid="button-login"
+          >
+            <LogIn className="h-4 w-4" />
+            <span className="text-sm">Sign In</span>
+          </Button>
         )}
       </div>
     </header>

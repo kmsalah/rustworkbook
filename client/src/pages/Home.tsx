@@ -14,6 +14,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { useToast } from "@/hooks/use-toast";
+import LoginModal from "@/components/LoginModal";
 
 export default function Home() {
   const { isAuthenticated, isLoading, user: authUser } = useAuth();
@@ -28,6 +29,7 @@ export default function Home() {
   const [compilationResult, setCompilationResult] = useState<CompilationResult | null>(null);
   const [showShortcutsDialog, setShowShortcutsDialog] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const filterInputRef = useRef<HTMLInputElement>(null);
   const user = authUser as User | undefined;
 
@@ -106,14 +108,7 @@ export default function Home() {
         // Check if this is a free exercise that should have worked
         const freeExercises = ['intro1', 'intro2', 'variables1'];
         if (currentExercise && !freeExercises.includes(currentExercise.id)) {
-          toast({
-            title: "Sign in Required",
-            description: "Please sign in to access exercises beyond the free tier. Redirecting to login...",
-            variant: "default",
-          });
-          setTimeout(() => {
-            window.location.href = "/api/login";
-          }, 2000);
+          setShowLoginModal(true);
         } else {
           toast({
             title: "Authentication Error",
@@ -338,6 +333,11 @@ export default function Home() {
         onDismiss={() => setShowCelebration(false)}
         onNextExercise={handleNextExercise}
         hasNextExercise={hasNextExercise}
+      />
+
+      <LoginModal
+        open={showLoginModal}
+        onOpenChange={setShowLoginModal}
       />
     </div>
   );

@@ -104,8 +104,8 @@ export default function About() {
               <section>
                 <h2 className="text-2xl font-semibold mb-3">Technical Details</h2>
                 <p className="text-muted-foreground">
-                  Code execution is handled securely through containerized sandboxing, ensuring a safe learning environment.
-                  Your code runs in isolated Docker containers with resource limits.
+                  Code execution is handled securely through the Piston API, a production-grade sandboxed execution environment.
+                  Your code runs in isolated containers with resource limits, ensuring a safe learning experience.
                 </p>
               </section>
 
