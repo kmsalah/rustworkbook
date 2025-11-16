@@ -23,26 +23,20 @@ npx vitest
 npx vitest --ui
 ```
 
-## Required Package.json Scripts
+## Test Commands
 
-**⚠️ IMPORTANT:** Add these to your `package.json` "scripts" section:
-
-```json
-{
-  "scripts": {
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage"
-  }
-}
+Run tests with these commands:
+```bash
+npx vitest run              # Run all tests once
+npx vitest                  # Watch mode
+npx vitest --ui             # Interactive UI
 ```
 
-Then you can use standard commands:
-```bash
-npm test              # Run all tests once
-npm run test:watch    # Watch mode
-npm run test:ui       # Interactive UI
+**Optional**: Add shortcuts to `package.json`:
+```json
+"test": "vitest run",
+"test:watch": "vitest",
+"test:ui": "vitest --ui"
 ```
 
 ## Test Organization
