@@ -1,8 +1,8 @@
-# Testing Guide for Rustlings Web IDE
+# Testing Guide for Rust Workbook
 
 ## 🧪 Test Suite Overview
 
-This application has **comprehensive automated tests** that run on every code change to ensure production quality before monetization.
+This application has **comprehensive automated tests** that run on every code change to ensure production quality. All tests are defined in code and executed automatically - no manual testing required.
 
 ### Current Test Coverage: **23 Tests Passing ✅**
 
@@ -10,12 +10,16 @@ This application has **comprehensive automated tests** that run on every code ch
 
 ### Run All Tests
 ```bash
-npx vitest run
+./scripts/run-tests.sh         # Recommended: Full test with DB sync
+# OR
+npx vitest run                  # Direct: Tests only
 ```
 
 ### Watch Mode (Auto-rerun on changes)
 ```bash
-npx vitest
+./scripts/watch-tests.sh        # Recommended: Auto-testing during dev
+# OR
+npx vitest                      # Direct: Watch mode
 ```
 
 ### Interactive UI
@@ -23,20 +27,43 @@ npx vitest
 npx vitest --ui
 ```
 
+## 🤖 Automated Testing Layers
+
+### Layer 1: Development Testing (Immediate Feedback)
+**Script**: `./scripts/watch-tests.sh`
+- Runs continuously during development
+- Auto-reruns on file changes
+- Provides immediate feedback
+
+### Layer 2: Pre-Checkpoint Validation
+**Script**: `./scripts/pre-checkpoint.sh`
+- Validates tests pass before saving project state
+- Prevents broken checkpoints
+- Run manually before creating checkpoints
+
+### Layer 3: Periodic Health Checks
+**Script**: `./scripts/periodic-tests.sh`
+- Comprehensive health monitoring
+- Tests database connectivity
+- Validates Piston API availability
+- Scheduled to run every 2 hours via deployment
+
 ## Test Commands
 
-Run tests with these commands:
+### Automated Scripts (Recommended)
+```bash
+./scripts/run-tests.sh          # Full test suite with DB sync
+./scripts/watch-tests.sh        # Auto-test on file changes
+./scripts/pre-checkpoint.sh     # Validate before checkpoint
+./scripts/periodic-tests.sh     # Health check (scheduled)
+```
+
+### Direct Vitest Commands
 ```bash
 npx vitest run              # Run all tests once
 npx vitest                  # Watch mode
 npx vitest --ui             # Interactive UI
-```
-
-**Optional**: Add shortcuts to `package.json`:
-```json
-"test": "vitest run",
-"test:watch": "vitest",
-"test:ui": "vitest --ui"
+npx vitest run --coverage   # Coverage report
 ```
 
 ## Test Organization
