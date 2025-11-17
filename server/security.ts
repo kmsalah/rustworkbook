@@ -23,7 +23,7 @@ export const compileRateLimiter = rateLimit({
 export const anonymousRateLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 3, // Only 3 requests per minute for non-authenticated
-  message: { error: 'Authentication required' },
+  message: { error: 'Sign in required to continue executing code' },
   skip: (req: any) => req.isAuthenticated && req.isAuthenticated(),
 });
 

@@ -3,6 +3,30 @@ import type { Exercise } from "@shared/schema";
 export const exercises: Exercise[] = [
   // Intro exercises
   {
+    id: "intro1",
+    name: "intro1",
+    path: "exercises/intro/intro1.rs",
+    topic: "intro",
+    mode: "compile",
+    hint: "Remove the I AM NOT DONE comment to move on to the next exercise.",
+    code: `// intro1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+// About this I AM NOT DONE thing:
+// We sometimes encourage you to keep trying things on a given exercise, even
+// after you already figured it out. If you got everything working and feel
+// ready for the next exercise, remove the I AM NOT DONE comment below.
+
+fn main() {
+    println!("Hello and welcome to Rustlings!");
+    // I AM NOT DONE
+}
+`,
+  },
+  {
     id: "intro2",
     name: "intro2",
     path: "exercises/intro/intro2.rs",
@@ -14,6 +38,7 @@ export const exercises: Exercise[] = [
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
+
 // Make me compile!
 
 fn main() {
@@ -35,6 +60,7 @@ fn main() {
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
+
 // Make me compile!
 
 fn main() {
@@ -318,6 +344,7 @@ fn main() {
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
+
 // Your task is to create a Vec which holds the exact same elements
 // as in the array a.
 
@@ -392,6 +419,7 @@ fn fill_vec(vec: Vec<i32>) -> Vec<i32> {
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
+
 // Address all the TODOs to make the tests pass!
 
 struct ColorClassicStruct {
@@ -577,6 +605,7 @@ mod tests {
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
+
 //
 // Make me compile!
 
@@ -609,6 +638,7 @@ fn main() {
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
+
 //
 // Fix these 'use' statements to make the code compile.
 
@@ -649,6 +679,7 @@ fn main() {
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
+
 //
 // Bring SystemTime and UNIX_EPOCH from the std::time module into your scope.
 
@@ -677,6 +708,7 @@ fn main() {
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
+
 //
 // A basket of fruits in the form of a hash map needs to be defined.
 
@@ -722,6 +754,7 @@ mod tests {
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
+
 //
 // Fix this function with proper lifetime annotations.
 
@@ -754,6 +787,7 @@ fn main() {
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
+
 //
 // Tests are important to ensure that your code does what you think it should do.
 
@@ -778,6 +812,7 @@ mod tests {
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
+
 //
 // Iterators are essential for working with collections.
 
@@ -807,6 +842,7 @@ fn main() {
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
+
 //
 // Spawn multiple threads and collect their results.
 
@@ -851,6 +887,7 @@ fn main() {
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
+
 //
 // Fix the recursive type by using Box.
 
@@ -901,6 +938,7 @@ mod tests {
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
+
 //
 // Call the macro correctly!
 
@@ -927,6 +965,7 @@ fn main() {
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
+
 //
 // The From trait is used for value-to-value conversions.
 

@@ -117,7 +117,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // For anonymous users, check session-based limit
     if (req.session.compileCount >= 5) {
       return res.status(403).json({ 
-        error: "You've reached the maximum number of free runs for this session. Please sign in to continue.",
+        error: "Sign in required to continue executing code",
         requiresAuth: true 
       });
     }
