@@ -8,7 +8,8 @@ import { IDEHeader } from "@/components/IDEHeader";
 import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
 // Removed CelebrationAnimation - using inline feedback instead
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { Loader2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2, Code, Terminal, List } from "lucide-react";
 import type { Exercise, CompilationResult, User } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
@@ -16,11 +17,20 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 import { useToast } from "@/hooks/use-toast";
 import LoginModal from "@/components/LoginModal";
 import { saveExerciseCode, loadExerciseCode, clearExerciseCode } from "@/lib/localStorage";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 export default function Home() {
   const { isAuthenticated, isLoading, user: authUser } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+
+  // Media queries for responsive design
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isTablet = useMediaQuery("(min-width: 769px) and (max-width: 1024px)");
+  const isDesktop = useMediaQuery("(min-width: 1025px)");
+  
+  // Mobile tab state
+  const [mobileActiveTab, setMobileActiveTab] = useState("editor");
 
   // Allow anonymous users - no redirect
 
@@ -387,6 +397,160 @@ export default function Home() {
     );
   }
 
+  // Mobile Layout
+  if (isMobile) {
+    return (
+      <div className="h-screen w-full flex flex-col bg-background" data-testid="page-home">
+        <IDEHeader
+          exerciseName={currentExercise?.name || ""}
+          exerciseMode={currentExercise?.mode || "compile"}
+          hint={currentExercise?.hint || ""}
+          onRunCode={handleRunCode}
+          onReset={handleReset}
+          isCompiling={compileMutation.isPending}
+          onPreviousExercise={handlePreviousExercise}
+          onNextExercise={handleNextExercise}
+          hasPreviousExercise={hasPreviousExercise}
+          hasNextExercise={hasNextExercise}
+          user={user}
+        />
+        
+        <div className="flex-1 overflow-hidden">
+          <Tabs value={mobileActiveTab} onValueChange={setMobileActiveTab} className="h-full flex flex-col">
+            <TabsList className="w-full rounded-none border-b">
+              <TabsTrigger value="exercises" className="flex-1 data-[state=active]:bg-primary/10">
+                <List className="h-4 w-4 mr-1" />
+                Exercises
+              </TabsTrigger>
+              <TabsTrigger value="editor" className="flex-1 data-[state=active]:bg-primary/10">
+                <Code className="h-4 w-4 mr-1" />
+                Editor
+              </TabsTrigger>
+              <TabsTrigger value="console" className="flex-1 data-[state=active]:bg-primary/10">
+                <Terminal className="h-4 w-4 mr-1" />
+                Console
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="exercises" className="flex-1 overflow-hidden m-0">
+              <ExerciseNavigator
+                ref={filterInputRef}
+                exercises={exercises || []}
+                currentExerciseId={currentExercise?.id || null}
+                completedExercises={completedExercises}
+                onSelectExercise={(exercise) => {
+                  handleSelectExercise(exercise);
+                  setMobileActiveTab("editor");
+                }}
+              />
+            </TabsContent>
+            
+            <TabsContent value="editor" className="flex-1 overflow-hidden m-0">
+              <CodeEditor
+                value={code}
+                onChange={(value) => setCode(value || "")}
+                fileName={currentExercise?.name ? `${currentExercise.name}.rs` : "untitled.rs"}
+                compilationResult={compilationResult}
+              />
+            </TabsContent>
+            
+            <TabsContent value="console" className="flex-1 overflow-hidden m-0">
+              <ConsolePanel
+                compilationResult={compilationResult}
+                isCompiling={compileMutation.isPending}
+                onClear={handleClearConsole}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        <KeyboardShortcutsDialog
+          open={showShortcutsDialog}
+          onOpenChange={setShowShortcutsDialog}
+        />
+
+        <LoginModal
+          open={showLoginModal}
+          onOpenChange={setShowLoginModal}
+        />
+      </div>
+    );
+  }
+
+  // Tablet Layout
+  if (isTablet) {
+    return (
+      <div className="h-screen w-full flex flex-col bg-background" data-testid="page-home">
+        <IDEHeader
+          exerciseName={currentExercise?.name || ""}
+          exerciseMode={currentExercise?.mode || "compile"}
+          hint={currentExercise?.hint || ""}
+          onRunCode={handleRunCode}
+          onReset={handleReset}
+          isCompiling={compileMutation.isPending}
+          onPreviousExercise={handlePreviousExercise}
+          onNextExercise={handleNextExercise}
+          hasPreviousExercise={hasPreviousExercise}
+          hasNextExercise={hasNextExercise}
+          user={user}
+        />
+
+        <ResizablePanelGroup direction="horizontal" className="flex-1" autoSaveId="rustlings-tablet-layout">
+          <ResizablePanel defaultSize={60} minSize={40} id="editor">
+            <div className="h-full flex flex-col">
+              {/* Exercise selector dropdown for tablet */}
+              <div className="border-b border-border p-2">
+                <select 
+                  className="w-full p-2 bg-background border border-input rounded-md text-sm"
+                  value={currentExercise?.id || ""}
+                  onChange={(e) => {
+                    const exercise = exercises?.find(ex => ex.id === e.target.value);
+                    if (exercise) handleSelectExercise(exercise);
+                  }}
+                >
+                  {exercises?.map(exercise => (
+                    <option key={exercise.id} value={exercise.id}>
+                      {completedExercises.includes(exercise.id) ? "✓ " : ""}{exercise.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex-1">
+                <CodeEditor
+                  value={code}
+                  onChange={(value) => setCode(value || "")}
+                  fileName={currentExercise?.name ? `${currentExercise.name}.rs` : "untitled.rs"}
+                  compilationResult={compilationResult}
+                />
+              </div>
+            </div>
+          </ResizablePanel>
+
+          <ResizableHandle className="w-1 bg-border hover:bg-primary transition-colors" />
+
+          <ResizablePanel defaultSize={40} minSize={30} id="console">
+            <ConsolePanel
+              compilationResult={compilationResult}
+              isCompiling={compileMutation.isPending}
+              onClear={handleClearConsole}
+            />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+
+        <KeyboardShortcutsDialog
+          open={showShortcutsDialog}
+          onOpenChange={setShowShortcutsDialog}
+        />
+
+        <LoginModal
+          open={showLoginModal}
+          onOpenChange={setShowLoginModal}
+        />
+      </div>
+    );
+  }
+
+  // Desktop Layout (default)
   return (
     <div className="h-screen w-full flex flex-col bg-background" data-testid="page-home">
       <IDEHeader
