@@ -36,10 +36,27 @@ export function AboutModal() {
             </p>
             
             <div>
-              <h3 className="font-semibold mb-2">Attribution</h3>
+              <h3 className="font-semibold mb-2">Recommended Learning Resource</h3>
+              <p>
+                We highly recommend <a 
+                  href="https://doc.rust-lang.org/book/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline inline-flex items-center gap-1"
+                  data-testid="link-rust-book"
+                >
+                  The Rust Programming Language Book
+                  <ExternalLink className="h-3 w-3" />
+                </a> for comprehensive Rust learning alongside these exercises.
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-2">Attribution & Credits</h3>
               <p>
                 Built on the excellent open-source <strong>Rustlings project (MIT License)</strong>.
-                This platform is <strong>unofficial and independent</strong>.
+                This platform is <strong>unofficial and not affiliated</strong> with the Rust Foundation, 
+                Mozilla, or the official Rust project.
               </p>
               <a 
                 href="https://github.com/rust-lang/rustlings" 
