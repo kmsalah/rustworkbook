@@ -52,11 +52,14 @@ export default function Home() {
   });
 
   // Load user progress from database - only when authenticated
-  const { data: progressData, isLoading: progressLoading } = useQuery<{ completedExercises: string[] }>({
+  const { data: progressData, isLoading: progressLoading, refetch: refetchProgress } = useQuery<{ completedExercises: string[] }>({
     queryKey: ["/api/progress"],
     enabled: isAuthenticated,
     retry: false,
   });
+
+  // State to track if we've already merged local progress
+  const [hasMergedLocalProgress, setHasMergedLocalProgress] = useState(false);
 
   // Merge local and database progress - ensure it's always an array
   const completedExercises: string[] = isAuthenticated 
@@ -146,6 +149,75 @@ export default function Home() {
       });
     },
   });
+
+  // Merge local progress when user signs in
+  useEffect(() => {
+    const mergeProgress = async () => {
+      if (!isAuthenticated || hasMergedLocalProgress || !progressData) return;
+      
+      // Check if there's local progress to merge
+      const savedLocal = localStorage.getItem("rustlings-progress");
+      if (!savedLocal) {
+        setHasMergedLocalProgress(true);
+        return;
+      }
+      
+      try {
+        const localExercises = JSON.parse(savedLocal);
+        if (!Array.isArray(localExercises) || localExercises.length === 0) {
+          setHasMergedLocalProgress(true);
+          return;
+        }
+        
+        console.log('[Progress] User signed in, merging local progress...');
+        console.log('[Progress] Local progress:', localExercises);
+        console.log('[Progress] Database progress:', progressData.completedExercises);
+        
+        // Find exercises that are in local but not in database
+        const dbProgress = progressData.completedExercises || [];
+        const exercisesToAdd = localExercises.filter(id => !dbProgress.includes(id));
+        
+        if (exercisesToAdd.length > 0) {
+          console.log('[Progress] Adding to database:', exercisesToAdd);
+          
+          // Submit each new exercise to the database
+          const results = await Promise.allSettled(
+            exercisesToAdd.map(exerciseId => 
+              apiRequest("POST", `/api/progress/${exerciseId}`, {})
+            )
+          );
+          
+          const succeeded = results.filter(r => r.status === 'fulfilled').length;
+          console.log(`[Progress] Successfully synced ${succeeded}/${exercisesToAdd.length} exercises`);
+          
+          // Clear local storage after merge attempt
+          localStorage.removeItem("rustlings-progress");
+          setLocalProgress([]);
+          
+          // Show toast with appropriate message
+          if (succeeded > 0) {
+            toast({
+              title: "✅ Progress Synced",
+              description: `Added ${succeeded} exercise${succeeded > 1 ? 's' : ''} from your local progress to your account.`,
+            });
+            // Refetch progress to get the updated list
+            await refetchProgress();
+          }
+        } else {
+          console.log('[Progress] No new exercises to add from local progress');
+          // Still clear localStorage since user is now signed in
+          localStorage.removeItem("rustlings-progress");
+          setLocalProgress([]);
+        }
+      } catch (error) {
+        console.error('[Progress] Error merging progress:', error);
+      } finally {
+        setHasMergedLocalProgress(true);
+      }
+    };
+    
+    mergeProgress();
+  }, [isAuthenticated, hasMergedLocalProgress, progressData, refetchProgress, toast]);
 
   useEffect(() => {
     if (exercises && exercises.length > 0 && !currentExercise) {
