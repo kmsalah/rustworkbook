@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { ExerciseNavigator } from "@/components/ExerciseNavigator";
@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { useToast } from "@/hooks/use-toast";
 import LoginModal from "@/components/LoginModal";
+import { saveExerciseCode, loadExerciseCode, clearExerciseCode } from "@/lib/localStorage";
 
 export default function Home() {
   const { isAuthenticated, isLoading, user: authUser } = useAuth();
@@ -230,9 +231,29 @@ export default function Home() {
     }
   }, [exercises, currentExercise]);
 
+  // Auto-save code to localStorage with debounce
+  useEffect(() => {
+    if (!currentExercise) return;
+    
+    const saveTimeout = setTimeout(() => {
+      // Only save if code is different from original template
+      if (code !== currentExercise.code) {
+        saveExerciseCode(currentExercise.id, code);
+      }
+    }, 250); // 250ms debounce
+    
+    return () => clearTimeout(saveTimeout);
+  }, [code, currentExercise]);
+
   useEffect(() => {
     if (currentExercise) {
-      setCode(currentExercise.code);
+      // Try to load saved code from localStorage
+      const savedCode = loadExerciseCode(currentExercise.id);
+      if (savedCode) {
+        setCode(savedCode);
+      } else {
+        setCode(currentExercise.code);
+      }
       setOriginalCode(currentExercise.code);
       setCompilationResult(null);
     }
@@ -324,6 +345,10 @@ export default function Home() {
     if (window.confirm("Reset code to original? This will discard your changes.")) {
       setCode(originalCode);
       setCompilationResult(null);
+      // Clear localStorage for this exercise
+      if (currentExercise) {
+        clearExerciseCode(currentExercise.id);
+      }
     }
   };
 

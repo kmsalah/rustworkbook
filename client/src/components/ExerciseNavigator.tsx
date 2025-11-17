@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Exercise } from "@shared/schema";
+import { clearAllExerciseCode } from "@/lib/localStorage";
 
 interface ExerciseNavigatorProps {
   exercises: Exercise[];
@@ -125,8 +126,10 @@ export const ExerciseNavigator = forwardRef<HTMLInputElement, ExerciseNavigatorP
       <div className="p-4 border-t border-sidebar-border">
         <Button
           onClick={() => {
-            if (window.confirm("Are you sure you want to reset all progress? This cannot be undone.")) {
+            if (window.confirm("Are you sure you want to reset all progress? This will clear all your saved code and cannot be undone.")) {
               localStorage.removeItem("rustlings-progress");
+              // Also clear all saved exercise code
+              clearAllExerciseCode();
               window.location.reload();
             }
           }}
