@@ -9,7 +9,9 @@ export const exercises: Exercise[] = [
     topic: "intro",
     mode: "compile",
     hint: "This is a simple introduction exercise. Just run it to see the welcome message!",
-    code: `fn main() {
+    code: `// Click the ▶ Run Code button above to get started!
+
+fn main() {
     println!("Hello and welcome to the Rust Workbook!");
 }
 `,
