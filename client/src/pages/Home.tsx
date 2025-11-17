@@ -30,6 +30,11 @@ export default function Home() {
   const [showShortcutsDialog, setShowShortcutsDialog] = useState(false);
   // Removed showCelebration state - using inline feedback
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [localProgress, setLocalProgress] = useState<string[]>(() => {
+    // Load anonymous progress from localStorage on mount
+    const saved = localStorage.getItem("rustlings-progress");
+    return saved ? JSON.parse(saved) : [];
+  });
   const filterInputRef = useRef<HTMLInputElement>(null);
   const user = authUser as User | undefined;
 
@@ -44,7 +49,10 @@ export default function Home() {
     retry: false,
   });
 
-  const completedExercises = progressData?.completedExercises || [];
+  // Merge local and database progress
+  const completedExercises = isAuthenticated 
+    ? progressData?.completedExercises || []
+    : localProgress;
   const dataLoading = exercisesLoading || progressLoading;
 
   const markCompleteMutation = useMutation({
@@ -82,24 +90,31 @@ export default function Home() {
       setCompilationResult(result);
       
       if (result.success && currentExercise) {
-        // Only save progress for authenticated users
+        const isFirstCompletion = !completedExercises.includes(currentExercise.id);
+        
+        console.log('[Progress] Exercise completed:', currentExercise.id);
+        console.log('[Progress] Currently completed:', completedExercises);
+        console.log('[Progress] Is first completion:', isFirstCompletion);
+        
         if (isAuthenticated) {
-          const isFirstCompletion = !completedExercises.includes(currentExercise.id);
-          
-          console.log('[Celebration] Exercise completed:', currentExercise.id);
-          console.log('[Celebration] Currently completed:', completedExercises);
-          console.log('[Celebration] Is first completion:', isFirstCompletion);
-          
-          // Mark as complete in database
+          // Save progress for authenticated users in database
           markCompleteMutation.mutate(currentExercise.id);
-          
-          // Show success feedback using toast for first completion
+        } else {
+          // Save progress for anonymous users in localStorage
           if (isFirstCompletion) {
-            toast({
-              title: "🎉 Excellent Work!",
-              description: `You've successfully completed ${currentExercise.name}`,
-            });
+            const newProgress = [...localProgress, currentExercise.id];
+            setLocalProgress(newProgress);
+            localStorage.setItem("rustlings-progress", JSON.stringify(newProgress));
+            console.log('[Progress] Saved to localStorage:', newProgress);
           }
+        }
+        
+        // Show success feedback using toast for first completion
+        if (isFirstCompletion) {
+          toast({
+            title: "🎉 Excellent Work!",
+            description: `You've successfully completed ${currentExercise.name}`,
+          });
         }
       }
     },
