@@ -3,26 +3,6 @@ import type { Exercise } from "@shared/schema";
 export const exercises: Exercise[] = [
   // Intro exercises
   {
-    id: "intro1",
-    name: "intro1",
-    path: "exercises/intro/intro1.rs",
-    topic: "intro",
-    mode: "compile",
-    hint: "Remove the I AM NOT DONE comment to move on to the next exercise.",
-    code: `// intro1.rs
-//
-// About this I AM NOT DONE thing:
-// We sometimes encourage you to keep trying things on a given exercise, even
-// after you already figured it out. If you got everything working and feel
-// ready for the next exercise, remove the I AM NOT DONE comment below.
-
-fn main() {
-    println!("Hello and welcome to Rustlings!");
-    // I AM NOT DONE
-}
-`,
-  },
-  {
     id: "intro2",
     name: "intro2",
     path: "exercises/intro/intro2.rs",
@@ -30,6 +10,10 @@ fn main() {
     mode: "compile",
     hint: "Add the missing keyword to make the code compile.",
     code: `// intro2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 // Make me compile!
 
 fn main() {
@@ -47,6 +31,10 @@ fn main() {
     mode: "compile",
     hint: "The declaration on line 8 is missing a keyword that is needed in Rust to create a new variable binding.",
     code: `// variables1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 // Make me compile!
 
 fn main() {
@@ -63,6 +51,10 @@ fn main() {
     mode: "compile",
     hint: "What happens if you annotate the first line in the main function with a type annotation?",
     code: `// variables2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 
 fn main() {
     let x;
@@ -82,6 +74,10 @@ fn main() {
     mode: "compile",
     hint: "In Rust, variable bindings are immutable by default. But here we're trying to reassign a different value to x! There's a keyword we can use to make a variable binding mutable instead.",
     code: `// variables3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 
 fn main() {
     let x = 3;
@@ -101,6 +97,10 @@ fn main() {
     mode: "compile",
     hint: "This main function is calling a function that it expects to exist, but the function doesn't exist. It expects to see the definition of the function.",
     code: `// functions1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 
 fn main() {
     call_me();
@@ -115,6 +115,10 @@ fn main() {
     mode: "compile",
     hint: "Rust requires that all parts of a function's signature have type annotations, but call_me is missing the type annotation of num.",
     code: `// functions2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 
 fn main() {
     call_me(3);
@@ -135,6 +139,10 @@ fn call_me(num:) {
     mode: "compile",
     hint: "This time, the function *declaration* is okay, but there's something wrong with the place where we're calling the function. What could that be?",
     code: `// functions3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 
 fn main() {
     call_me();
@@ -157,6 +165,10 @@ fn call_me(num: u32) {
     mode: "compile",
     hint: "It's possible to do this in one line if you would like! Some similar examples from other languages: C: a > b ? a : b, JS: a > b ? a : b, Python: a if a > b else b",
     code: `// if1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 
 pub fn bigger(a: i32, b: i32) -> i32 {
     // Complete this function to return the bigger number!
@@ -189,6 +201,10 @@ mod tests {
     mode: "compile",
     hint: "For that first compiler error, it's important to note that in Rust, every conditional block must return the same type. Also, within a function, the last expression is automatically returned.",
     code: `// if2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 
 pub fn foo_if_fizz(fizzish: &str) -> &str {
     if fizzish == "fizz" {
@@ -229,6 +245,10 @@ mod tests {
     mode: "compile",
     hint: "There is no boilerplate needed for this exercise. Try looking at the test to see what the expected type is.",
     code: `// primitive_types1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 
 fn main() {
     // Booleans (true or false)
@@ -252,6 +272,10 @@ fn main() {
     mode: "compile",
     hint: "No hints this time ;)",
     code: `// primitive_types2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 
 fn main() {
     // Characters (char)
@@ -290,6 +314,10 @@ fn main() {
     mode: "compile",
     hint: "In Rust, there are two ways to define a Vector. 1. One way is to use the vec! macro. 2. The other way is to use the Vec::new() function to create a new vector and fill it with the push() method.",
     code: `// vecs1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 // Your task is to create a Vec which holds the exact same elements
 // as in the array a.
 
@@ -322,6 +350,10 @@ mod tests {
     mode: "compile",
     hint: "So you've got the vec! macro and the new function from the Vec<T> type to create vectors. The problem is that the vec! macro is creating a vector and moving it to fill_vec, but the vector is not returned from the fill_vec function.",
     code: `// move_semantics1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 
 fn main() {
     let vec0 = Vec::new();
@@ -356,6 +388,10 @@ fn fill_vec(vec: Vec<i32>) -> Vec<i32> {
     mode: "compile",
     hint: "Rust has more than one type of struct. Three actually, all variants are used to package related data together. For this exercise, you need to create a classic C struct.",
     code: `// structs1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 // Address all the TODOs to make the tests pass!
 
 struct ColorClassicStruct {
@@ -410,6 +446,10 @@ mod tests {
     mode: "compile",
     hint: "Hint: The declaration of the Message enum is just missing something in front of the first curly bracket.",
     code: `// enums1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 
 #[derive(Debug)]
 enum Message {
@@ -434,6 +474,10 @@ fn main() {
     mode: "compile",
     hint: "The current_favorite_color function is currently returning a string slice with the 'static lifetime. Make it return a String instead.",
     code: `// strings1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 
 fn main() {
     let answer = current_favorite_color();
@@ -455,6 +499,10 @@ fn current_favorite_color() -> String {
     mode: "compile",
     hint: "Options can have a Some value, with an inner value, or a None value, without an inner value. There's multiple ways to get at the inner value, you can use unwrap, or pattern match. Unwrapping is the easiest, but how do you do it safely so that it doesn't panic in your face later?",
     code: `// options1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 
 fn main() {
     let target = "rustlings";
@@ -477,6 +525,10 @@ fn main() {
     mode: "compile",
     hint: "Most errors aren't serious enough to require the program to stop entirely. Sometimes, when a function fails, it's for a reason that you can easily interpret and respond to. For example, if you try to open a file and that operation fails because the file doesn't exist, you might want to create the file instead of terminating the process.",
     code: `// errors1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 
 pub fn generate_nametag_text(name: String) -> Option<String> {
     if name.is_empty() {
@@ -521,6 +573,10 @@ mod tests {
     mode: "compile",
     hint: "Everything is private in Rust by default. Use the 'pub' keyword to make the make_sausage function public.",
     code: `// modules1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 //
 // Make me compile!
 
@@ -549,6 +605,10 @@ fn main() {
     mode: "compile",
     hint: "The 'use' keyword with 'as' allows you to bring module paths into scope and rename them. Replace the ??? with appropriate names.",
     code: `// modules2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 //
 // Fix these 'use' statements to make the code compile.
 
@@ -585,6 +645,10 @@ fn main() {
     mode: "compile",
     hint: "Use the 'use' keyword to bring SystemTime and UNIX_EPOCH from the std::time module into scope.",
     code: `// modules3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 //
 // Bring SystemTime and UNIX_EPOCH from the std::time module into your scope.
 
@@ -609,6 +673,10 @@ fn main() {
     mode: "test",
     hint: "Take a look at the test code. Use HashMap from std::collections to store fruits.",
     code: `// hashmaps1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 //
 // A basket of fruits in the form of a hash map needs to be defined.
 
@@ -650,6 +718,10 @@ mod tests {
     mode: "compile",
     hint: "Add lifetime annotations to help the compiler understand the relationship between the input and output references.",
     code: `// lifetimes1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 //
 // Fix this function with proper lifetime annotations.
 
@@ -678,6 +750,10 @@ fn main() {
     mode: "test",
     hint: "You don't even need to write any code to test -- make the assert pass with a boolean value!",
     code: `// tests1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 //
 // Tests are important to ensure that your code does what you think it should do.
 
@@ -698,6 +774,10 @@ mod tests {
     mode: "compile",
     hint: "Step 1: Apply the .iter() method to create an iterator. Step 2: Use Some() to wrap the expected values.",
     code: `// iterators1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 //
 // Iterators are essential for working with collections.
 
@@ -723,6 +803,10 @@ fn main() {
     mode: "compile",
     hint: "Use handle.join().unwrap() to wait for each thread and collect its return value.",
     code: `// threads1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 //
 // Spawn multiple threads and collect their results.
 
@@ -763,6 +847,10 @@ fn main() {
     mode: "test",
     hint: "Box provides indirection and a pointer to the heap for recursive types. Wrap the List type in Box to fix the infinite size issue.",
     code: `// box1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 //
 // Fix the recursive type by using Box.
 
@@ -809,6 +897,10 @@ mod tests {
     mode: "compile",
     hint: "When you call a macro, you need to add an exclamation mark after its name!",
     code: `// macros1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 //
 // Call the macro correctly!
 
@@ -831,6 +923,10 @@ fn main() {
     mode: "test",
     hint: "Split the string on commas, extract name and age, and parse the age. Return default on any errors.",
     code: `// from_into.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
 //
 // The From trait is used for value-to-value conversions.
 

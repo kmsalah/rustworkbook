@@ -6,7 +6,7 @@ import { CodeEditor } from "@/components/CodeEditor";
 import { ConsolePanel } from "@/components/ConsolePanel";
 import { IDEHeader } from "@/components/IDEHeader";
 import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
-import { CelebrationAnimation } from "@/components/CelebrationAnimation";
+// Removed CelebrationAnimation - using inline feedback instead
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Loader2 } from "lucide-react";
 import type { Exercise, CompilationResult, User } from "@shared/schema";
@@ -28,7 +28,7 @@ export default function Home() {
   const [originalCode, setOriginalCode] = useState("");
   const [compilationResult, setCompilationResult] = useState<CompilationResult | null>(null);
   const [showShortcutsDialog, setShowShortcutsDialog] = useState(false);
-  const [showCelebration, setShowCelebration] = useState(false);
+  // Removed showCelebration state - using inline feedback
   const [showLoginModal, setShowLoginModal] = useState(false);
   const filterInputRef = useRef<HTMLInputElement>(null);
   const user = authUser as User | undefined;
@@ -93,32 +93,25 @@ export default function Home() {
           // Mark as complete in database
           markCompleteMutation.mutate(currentExercise.id);
           
-          // Show celebration animation only on first completion
+          // Show success feedback using toast for first completion
           if (isFirstCompletion) {
-            console.log('[Celebration] Showing celebration overlay');
-            setShowCelebration(true);
-          } else {
-            console.log('[Celebration] Skipping celebration (already completed)');
+            toast({
+              title: "🎉 Excellent Work!",
+              description: `You've successfully completed ${currentExercise.name}`,
+            });
           }
         }
       }
     },
     onError: (error) => {
       if (isUnauthorizedError(error)) {
-        // Check if this is a free exercise that should have worked
-        const freeExercises = ['intro1', 'intro2', 'variables1'];
-        if (currentExercise && !freeExercises.includes(currentExercise.id)) {
+        // Check if error is due to session limit reached
+        if (error instanceof Error && error.message.includes("maximum number of free runs")) {
           setShowLoginModal(true);
-        } else {
-          toast({
-            title: "Authentication Error",
-            description: "Please sign in and try again.",
-            variant: "destructive",
-          });
-          setTimeout(() => {
-            window.location.href = "/api/login";
-          }, 2000);
+          return;
         }
+        // Show login modal for authentication errors
+        setShowLoginModal(true);
         return;
       }
       setCompilationResult({
@@ -327,13 +320,7 @@ export default function Home() {
         onOpenChange={setShowShortcutsDialog}
       />
 
-      <CelebrationAnimation
-        show={showCelebration}
-        exerciseName={currentExercise?.name || ""}
-        onDismiss={() => setShowCelebration(false)}
-        onNextExercise={handleNextExercise}
-        hasNextExercise={hasNextExercise}
-      />
+      {/* Celebration animation removed - using inline toast feedback instead */}
 
       <LoginModal
         open={showLoginModal}

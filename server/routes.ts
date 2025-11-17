@@ -102,20 +102,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ✅ Monitoring and logging
   
   // Custom middleware: allow anonymous for first 3 exercises only
-  const conditionalAuth = (req: any, res: any, next: any) => {
-    const freeExercises = ['intro1', 'intro2', 'variables1'];
-    const exerciseId = req.body?.exerciseId;
+  // Track anonymous compilation attempts per session
+  const sessionCompileTracker = (req: any, res: any, next: any) => {
+    // Initialize session compile count if not present
+    if (req.session.compileCount === undefined) {
+      req.session.compileCount = 0;
+    }
     
-    // If it's a free exercise, skip authentication
-    if (exerciseId && freeExercises.includes(exerciseId)) {
+    // If authenticated, skip limits
+    if (req.isAuthenticated()) {
       return next();
     }
     
-    // Otherwise require authentication
-    return isAuthenticated(req, res, next);
+    // For anonymous users, check session-based limit
+    if (req.session.compileCount >= 5) {
+      return res.status(403).json({ 
+        error: "You've reached the maximum number of free runs for this session. Please sign in to continue.",
+        requiresAuth: true 
+      });
+    }
+    
+    // Increment count and continue
+    req.session.compileCount++;
+    next();
   };
   
-  app.post("/api/compile", anonymousRateLimiter, conditionalAuth, compileRateLimiter, async (req, res) => {
+  app.post("/api/compile", anonymousRateLimiter, sessionCompileTracker, compileRateLimiter, async (req, res) => {
     try {
       const result = compileRequestSchema.safeParse(req.body);
       if (!result.success) {
