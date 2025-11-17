@@ -1,4 +1,4 @@
-import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn, Bug } from "lucide-react";
+import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -149,16 +149,6 @@ export function IDEHeader({
         >
           <RotateCcw className="h-4 w-4" />
           Reset
-        </Button>
-
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => window.open("https://github.com/rust-lang/rustlings/issues", "_blank")}
-          data-testid="button-bug-report"
-          title="Report Bug"
-        >
-          <Bug className="h-4 w-4" />
         </Button>
 
         <div className="h-6 w-px bg-border mx-1" />
