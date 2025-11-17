@@ -205,28 +205,8 @@ export function IDEHeader({
             variant="ghost"
             className="h-8 px-2 gap-2"
             onClick={() => {
-              // Open login in a popup window
-              const width = 500;
-              const height = 600;
-              const left = window.screen.width / 2 - width / 2;
-              const top = window.screen.height / 2 - height / 2;
-              
-              const popup = window.open(
-                "/api/login",
-                "replit-login",
-                `width=${width},height=${height},left=${left},top=${top},toolbar=0,location=0,menubar=0,scrollbars=1`
-              );
-              
-              // Check periodically if the popup is closed
-              if (popup) {
-                const checkPopup = setInterval(() => {
-                  if (popup.closed) {
-                    clearInterval(checkPopup);
-                    // Reload the page to refresh auth state
-                    window.location.reload();
-                  }
-                }, 500);
-              }
+              // Use redirect-based login for Replit Auth
+              window.location.href = "/api/login";
             }}
             data-testid="button-login"
           >
