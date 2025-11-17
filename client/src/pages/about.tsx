@@ -23,7 +23,7 @@ export default function About() {
               <BookOpen className="h-12 w-12 text-primary" />
               <span className="text-5xl font-bold">&gt;_</span>
             </div>
-            <h1 className="text-4xl font-bold">Rust Coding Exercises Web IDE</h1>
+            <h1 className="text-4xl font-bold">Rust IDE Workbook</h1>
             <p className="text-xl text-muted-foreground">
               Practice and learn Rust in your browser with interactive exercises
             </p>

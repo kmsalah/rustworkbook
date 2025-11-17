@@ -1,8 +1,8 @@
-# Rustlings Web IDE
+# Rust IDE Workbook
 
 ## Overview
 
-Rustlings Web IDE is an interactive web-based learning platform for Rust programming. It provides a browser-based integrated development environment where users can work through Rustlings exercises, compile and run Rust code in real-time, and track their progress. The application features a three-panel IDE layout with exercise navigation, a Monaco code editor, and a console output panel for compilation results.
+Rust IDE Workbook is an interactive web-based learning platform for Rust programming. It provides a browser-based integrated development environment where users can work through Rustlings exercises, compile and run Rust code in real-time, and track their progress. The application features a three-panel IDE layout with exercise navigation, a Monaco code editor, and a console output panel for compilation results.
 
 ## User Preferences
 

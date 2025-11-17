@@ -70,7 +70,7 @@ export function IDEHeader({
   return (
     <header className="h-14 border-b border-border bg-background px-6 flex items-center justify-between flex-shrink-0" data-testid="header-ide">
       <div className="flex items-center gap-4">
-        <h1 className="text-lg font-semibold text-foreground">Rustlings IDE</h1>
+        <h1 className="text-lg font-semibold text-foreground">Rust IDE Workbook</h1>
         <div className="h-6 w-px bg-border" />
         <div className="flex items-center gap-2">
           <Button

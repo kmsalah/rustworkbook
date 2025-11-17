@@ -73,11 +73,11 @@ if bbox:
     y = (new_size - crop_height) // 2
     final_img.paste(img_cropped, (x, y))
     
-    # Apply another slight dilation to thicken lines after scaling
-    final_img = final_img.filter(ImageFilter.MaxFilter(2))
-    
-    # Scale to favicon size
+    # Scale to favicon size first
     favicon = final_img.resize((256, 256), Image.Resampling.LANCZOS)
+    
+    # Apply dilation to thicken lines after scaling
+    favicon = favicon.filter(ImageFilter.MaxFilter(3))
     
     # Apply a final sharpening to enhance edges
     favicon = favicon.filter(ImageFilter.SHARPEN)
