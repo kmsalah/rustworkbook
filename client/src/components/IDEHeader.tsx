@@ -1,4 +1,4 @@
-import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, Info, LogIn } from "lucide-react";
+import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -21,6 +21,8 @@ import {
 import { useEffect, useState } from "react";
 import type { User } from "@shared/schema";
 import { RustWorkbookLogo } from "./RustWorkbookLogo";
+import { AboutModal } from "./AboutModal";
+import { DonationModal } from "./DonationModal";
 
 interface IDEHeaderProps {
   exerciseName: string;
@@ -151,15 +153,9 @@ export function IDEHeader({
 
         <div className="h-6 w-px bg-border mx-1" />
 
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => window.location.href = "/about"}
-          data-testid="button-about"
-          title="About"
-        >
-          <Info className="h-4 w-4" />
-        </Button>
+        <AboutModal />
+        
+        <DonationModal />
 
         <Button
           size="icon"
