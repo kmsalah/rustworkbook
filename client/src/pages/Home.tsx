@@ -32,8 +32,17 @@ export default function Home() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [localProgress, setLocalProgress] = useState<string[]>(() => {
     // Load anonymous progress from localStorage on mount
-    const saved = localStorage.getItem("rustlings-progress");
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem("rustlings-progress");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Ensure it's an array
+        return Array.isArray(parsed) ? parsed : [];
+      }
+    } catch (e) {
+      console.error('Failed to load progress from localStorage:', e);
+    }
+    return [];
   });
   const filterInputRef = useRef<HTMLInputElement>(null);
   const user = authUser as User | undefined;
@@ -49,9 +58,9 @@ export default function Home() {
     retry: false,
   });
 
-  // Merge local and database progress
-  const completedExercises = isAuthenticated 
-    ? progressData?.completedExercises || []
+  // Merge local and database progress - ensure it's always an array
+  const completedExercises: string[] = isAuthenticated 
+    ? (Array.isArray(progressData?.completedExercises) ? progressData.completedExercises : [])
     : localProgress;
   const dataLoading = exercisesLoading || progressLoading;
 

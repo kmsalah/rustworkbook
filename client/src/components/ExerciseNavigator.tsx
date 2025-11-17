@@ -23,6 +23,9 @@ export const ExerciseNavigator = forwardRef<HTMLInputElement, ExerciseNavigatorP
     onSelectExercise,
   }, ref) {
     const [searchQuery, setSearchQuery] = useState("");
+    
+    // Ensure completedExercises is always an array
+    const safeCompletedExercises = Array.isArray(completedExercises) ? completedExercises : [];
 
   const groupedExercises = exercises.reduce((acc, exercise) => {
     if (!acc[exercise.topic]) {
@@ -44,7 +47,7 @@ export const ExerciseNavigator = forwardRef<HTMLInputElement, ExerciseNavigatorP
   }, {} as Record<string, Exercise[]>);
 
   const totalExercises = exercises.length;
-  const completedCount = completedExercises.length;
+  const completedCount = safeCompletedExercises.length;
   const progressPercent = totalExercises > 0 ? (completedCount / totalExercises) * 100 : 0;
 
   return (
@@ -73,7 +76,7 @@ export const ExerciseNavigator = forwardRef<HTMLInputElement, ExerciseNavigatorP
       <ScrollArea className="flex-1">
         <Accordion type="multiple" defaultValue={Object.keys(groupedExercises)} className="px-2">
           {Object.entries(filteredGroups).map(([topic, topicExercises]) => {
-            const topicCompleted = topicExercises.filter(ex => completedExercises.includes(ex.id)).length;
+            const topicCompleted = topicExercises.filter(ex => safeCompletedExercises.includes(ex.id)).length;
             return (
               <AccordionItem key={topic} value={topic} className="border-none">
                 <AccordionTrigger className="py-2 px-3 hover-elevate rounded-md text-sm font-medium text-sidebar-foreground hover:no-underline" data-testid={`accordion-topic-${topic}`}>
@@ -87,7 +90,7 @@ export const ExerciseNavigator = forwardRef<HTMLInputElement, ExerciseNavigatorP
                 <AccordionContent className="pb-2">
                   <div className="space-y-1 ml-2">
                     {topicExercises.map((exercise) => {
-                      const isCompleted = completedExercises.includes(exercise.id);
+                      const isCompleted = safeCompletedExercises.includes(exercise.id);
                       const isCurrent = currentExerciseId === exercise.id;
                       return (
                         <button
