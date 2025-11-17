@@ -73,10 +73,7 @@ export function IDEHeader({
   return (
     <header className="h-14 border-b border-border bg-background px-6 flex items-center justify-between flex-shrink-0" data-testid="header-ide">
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          <RustWorkbookLogo size={22} />
-          <span className="font-medium">Rust Workbook</span>
-        </div>
+        <RustWorkbookLogo className="h-9 w-48 text-primary" />
         <div className="h-6 w-px bg-border" />
         <div className="flex items-center gap-2">
           <Button

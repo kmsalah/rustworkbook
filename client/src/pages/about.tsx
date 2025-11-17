@@ -20,9 +20,8 @@ export default function About() {
         <div className="space-y-8">
           {/* Title */}
           <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <RustWorkbookLogo size={48} />
-              <span className="text-3xl font-bold">Rust Workbook</span>
+            <div className="flex items-center justify-center mb-4">
+              <RustWorkbookLogo className="h-16 w-64 text-primary" />
             </div>
             <p className="text-xl text-muted-foreground">
               Online Rust Coding Workbook
