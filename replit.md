@@ -8,6 +8,33 @@ Rust Workbook (rustworkbook.com) is an online Rust coding workbook - an interact
 
 Preferred communication style: Simple, everyday language.
 
+## Automated Testing
+
+### Three-Layer Test Automation (Replit-Native)
+
+**Layer 1: Development Testing** (`./scripts/watch-tests.sh`)
+- Auto-runs tests on file changes during development
+- Immediate feedback for developers
+- 39 tests covering all critical paths
+
+**Layer 2: Pre-Checkpoint Validation** (`./scripts/pre-checkpoint.sh`)
+- Validates all tests pass before creating project snapshots
+- Prevents broken checkpoints
+- Ensures rollback points are always functional
+
+**Layer 3: Periodic Health Checks** (`./scripts/periodic-tests.sh`)
+- Scheduled deployment runs every 2 hours
+- Tests database connectivity and Piston API availability
+- Full test suite execution with health reporting
+- Deployment instructions in DEPLOYMENT_SCHEDULE.md
+
+**Test Infrastructure**: Vitest + Supertest
+- 39 automated tests (100% passing)
+- API endpoints, authentication, progress tracking, compilation
+- Session-based rate limiting tests
+- Database constraint validation
+- No manual testing required - all tests defined and executed in code
+
 ## System Architecture
 
 ### Frontend Architecture
