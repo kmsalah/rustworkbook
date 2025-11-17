@@ -25,8 +25,9 @@ export function AboutModal() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]" data-testid="dialog-about">
         <DialogHeader>
-          <div className="flex justify-center mb-4">
-            <RustWorkbookLogo className="h-10 w-52 text-primary" />
+          <div className="flex justify-center items-center gap-2 mb-4">
+            <RustWorkbookLogo size={36} />
+            <span className="text-2xl font-semibold">Rust Workbook</span>
           </div>
           <DialogTitle className="text-center">Online Rust Coding Workbook</DialogTitle>
           <DialogDescription className="text-left space-y-4 mt-4">
