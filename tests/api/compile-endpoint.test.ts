@@ -12,7 +12,7 @@ describe('/api/compile Endpoint (E2E)', () => {
     await registerRoutes(app);
   });
 
-  it('should allow anonymous for first 3 exercises', async () => {
+  it('should allow anonymous users up to 5 compilations per session', async () => {
     const response = await request(app)
       .post('/api/compile')
       .send({
@@ -24,7 +24,8 @@ describe('/api/compile Endpoint (E2E)', () => {
     expect(response.status).toBe(200);
   });
   
-  it('should require authentication for premium exercises', async () => {
+  it('should allow anonymous for any exercise within session limit', async () => {
+    // Even premium exercises work for anonymous users within their 5-compile session limit
     const response = await request(app)
       .post('/api/compile')
       .send({
@@ -33,7 +34,7 @@ describe('/api/compile Endpoint (E2E)', () => {
         exerciseId: 'functions1',
       });
 
-    expect(response.status).toBeGreaterThanOrEqual(400);
+    expect(response.status).toBe(200); // Should work within session limit
   });
 
   it('should validate request body', async () => {

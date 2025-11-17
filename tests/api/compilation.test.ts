@@ -12,8 +12,9 @@ describe('Compilation API Endpoints', () => {
     await registerRoutes(app);
   });
 
-  describe('POST /api/compile - Authentication', () => {
-    it('should allow anonymous for first 3 exercises', async () => {
+  describe('POST /api/compile - Session-based Rate Limiting', () => {
+    it('should allow anonymous users up to 5 compilations per session', async () => {
+      // Anonymous users can compile any exercise up to 5 times per session
       await request(app)
         .post('/api/compile')
         .send({
@@ -24,26 +25,28 @@ describe('Compilation API Endpoints', () => {
         .expect(200);
     });
     
-    it('should require authentication for other exercises', async () => {
+    it('should allow anonymous for any exercise within session limit', async () => {
+      // Even premium exercises work for anonymous users within their 5-compile session limit
       await request(app)
         .post('/api/compile')
         .send({
           code: 'fn main() { println!("test"); }',
           mode: 'compile',
-          exerciseId: 'functions1', // Not in the free tier
+          exerciseId: 'functions1',
         })
-        .expect(401);
+        .expect(200);
     });
   });
 
   describe('POST /api/compile - Validation', () => {
     it('should reject invalid request body', async () => {
-      const response = await request(app)
+      await request(app)
         .post('/api/compile')
         .send({
           code: 'fn main() {}',
+          // Missing mode and exerciseId
         })
-        .expect(401);
+        .expect(400); // Bad Request, not Unauthorized
     });
   });
 });
