@@ -8,21 +8,15 @@ export const exercises: Exercise[] = [
     path: "exercises/intro/intro1.rs",
     topic: "intro",
     mode: "compile",
-    hint: "Remove the I AM NOT DONE comment to move on to the next exercise.",
+    hint: "This is a simple introduction exercise. Just run it to see the welcome message!",
     code: `// intro1.rs
 // This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
 //
 
-// About this I AM NOT DONE thing:
-// We sometimes encourage you to keep trying things on a given exercise, even
-// after you already figured it out. If you got everything working and feel
-// ready for the next exercise, remove the I AM NOT DONE comment below.
-
 fn main() {
-    println!("Hello and welcome to Rustlings!");
-    // I AM NOT DONE
+    println!("Hello and welcome to the Rust Workbook!");
 }
 `,
   },
