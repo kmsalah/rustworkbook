@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
 import type { User } from "@shared/schema";
+import { RustWorkbookLogo } from "./RustWorkbookLogo";
 
 interface IDEHeaderProps {
   exerciseName: string;
@@ -70,7 +71,7 @@ export function IDEHeader({
   return (
     <header className="h-14 border-b border-border bg-background px-6 flex items-center justify-between flex-shrink-0" data-testid="header-ide">
       <div className="flex items-center gap-4">
-        <h1 className="text-lg font-semibold text-foreground">Rust IDE Workbook</h1>
+        <RustWorkbookLogo className="h-9 w-48 text-primary" />
         <div className="h-6 w-px bg-border" />
         <div className="flex items-center gap-2">
           <Button

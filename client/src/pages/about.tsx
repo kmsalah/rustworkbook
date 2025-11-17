@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
 import { ArrowLeft, Github, ExternalLink, BookOpen } from "lucide-react";
+import { RustWorkbookLogo } from "@/components/RustWorkbookLogo";
 
 export default function About() {
   return (
@@ -19,13 +20,15 @@ export default function About() {
         <div className="space-y-8">
           {/* Title */}
           <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <BookOpen className="h-12 w-12 text-primary" />
-              <span className="text-5xl font-bold">&gt;_</span>
+            <div className="flex items-center justify-center mb-4">
+              <RustWorkbookLogo className="h-16 w-64 text-primary" />
             </div>
-            <h1 className="text-4xl font-bold">Rust IDE Workbook</h1>
             <p className="text-xl text-muted-foreground">
-              Practice and learn Rust in your browser with interactive exercises
+              Online Rust Coding Workbook
+            </p>
+            <p className="text-base text-muted-foreground max-w-2xl mx-auto">
+              Practice Rust in a browser-based coding workbook. Write and run code on every page, 
+              starting with Rustlings exercises and moving into advanced tracks—no setup needed.
             </p>
           </div>
 
@@ -33,11 +36,14 @@ export default function About() {
           <Card>
             <CardContent className="p-8 space-y-6">
               <section>
-                <h2 className="text-2xl font-semibold mb-3">About This Project</h2>
+                <h2 className="text-2xl font-semibold mb-3">About Rust Workbook</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  This web-based IDE provides an interactive way to learn Rust programming through hands-on exercises. 
-                  Built on the excellent open-source <strong>Rustlings project (MIT License)</strong>, we've added 
-                  a browser-based development environment, progress tracking, and interactive hints to enhance your learning experience.
+                  A hands-on Rust workbook with a live code editor and runner. Start with the familiar Rustlings exercises, 
+                  then continue into original problem sets and curated tracks—all runnable in your browser, no installs required.
+                </p>
+                <p className="text-muted-foreground leading-relaxed mt-3">
+                  Built on the excellent open-source <strong>Rustlings project (MIT License)</strong>, we've enhanced the experience 
+                  with a browser-based development environment, progress tracking, and interactive hints.
                 </p>
               </section>
 
