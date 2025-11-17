@@ -151,12 +151,6 @@ export function IDEHeader({
           Reset
         </Button>
 
-        <div className="h-6 w-px bg-border mx-1" />
-
-        <AboutModal />
-        
-        <DonationModal />
-        
         <Button
           size="icon"
           variant="ghost"
@@ -166,6 +160,12 @@ export function IDEHeader({
         >
           <Bug className="h-4 w-4" />
         </Button>
+
+        <div className="h-6 w-px bg-border mx-1" />
+
+        <AboutModal />
+        
+        <DonationModal />
 
         <Button
           size="icon"
