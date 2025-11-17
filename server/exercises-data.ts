@@ -9,13 +9,7 @@ export const exercises: Exercise[] = [
     topic: "intro",
     mode: "compile",
     hint: "This is a simple introduction exercise. Just run it to see the welcome message!",
-    code: `// intro1.rs
-// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
-// Licensed under the MIT License
-// Copyright (c) 2015 Carol (Nichols || Goulding)
-//
-
-fn main() {
+    code: `fn main() {
     println!("Hello and welcome to the Rust Workbook!");
 }
 `,
