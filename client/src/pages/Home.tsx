@@ -496,47 +496,51 @@ export default function Home() {
           user={user}
         />
 
-        <ResizablePanelGroup direction="horizontal" className="flex-1" autoSaveId="rustlings-tablet-layout">
-          <ResizablePanel defaultSize={60} minSize={40} id="editor">
-            <div className="h-full flex flex-col">
-              {/* Exercise selector dropdown for tablet */}
-              <div className="border-b border-border p-2">
-                <select 
-                  className="w-full p-2 bg-background border border-input rounded-md text-sm"
-                  value={currentExercise?.id || ""}
-                  onChange={(e) => {
-                    const exercise = exercises?.find(ex => ex.id === e.target.value);
-                    if (exercise) handleSelectExercise(exercise);
-                  }}
-                >
-                  {exercises?.map(exercise => (
+        <div className="flex-1 flex">
+          <div className="flex-[60] min-w-0 flex flex-col">
+            {/* Exercise selector dropdown for tablet */}
+            <div className="border-b border-border p-2">
+              <select 
+                className="w-full p-2 bg-background border border-input rounded-md text-sm"
+                value={currentExercise?.id || ""}
+                onChange={(e) => {
+                  const exercise = exercises?.find(ex => ex.id === e.target.value);
+                  if (exercise) handleSelectExercise(exercise);
+                }}
+                data-testid="select-exercise-tablet"
+              >
+                {exercises?.map(exercise => {
+                  const isCompleted = completedExercises.includes(exercise.id);
+                  const chapterMatch = exercise.name.match(/^(.+?)_/);
+                  const chapterName = chapterMatch ? chapterMatch[1] : "misc";
+                  return (
                     <option key={exercise.id} value={exercise.id}>
-                      {completedExercises.includes(exercise.id) ? "✓ " : ""}{exercise.name}
+                      {isCompleted ? "✓ " : "○ "}{chapterName}/{exercise.name}
                     </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex-1">
-                <CodeEditor
-                  value={code}
-                  onChange={(value) => setCode(value || "")}
-                  fileName={currentExercise?.name ? `${currentExercise.name}.rs` : "untitled.rs"}
-                  compilationResult={compilationResult}
-                />
-              </div>
+                  );
+                })}
+              </select>
             </div>
-          </ResizablePanel>
+            <div className="flex-1">
+              <CodeEditor
+                value={code}
+                onChange={(value) => setCode(value || "")}
+                fileName={currentExercise?.name ? `${currentExercise.name}.rs` : "untitled.rs"}
+                compilationResult={compilationResult}
+              />
+            </div>
+          </div>
 
-          <ResizableHandle className="w-1 bg-border hover:bg-primary transition-colors" />
+          <div className="w-px bg-border" />
 
-          <ResizablePanel defaultSize={40} minSize={30} id="console">
+          <div className="flex-[40] min-w-0">
             <ConsolePanel
               compilationResult={compilationResult}
               isCompiling={compileMutation.isPending}
               onClear={handleClearConsole}
             />
-          </ResizablePanel>
-        </ResizablePanelGroup>
+          </div>
+        </div>
 
         <KeyboardShortcutsDialog
           open={showShortcutsDialog}
