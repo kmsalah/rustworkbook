@@ -132,12 +132,16 @@ Preferred communication style: Simple, everyday language.
 - CSRF protection via session middleware
 - Single canonical OIDC strategy (no host header injection)
 - Token refresh with automatic persistence
+- **Custom Domain Handling**: rustworkbook.com is prioritized as canonical domain
+- **Domain Redirect**: Automatic 301 redirect from replit.app domains to rustworkbook.com
+- **Session Cookie Configuration**: Domain-scoped cookies for rustworkbook.com with SameSite=lax
 
 **Key Architectural Decisions**:
 - **Why Replit Auth**: Managed authentication with zero setup for users
 - **Why OpenID Connect**: Industry-standard protocol with token refresh
 - **Why Database Sessions**: Enables session persistence across server restarts
 - **Session Cookie Security**: Secure flag only enabled in production (allows local development)
+- **Custom Domain Priority**: Ensures users always stay on rustworkbook.com for consistent experience
 
 ### Code Validation and Compilation
 

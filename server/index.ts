@@ -16,6 +16,20 @@ app.use(express.json({
 }));
 app.use(express.urlencoded({ extended: false }));
 
+// Domain redirect middleware - ensure users stay on rustworkbook.com in production
+app.use((req, res, next) => {
+  const host = req.get('host');
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  if (isProduction && host && !host.includes('rustworkbook.com')) {
+    // Redirect to rustworkbook.com while preserving the path and query
+    const redirectUrl = `https://rustworkbook.com${req.originalUrl}`;
+    return res.redirect(301, redirectUrl);
+  }
+  
+  next();
+});
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;

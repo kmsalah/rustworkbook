@@ -28,6 +28,9 @@ export function getSession() {
     ttl: sessionTtl,
     tableName: "sessions",
   });
+  
+  const isProduction = process.env.NODE_ENV === "production";
+  
   return session({
     secret: process.env.SESSION_SECRET!,
     store: sessionStore,
@@ -35,8 +38,10 @@ export function getSession() {
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: isProduction,
       maxAge: sessionTtl,
+      sameSite: isProduction ? 'lax' : 'lax', // Lax allows navigation from external sites
+      domain: isProduction ? '.rustworkbook.com' : undefined, // Set domain for production
     },
   });
 }
@@ -82,8 +87,19 @@ export async function setupAuth(app: Express) {
   };
 
   // Get canonical host from environment (secure against host header injection)
-  const canonicalHost = process.env.REPLIT_DOMAINS?.split(',')[0] || 
-                        process.env.REPL_SLUG + '.' + process.env.REPL_OWNER + '.repl.co';
+  // Prioritize rustworkbook.com if it exists in REPLIT_DOMAINS
+  const replitDomains = process.env.REPLIT_DOMAINS?.split(',') || [];
+  let canonicalHost = replitDomains[0] || 
+                      process.env.REPL_SLUG + '.' + process.env.REPL_OWNER + '.repl.co';
+  
+  // If rustworkbook.com is configured, always use it as the canonical host
+  const customDomain = 'rustworkbook.com';
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  // In production, prioritize custom domain if available
+  if (isProduction) {
+    canonicalHost = customDomain;
+  }
   
   // Register a single strategy at startup with canonical callback URL
   const strategy = new Strategy(
