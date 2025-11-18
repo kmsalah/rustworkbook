@@ -925,6 +925,157 @@ mod tests {
 }
 `,
   },
+  {
+    id: "structs2",
+    name: "structs2",
+    path: "exercises/structs/structs2.rs",
+    topic: "structs",
+    mode: "test",
+    hint: "Create structs with both update syntax strategies.",
+    code: `// structs2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+#[derive(Debug)]
+struct Order {
+    name: String,
+    year: u32,
+    made_by_phone: bool,
+    made_by_mobile: bool,
+    made_by_email: bool,
+    item_number: u32,
+    count: u32,
+}
+
+fn create_order_template() -> Order {
+    Order {
+        name: String::from("Bob"),
+        year: 2019,
+        made_by_phone: false,
+        made_by_mobile: false,
+        made_by_email: true,
+        item_number: 123,
+        count: 0,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn your_order() {
+        let order_template = create_order_template();
+        // TODO: Create your own order using the update syntax and template above!
+        // let your_order =
+        assert_eq!(your_order.name, "Hacker in Rust");
+        assert_eq!(your_order.year, order_template.year);
+        assert_eq!(your_order.made_by_phone, order_template.made_by_phone);
+        assert_eq!(your_order.made_by_mobile, order_template.made_by_mobile);
+        assert_eq!(your_order.made_by_email, order_template.made_by_email);
+        assert_eq!(your_order.item_number, order_template.item_number);
+        assert_eq!(your_order.count, 1);
+    }
+}
+`,
+  },
+  {
+    id: "structs3",
+    name: "structs3",
+    path: "exercises/structs/structs3.rs",
+    topic: "structs",
+    mode: "test",
+    hint: "For is_international: What makes a package international? Seems related to the country code.",
+    code: `// structs3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+// Structs contain data, but can also have methods associated with them.
+// In this exercise, implement two methods for the Package struct.
+
+#[derive(Debug)]
+struct Package {
+    sender_country: String,
+    recipient_country: String,
+    weight_in_grams: u32,
+}
+
+impl Package {
+    fn new(sender_country: String, recipient_country: String, weight_in_grams: u32) -> Package {
+        if weight_in_grams < 10 {
+            panic!("Can not ship a package with weight below 10 grams.")
+        } else {
+            Package {
+                sender_country,
+                recipient_country,
+                weight_in_grams,
+            }
+        }
+    }
+
+    // Implement the is_international method here.
+    fn is_international(&self) -> ??? {
+        // Something goes here...
+    }
+
+    // Implement the get_fees method here.
+    fn get_fees(&self, cents_per_gram: u32) -> ??? {
+        // Something goes here...
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[should_panic]
+    fn fail_creating_weightless_package() {
+        let sender_country = String::from("Spain");
+        let recipient_country = String::from("Austria");
+
+        Package::new(sender_country, recipient_country, 5);
+    }
+
+    #[test]
+    fn create_international_package() {
+        let sender_country = String::from("Spain");
+        let recipient_country = String::from("Russia");
+
+        let package = Package::new(sender_country, recipient_country, 1200);
+
+        assert!(package.is_international());
+    }
+
+    #[test]
+    fn create_local_package() {
+        let sender_country = String::from("Canada");
+        let recipient_country = sender_country.clone();
+
+        let package = Package::new(sender_country, recipient_country, 1200);
+
+        assert!(!package.is_international());
+    }
+
+    #[test]
+    fn calculate_transport_fees() {
+        let sender_country = String::from("Spain");
+        let recipient_country = String::from("Spain");
+
+        let cents_per_gram = 3;
+
+        let package = Package::new(sender_country, recipient_country, 1500);
+
+        assert_eq!(package.get_fees(cents_per_gram), 4500);
+        assert_eq!(package.get_fees(cents_per_gram * 2), 9000);
+    }
+}
+`,
+  },
 
   // Enums
   {
@@ -950,6 +1101,128 @@ fn main() {
     println!("{:?}", Message::Echo);
     println!("{:?}", Message::Move);
     println!("{:?}", Message::ChangeColor);
+}
+`,
+  },
+  {
+    id: "enums2",
+    name: "enums2",
+    path: "exercises/enums/enums2.rs",
+    topic: "enums",
+    mode: "compile",
+    hint: "You can create enumerations that have different variants with different types, such as no data, anonymous structs, a single string, tuples, etc.",
+    code: `// enums2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+#[derive(Debug)]
+enum Message {
+    // TODO: define the different variants used below
+}
+
+impl Message {
+    fn call(&self) {
+        println!("{:?}", self);
+    }
+}
+
+fn main() {
+    let messages = [
+        Message::Move { x: 10, y: 30 },
+        Message::Echo(String::from("hello world")),
+        Message::ChangeColor(200, 255, 255),
+        Message::Quit,
+    ];
+
+    for message in &messages {
+        message.call();
+    }
+}
+`,
+  },
+  {
+    id: "enums3",
+    name: "enums3",
+    path: "exercises/enums/enums3.rs",
+    topic: "enums",
+    mode: "test",
+    hint: "You can use a match statement to handle the different cases. You can also use if let or while let to destructure enums.",
+    code: `// enums3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+// Address all the TODOs to make the tests pass!
+
+enum Message {
+    ChangeColor(u8, u8, u8),
+    Echo(String),
+    Move(Point),
+    Quit,
+}
+
+struct Point {
+    x: u8,
+    y: u8,
+}
+
+struct State {
+    color: (u8, u8, u8),
+    position: Point,
+    quit: bool,
+    message: String,
+}
+
+impl State {
+    fn change_color(&mut self, color: (u8, u8, u8)) {
+        self.color = color;
+    }
+
+    fn quit(&mut self) {
+        self.quit = true;
+    }
+
+    fn echo(&mut self, s: String) {
+        self.message = s
+    }
+
+    fn move_position(&mut self, p: Point) {
+        self.position = p;
+    }
+
+    fn process(&mut self, message: Message) {
+        // TODO: create a match expression to process the different message variants
+        // Remember: When passing a tuple as a function argument, you'll need extra parentheses:
+        // e.g. self.change_color((r, g, b))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_match_message_call() {
+        let mut state = State {
+            quit: false,
+            position: Point { x: 0, y: 0 },
+            color: (0, 0, 0),
+            message: "hello world".to_string(),
+        };
+        state.process(Message::ChangeColor(255, 0, 255));
+        state.process(Message::Echo(String::from("Hello world!")));
+        state.process(Message::Move(Point { x: 10, y: 15 }));
+        state.process(Message::Quit);
+
+        assert_eq!(state.color, (255, 0, 255));
+        assert_eq!(state.position.x, 10);
+        assert_eq!(state.position.y, 15);
+        assert_eq!(state.quit, true);
+        assert_eq!(state.message, "Hello world!");
+    }
 }
 `,
   },
