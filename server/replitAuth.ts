@@ -35,13 +35,14 @@ export function getSession() {
     secret: process.env.SESSION_SECRET!,
     store: sessionStore,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true, // Changed to true to ensure sessions are saved
     cookie: {
       httpOnly: true,
       secure: isProduction,
       maxAge: sessionTtl,
-      sameSite: isProduction ? 'lax' : 'lax', // Lax allows navigation from external sites
-      domain: isProduction ? '.rustworkbook.com' : undefined, // Set domain for production
+      sameSite: 'lax', // Lax allows navigation from external sites
+      // Remove domain setting to allow cookies to work on any domain
+      // The cookie will be set for the current domain automatically
     },
   });
 }
@@ -86,28 +87,30 @@ export async function setupAuth(app: Express) {
     verified(null, user);
   };
 
-  // Get canonical host from environment (secure against host header injection)
-  // Prioritize rustworkbook.com if it exists in REPLIT_DOMAINS
+  // Get canonical host from environment
   const replitDomains = process.env.REPLIT_DOMAINS?.split(',') || [];
-  let canonicalHost = replitDomains[0] || 
-                      process.env.REPL_SLUG + '.' + process.env.REPL_OWNER + '.repl.co';
-  
-  // If rustworkbook.com is configured, always use it as the canonical host
-  const customDomain = 'rustworkbook.com';
   const isProduction = process.env.NODE_ENV === 'production';
   
-  // In production, prioritize custom domain if available
-  if (isProduction) {
-    canonicalHost = customDomain;
+  // Find the best host to use for callbacks
+  let callbackHost;
+  if (isProduction && replitDomains.includes('rustworkbook.com')) {
+    // Prefer rustworkbook.com if it's configured
+    callbackHost = 'rustworkbook.com';
+  } else if (replitDomains.length > 0) {
+    // Use first available domain
+    callbackHost = replitDomains[0];
+  } else {
+    // Fallback to repl.co domain
+    callbackHost = process.env.REPL_SLUG + '.' + process.env.REPL_OWNER + '.repl.co';
   }
   
-  // Register a single strategy at startup with canonical callback URL
+  // Register strategy with the callback URL
   const strategy = new Strategy(
     {
       name: "replitauth",
       config,
       scope: "openid email profile offline_access",
-      callbackURL: `https://${canonicalHost}/api/callback`,
+      callbackURL: `https://${callbackHost}/api/callback`,
     },
     verify,
   );
