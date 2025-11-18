@@ -625,6 +625,63 @@ mod tests {
 }
 `,
   },
+  {
+    id: "vecs2",
+    name: "vecs2",
+    path: "exercises/vecs/vecs2.rs",
+    topic: "vecs",
+    mode: "compile",
+    hint: "Vec is generic over the type of its elements. So if you want a vector of integers, use Vec<i32>! Also, vectors can make use of iterators, try using an iterator instead of indexing.",
+    code: `// vecs2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+// A Vec of even numbers is given. Your task is to complete the loop
+// so that each number in the Vec is multiplied by 2.
+
+fn vec_loop(mut v: Vec<i32>) -> Vec<i32> {
+    for element in v.iter_mut() {
+        // TODO: Fill this up so that each element in the Vec v is
+        // multiplied by 2.
+        ???
+    }
+
+    // At this point, v should be equal to [4, 8, 12, 16, 20].
+    v
+}
+
+fn vec_map(v: &Vec<i32>) -> Vec<i32> {
+    v.iter().map(|element| {
+        // TODO: Do the same thing as above - but instead of mutating the
+        // Vec, you can just return the new number!
+        ???
+    }).collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_vec_loop() {
+        let v: Vec<i32> = (1..).filter(|x| x % 2 == 0).take(5).collect();
+        let ans = vec_loop(v.clone());
+
+        assert_eq!(ans, v.iter().map(|x| x * 2).collect::<Vec<i32>>());
+    }
+
+    #[test]
+    fn test_vec_map() {
+        let v: Vec<i32> = (1..).filter(|x| x % 2 == 0).take(5).collect();
+        let ans = vec_map(&v);
+
+        assert_eq!(ans, v.iter().map(|x| x * 2).collect::<Vec<i32>>());
+    }
+}
+`,
+  },
 
   // Move semantics
   {
@@ -660,6 +717,152 @@ fn fill_vec(vec: Vec<i32>) -> Vec<i32> {
     vec.push(66);
 
     vec
+}
+`,
+  },
+  {
+    id: "move_semantics2",
+    name: "move_semantics2",
+    path: "exercises/move_semantics/move_semantics2.rs",
+    topic: "move_semantics",
+    mode: "test",
+    hint: "When you pass a value to a function, the value is moved and can no longer be used. One way to fix this is to make a copy of the value by cloning it.",
+    code: `// move_semantics2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+#[test]
+fn main() {
+    let vec0 = vec![22, 44, 66];
+
+    let vec1 = fill_vec(vec0);
+
+    assert_eq!(vec0, vec![22, 44, 66]);
+    assert_eq!(vec1, vec![22, 44, 66, 88]);
+}
+
+fn fill_vec(vec: Vec<i32>) -> Vec<i32> {
+    let mut vec = vec;
+
+    vec.push(88);
+
+    vec
+}
+`,
+  },
+  {
+    id: "move_semantics3",
+    name: "move_semantics3",
+    path: "exercises/move_semantics/move_semantics3.rs",
+    topic: "move_semantics",
+    mode: "compile",
+    hint: "The difference between this and the previous exercise is that the first line of fill_vec is no longer let mut vec = vec;. You can create a mutable reference to vec0 with &mut vec0.",
+    code: `// move_semantics3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+fn main() {
+    let vec0 = vec![22, 44, 66];
+
+    let mut vec1 = fill_vec(vec0);
+
+    assert_eq!(vec1, vec![22, 44, 66, 88]);
+}
+
+fn fill_vec(vec: Vec<i32>) -> Vec<i32> {
+    vec.push(88);
+
+    vec
+}
+`,
+  },
+  {
+    id: "move_semantics4",
+    name: "move_semantics4",
+    path: "exercises/move_semantics/move_semantics4.rs",
+    topic: "move_semantics",
+    mode: "compile",
+    hint: "Stop reading whenever you feel like you have enough direction :) Here are some additional hints: Carefully reason through the changes required. Start by asking what the ownership rules are. Then change the function signature to fix the issue. Note that it doesn't need to be a reference.",
+    code: `// move_semantics4.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+fn main() {
+    let vec0 = vec![22, 44, 66];
+
+    let mut vec1 = fill_vec(vec0);
+
+    assert_eq!(vec1, vec![22, 44, 66, 88]);
+}
+
+// Write a function that takes a vector of integers, appends 88 to it,
+// and returns the modified vector.
+// TODO: Fix the function signature and body.
+fn fill_vec() {
+    vec.push(88);
+}
+`,
+  },
+  {
+    id: "move_semantics5",
+    name: "move_semantics5",
+    path: "exercises/move_semantics/move_semantics5.rs",
+    topic: "move_semantics",
+    mode: "compile",
+    hint: "The main function is calling fill_vec with a reference to vec0, so vec0 cannot be moved. You could make a second mutable reference to vec0, but the first one is still in scope and you can't have two mutable references to the same variable. The solution is to make only one mutable reference to vec0.",
+    code: `// move_semantics5.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+fn main() {
+    let mut x = 100;
+    let y = &mut x;
+    let z = &mut x;
+    *y += 100;
+    *z += 1000;
+    assert_eq!(x, 1200);
+}
+`,
+  },
+  {
+    id: "move_semantics6",
+    name: "move_semantics6",
+    path: "exercises/move_semantics/move_semantics6.rs",
+    topic: "move_semantics",
+    mode: "compile",
+    hint: "To find the answer, you can consult the documentation for the String type: https://doc.rust-lang.org/std/string/struct.String.html#method.capacity. Of note, the allocation happens when the string is created with String::from().",
+    code: `// move_semantics6.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+fn main() {
+    let data = "Rust is great!".to_string();
+
+    get_char(data);
+
+    string_uppercase(&data);
+}
+
+// Should not take ownership
+fn get_char(data: String) -> char {
+    data.chars().last().unwrap()
+}
+
+// Should take ownership
+fn string_uppercase(mut data: &String) {
+    data = &data.to_uppercase();
+
+    println!("{}", data);
 }
 `,
   },
