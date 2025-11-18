@@ -367,6 +367,67 @@ mod tests {
 }
 `,
   },
+  {
+    id: "if3",
+    name: "if3",
+    path: "exercises/if/if3.rs",
+    topic: "if",
+    mode: "compile",
+    hint: "In Rust, every arm of an if expression returns the same type. Double check your conditions and the types of values returned in each arm.",
+    code: `// if3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+pub fn animal_habitat(animal: &str) -> &'static str {
+    let identifier = if animal == "crab" {
+        1
+    } else if animal == "gopher" {
+        2.0
+    } else if animal == "snake" {
+        3
+    } else {
+        "Unknown"
+    };
+
+    if identifier == 1 {
+        "Beach"
+    } else if identifier == 2 {
+        "Burrow"
+    } else if identifier == 3 {
+        "Desert"
+    } else {
+        "Unknown"
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn gopher_lives_in_burrow() {
+        assert_eq!(animal_habitat("gopher"), "Burrow");
+    }
+
+    #[test]
+    fn snake_lives_in_desert() {
+        assert_eq!(animal_habitat("snake"), "Desert");
+    }
+
+    #[test]
+    fn crab_lives_on_beach() {
+        assert_eq!(animal_habitat("crab"), "Beach");
+    }
+
+    #[test]
+    fn unknown_animal() {
+        assert_eq!(animal_habitat("dinosaur"), "Unknown");
+    }
+}
+`,
+  },
 
   // Primitive types
   {
@@ -433,6 +494,97 @@ fn main() {
     } else {
         println!("Neither alphabetic nor numeric!");
     }
+}
+`,
+  },
+  {
+    id: "primitive_types3",
+    name: "primitive_types3",
+    path: "exercises/primitive_types/primitive_types3.rs",
+    topic: "primitive_types",
+    mode: "compile",
+    hint: "There's a shorthand to initialize an array with a certain size that does not require you to type out every single element. Look at the Rust docs.",
+    code: `// primitive_types3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+fn main() {
+    let a = ???
+
+    if a.len() >= 100 {
+        println!("Wow, that's a big array!");
+    } else {
+        println!("Meh, I eat arrays like that for breakfast.");
+    }
+}
+`,
+  },
+  {
+    id: "primitive_types4",
+    name: "primitive_types4",
+    path: "exercises/primitive_types/primitive_types4.rs",
+    topic: "primitive_types",
+    mode: "test",
+    hint: "Take a look at the 'Understanding Ownership -> Slices' section of the book: https://doc.rust-lang.org/book/ch04-03-slices.html and use the starting and ending indices of the items in the Array that you want to end up in the slice. In Rust, the first element of an array is at index 0.",
+    code: `// primitive_types4.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+#[test]
+fn slice_out_of_array() {
+    let a = [1, 2, 3, 4, 5];
+
+    let nice_slice = ???
+
+    assert_eq!([2, 3, 4], nice_slice)
+}
+`,
+  },
+  {
+    id: "primitive_types5",
+    name: "primitive_types5",
+    path: "exercises/primitive_types/primitive_types5.rs",
+    topic: "primitive_types",
+    mode: "compile",
+    hint: "Tuples are a way to group a number of values with different types. You can access the values with numerical indices, e.g. tuple.0 or tuple.1.",
+    code: `// primitive_types5.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+fn main() {
+    let cat = ("Furry McFurson", 3.5);
+    let /* your pattern here */ = cat;
+
+    println!("{} is {} years old.", name, age);
+}
+`,
+  },
+  {
+    id: "primitive_types6",
+    name: "primitive_types6",
+    path: "exercises/primitive_types/primitive_types6.rs",
+    topic: "primitive_types",
+    mode: "test",
+    hint: "You can index into a tuple with numerical notation, and an index is a number.",
+    code: `// primitive_types6.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+#[test]
+fn indexing_tuple() {
+    let numbers = (1, 2, 3);
+    // Replace below ??? with the tuple indexing syntax.
+    let second = ???;
+
+    assert_eq!(2, second, "This is not the 2nd number in the tuple!")
 }
 `,
   },
