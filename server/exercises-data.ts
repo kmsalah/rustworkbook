@@ -103,6 +103,68 @@ fn main() {
 }
 `,
   },
+  {
+    id: "variables4",
+    name: "variables4",
+    path: "exercises/variables/variables4.rs",
+    topic: "variables",
+    mode: "compile",
+    hint: "Oops! The compiler found an issue. The x variable isn't the same in all branches.",
+    code: `// variables4.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+fn main() {
+    let x = 3;
+    println!("Number {}", x);
+    x = 5;
+    println!("Number {}", x);
+}
+`,
+  },
+  {
+    id: "variables5",
+    name: "variables5",
+    path: "exercises/variables/variables5.rs",
+    topic: "variables",
+    mode: "compile",
+    hint: "Shadowing allows you to reuse a variable name, with a different value and even different type. When you shadow a variable, you're creating a new variable with the same name.",
+    code: `// variables5.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+fn main() {
+    let number = "T-H-R-E-E";
+    println!("Spell a Number : {}", number);
+    number = 3;
+    println!("Number plus two is : {}", number + 2);
+}
+`,
+  },
+  {
+    id: "variables6",
+    name: "variables6",
+    path: "exercises/variables/variables6.rs",
+    topic: "variables",
+    mode: "compile",
+    hint: "We know about variables and mutability, but there is one more important type of variable available: constants. Constants are always immutable and they are declared with keyword 'const' rather than keyword 'let'. Constants types must also always be annotated.",
+    code: `// variables6.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+NUMBER = 3;
+
+fn main() {
+    println!("Number {}", NUMBER);
+}
+`,
+  },
   
   // Functions exercises
   {
@@ -168,6 +230,60 @@ fn call_me(num: u32) {
     for i in 0..num {
         println!("Ring! Call number {}", i + 1);
     }
+}
+`,
+  },
+  {
+    id: "functions4",
+    name: "functions4",
+    path: "exercises/functions/functions4.rs",
+    topic: "functions",
+    mode: "compile",
+    hint: "The function signature needs to specify the type of the return value after the arrow (->).",
+    code: `// functions4.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+fn main() {
+    let original_price = 51;
+    println!("Your sale price is {}", sale_price(original_price));
+}
+
+fn sale_price(price: i32) -> {
+    if is_even(price) {
+        price - 10
+    } else {
+        price - 3
+    }
+}
+
+fn is_even(num: i32) -> bool {
+    num % 2 == 0
+}
+`,
+  },
+  {
+    id: "functions5",
+    name: "functions5",
+    path: "exercises/functions/functions5.rs",
+    topic: "functions",
+    mode: "compile",
+    hint: "Rust distinguishes between expressions and statements. Expressions return a value, statements don't. A semicolon turns an expression into a statement. Can you figure out which parts of this code are expressions vs statements?",
+    code: `// functions5.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+fn main() {
+    let answer = square(3);
+    println!("The square of 3 is {}", answer);
+}
+
+fn square(num: i32) -> i32 {
+    num * num;
 }
 `,
   },
