@@ -2367,4 +2367,551 @@ mod tests {
 }
 `,
   },
+  {
+    id: "errors2",
+    name: "errors2",
+    path: "exercises/error_handling/errors2.rs",
+    topic: "error_handling",
+    mode: "compile",
+    hint: "One way to handle this is using a match statement on Result<T, E> to figure out whether it has a value or error to return the former or the latter. But there's a concise expression to do it!",
+    code: `// errors2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// Say we're writing a game where you can buy items with tokens. All items cost
+// 5 tokens, and whenever you purchase items there is a processing fee of 1
+// token. A player of the game will type in how many items they want to buy, and
+// the handle_purchase function will calculate the total cost of the items. Since
+// the player typed in the quantity, we get it as a string. They might have typed
+// anything, not just numbers!
+//
+// Right now, this function isn't handling the error case at all (and isn't
+// handling the success case properly either). What we want to do is:
+// If we call the parse function on a string that is not a number, that function
+// will return a ParseIntError, and in that case, we want to immediately return
+// that error from our function and not try to multiply and add.
+//
+// There's one function that will help you do both of these things!
+// Scroll down for hints :)
+
+use std::num::ParseIntError;
+
+pub fn total_cost(item_quantity: &str) -> Result<i32, ParseIntError> {
+    let processing_fee = 1;
+    let cost_per_item = 5;
+    let qty = item_quantity.parse::<i32>();
+
+    Ok(qty * cost_per_item + processing_fee)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn item_quantity_is_a_valid_number() {
+        assert_eq!(total_cost("34"), Ok(171));
+    }
+
+    #[test]
+    fn item_quantity_is_an_invalid_number() {
+        assert_eq!(
+            total_cost("beep boop").unwrap_err().to_string(),
+            "invalid digit found in string"
+        );
+    }
+}
+`,
+  },
+  {
+    id: "errors3",
+    name: "errors3",
+    path: "exercises/error_handling/errors3.rs",
+    topic: "error_handling",
+    mode: "compile",
+    hint: "Use the question mark operator when handling a Result type",
+    code: `// errors3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// This is a program that is trying to use a completed version of the
+// total_cost function from the previous exercise. It's not working though!
+// Why not? What should we do to fix it?
+// Scroll down for hints!
+
+use std::num::ParseIntError;
+
+fn main() {
+    let mut tokens = 100;
+    let pretend_user_input = "8";
+
+    let cost = total_cost(pretend_user_input)?;
+
+    if cost > tokens {
+        println!("You can't afford that many!");
+    } else {
+        tokens -= cost;
+        println!("You now have {} tokens.", tokens);
+    }
+}
+
+pub fn total_cost(item_quantity: &str) -> Result<i32, ParseIntError> {
+    let processing_fee = 1;
+    let cost_per_item = 5;
+    let qty = item_quantity.parse::<i32>()?;
+
+    Ok(qty * cost_per_item + processing_fee)
+}
+`,
+  },
+  {
+    id: "errors4",
+    name: "errors4",
+    path: "exercises/error_handling/errors4.rs",
+    topic: "error_handling",
+    mode: "compile",
+    hint: "A match statement is one way to do this, but it's not the shortest way! When returning a Result type, match is nice because we can be really explicit with our error handling. The shorthand way would involve using a method on the Result to convert it to an Option.",
+    code: `// errors4.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+#[derive(PartialEq, Debug)]
+struct PositiveNonzeroInteger(u64);
+
+#[derive(PartialEq, Debug)]
+enum CreationError {
+    Negative,
+    Zero,
+}
+
+impl PositiveNonzeroInteger {
+    fn new(value: i64) -> Result<PositiveNonzeroInteger, CreationError> {
+        // Hmm... Why is this only returning an Ok value?
+        Ok(PositiveNonzeroInteger(value as u64))
+    }
+}
+
+#[test]
+fn test_creation() {
+    assert!(PositiveNonzeroInteger::new(10).is_ok());
+    assert_eq!(
+        Err(CreationError::Negative),
+        PositiveNonzeroInteger::new(-10)
+    );
+    assert_eq!(Err(CreationError::Zero), PositiveNonzeroInteger::new(0));
+}
+`,
+  },
+  {
+    id: "errors5",
+    name: "errors5",
+    path: "exercises/error_handling/errors5.rs",
+    topic: "error_handling",
+    mode: "compile",
+    hint: "Hint: There are two different possible Result types produced within the body of main function, which are propagated using the ? operator. How do we declare a return type for main() so that we can use both types of Results with the ? operator? Look at the Box<dyn ...> construct.",
+    code: `// errors5.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// This exercise uses an altered version of the code from errors4.
+// This exercise uses some concepts that we won't get to until later in the course, like Box and the
+// From trait. It's not important to understand them in detail right now, but you can read ahead if you like.
+// In short, this particular use case for Box is for when you want to own a value and you only care that
+// it's a type which implements a particular trait. For more information, read about trait objects:
+// https://doc.rust-lang.org/book/ch17-02-trait-objects.html#trait-objects-perform-dynamic-dispatch
+//
+// Execute rustlings hint errors5 for hints!
+
+use std::error;
+use std::fmt;
+use std::num::ParseIntError;
+
+// TODO: update the return type of main() to make this compile.
+fn main() -> Result<(), ParseIntError> {
+    let pretend_user_input = "42";
+    let x: i64 = pretend_user_input.parse()?;
+    println!("output={:?}", PositiveNonzeroInteger::new(x)?);
+    Ok(())
+}
+
+// Don't change anything below this line.
+
+#[derive(PartialEq, Debug)]
+struct PositiveNonzeroInteger(u64);
+
+#[derive(PartialEq, Debug)]
+enum CreationError {
+    Negative,
+    Zero,
+}
+
+impl PositiveNonzeroInteger {
+    fn new(value: i64) -> Result<PositiveNonzeroInteger, CreationError> {
+        match value {
+            x if x < 0 => Err(CreationError::Negative),
+            x if x == 0 => Err(CreationError::Zero),
+            x => Ok(PositiveNonzeroInteger(x as u64))
+        }
+    }
+}
+
+// This is required so that CreationError can implement the Error trait.
+impl fmt::Display for CreationError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let description = match *self {
+            CreationError::Negative => "number is negative",
+            CreationError::Zero => "number is zero",
+        };
+        f.write_str(description)
+    }
+}
+
+impl error::Error for CreationError {}
+`,
+  },
+  {
+    id: "errors6",
+    name: "errors6",
+    path: "exercises/error_handling/errors6.rs",
+    topic: "error_handling",
+    mode: "test",
+    hint: "This exercise presents a common issue with using the question mark operator. What about using map_err to convert the error type? Another hint: Read the documentation for From trait thoroughly.",
+    code: `// errors6.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// Using catch-all error types like Box<dyn error::Error> isn't recommended
+// for library code, where callers might want to make decisions based on the
+// error content, instead of printing it out or propagating it further. Here, we
+// define a custom error type to make it possible for callers to decide what to
+// do next when our function returns an error.
+//
+// Make these tests pass!
+
+use std::num::ParseIntError;
+
+// This is a custom error type that we will be using in parse_pos_nonzero().
+#[derive(PartialEq, Debug)]
+enum ParsePosNonzeroError {
+    Creation(CreationError),
+    ParseInt(ParseIntError)
+}
+
+impl ParsePosNonzeroError {
+    fn from_creation(err: CreationError) -> ParsePosNonzeroError {
+        ParsePosNonzeroError::Creation(err)
+    }
+    
+    fn from_parseint(err: ParseIntError) -> ParsePosNonzeroError {
+        ParsePosNonzeroError::ParseInt(err)
+    }
+}
+
+fn parse_pos_nonzero(s: &str)
+    -> Result<PositiveNonzeroInteger, ParsePosNonzeroError>
+{
+    // TODO: change this to return an appropriate error instead of panicking
+    // when parse() returns an error.
+    let x: i64 = s.parse().unwrap();
+    PositiveNonzeroInteger::new(x)
+        .map_err(ParsePosNonzeroError::from_creation)
+}
+
+// Don't change anything below this line.
+
+#[derive(PartialEq, Debug)]
+struct PositiveNonzeroInteger(u64);
+
+#[derive(PartialEq, Debug)]
+enum CreationError {
+    Negative,
+    Zero,
+}
+
+impl PositiveNonzeroInteger {
+    fn new(value: i64) -> Result<PositiveNonzeroInteger, CreationError> {
+        match value {
+            x if x < 0 => Err(CreationError::Negative),
+            x if x == 0 => Err(CreationError::Zero),
+            x => Ok(PositiveNonzeroInteger(x as u64))
+        }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_parse_error() {
+        // We can't construct a ParseIntError, so we have to pattern match.
+        assert!(matches!(
+            parse_pos_nonzero("not a number"),
+            Err(ParsePosNonzeroError::ParseInt(_))
+        ));
+    }
+
+    #[test]
+    fn test_negative() {
+        assert_eq!(
+            parse_pos_nonzero("-555"),
+            Err(ParsePosNonzeroError::Creation(CreationError::Negative))
+        );
+    }
+
+    #[test]
+    fn test_zero() {
+        assert_eq!(
+            parse_pos_nonzero("0"),
+            Err(ParsePosNonzeroError::Creation(CreationError::Zero))
+        );
+    }
+
+    #[test]
+    fn test_positive() {
+        let x = PositiveNonzeroInteger::new(42);
+        assert!(x.is_ok());
+        assert_eq!(parse_pos_nonzero("42"), x.map_err(ParsePosNonzeroError::from_creation));
+    }
+}
+`,
+  },
+  {
+    id: "hashmaps1",
+    name: "hashmaps1",
+    path: "exercises/hashmaps/hashmaps1.rs",
+    topic: "hashmaps",
+    mode: "test",
+    hint: "Take a look at the return type of the function to figure out what type the basket should be.",
+    code: `// hashmaps1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// A basket of fruits in the form of a hash map needs to be defined.
+// The key represents the name of the fruit and the value represents
+// how many of that particular fruit is in the basket. You have to put
+// at least three different types of fruits (e.g., apple, banana) in the basket and
+// the total count of all the fruits should be at least five.
+//
+// Make me pass the tests!
+//
+// Execute rustlings hint hashmaps1 for hints!
+
+use std::collections::HashMap;
+
+fn fruit_basket() -> HashMap<String, u32> {
+    let mut basket = // TODO: declare your hash map here.
+
+    // Two bananas are already given for you :)
+    basket.insert(String::from("banana"), 2);
+
+    // TODO: Put more fruits in your basket here.
+
+    basket
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn at_least_three_types_of_fruits() {
+        let basket = fruit_basket();
+        assert!(basket.len() >= 3);
+    }
+
+    #[test]
+    fn at_least_five_fruits() {
+        let basket = fruit_basket();
+        assert!(basket.values().sum::<u32>() >= 5);
+    }
+}
+`,
+  },
+  {
+    id: "hashmaps2",
+    name: "hashmaps2",
+    path: "exercises/hashmaps/hashmaps2.rs",
+    topic: "hashmaps",
+    mode: "test",
+    hint: "Use the entry() and or_insert() methods of HashMap to achieve this. Learn more about the or_insert() method here: https://doc.rust-lang.org/stable/std/collections/hash_map/enum.Entry.html#method.or_insert",
+    code: `// hashmaps2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+use std::collections::HashMap;
+
+#[derive(Hash, PartialEq, Eq)]
+enum Fruit {
+    Apple,
+    Banana,
+    Mango,
+    Lychee,
+    Pineapple,
+}
+
+fn fruit_basket(basket: &mut HashMap<Fruit, u32>) {
+    let fruit_kinds = vec![
+        Fruit::Apple,
+        Fruit::Banana,
+        Fruit::Mango,
+        Fruit::Lychee,
+        Fruit::Pineapple,
+    ];
+
+    for fruit in fruit_kinds {
+        // TODO: Put new fruits if not already present. Note that you
+        // are not allowed to put any type of fruit that's already
+        // present!
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn get_fruit_basket() -> HashMap<Fruit, u32> {
+        let mut basket = HashMap::<Fruit, u32>::new();
+        basket.insert(Fruit::Apple, 4);
+        basket.insert(Fruit::Mango, 2);
+        basket.insert(Fruit::Lychee, 5);
+
+        basket
+    }
+
+    #[test]
+    fn test_given_fruits_are_not_modified() {
+        let mut basket = get_fruit_basket();
+        fruit_basket(&mut basket);
+        assert_eq!(*basket.get(&Fruit::Apple).unwrap(), 4);
+        assert_eq!(*basket.get(&Fruit::Mango).unwrap(), 2);
+        assert_eq!(*basket.get(&Fruit::Lychee).unwrap(), 5);
+    }
+
+    #[test]
+    fn at_least_five_types_of_fruits() {
+        let mut basket = get_fruit_basket();
+        fruit_basket(&mut basket);
+        let count_fruit_kinds = basket.len();
+        assert!(count_fruit_kinds >= 5);
+    }
+
+    #[test]
+    fn greater_than_eleven_fruits() {
+        let mut basket = get_fruit_basket();
+        fruit_basket(&mut basket);
+        let count = basket.values().sum::<u32>();
+        assert!(count > 11);
+    }
+}
+`,
+  },
+  {
+    id: "hashmaps3",
+    name: "hashmaps3",
+    path: "exercises/hashmaps/hashmaps3.rs",
+    topic: "hashmaps",
+    mode: "test",
+    hint: "Tip 1: Use the .entry() and .or_insert() methods of HashMap. Tip 2: We've already imported HashMap for you, so you should not import it again.",
+    code: `// hashmaps3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// A list of scores (one per line) of a soccer match is given. Each line
+// is of the form:
+// <team_1_name>,<team_2_name>,<team_1_goals>,<team_2_goals>
+// Example: England,France,4,2 (England scored 4 goals, France scored 2).
+//
+// You have to build a scores table containing the name of the team, goals
+// the team scored, and goals the team conceded. One approach to build
+// the scores table is to use a Hashmap. The solution is partially written
+// to use a Hashmap, complete it to pass the test.
+//
+// Make me pass the tests!
+//
+// Execute rustlings hint hashmaps3 for hints!
+
+use std::collections::HashMap;
+
+// A structure to store team name and its goal details.
+struct Team {
+    name: String,
+    goals_scored: u8,
+    goals_conceded: u8,
+}
+
+fn build_scores_table(results: String) -> HashMap<String, Team> {
+    // The name of the team is the key and its associated struct is the value.
+    let mut scores: HashMap<String, Team> = HashMap::new();
+
+    for r in results.lines() {
+        let v: Vec<&str> = r.split(',').collect();
+        let team_1_name = v[0].to_string();
+        let team_1_score: u8 = v[2].parse().unwrap();
+        let team_2_name = v[1].to_string();
+        let team_2_score: u8 = v[3].parse().unwrap();
+        // TODO: Populate the scores table with details extracted from the
+        // current line. Keep in mind that goals scored by team_1
+        // will be number of goals conceded from team_2, and similarly
+        // goals scored by team_2 will be the number of goals conceded by
+        // team_1.
+    }
+    scores
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn get_results() -> String {
+        let results = "".to_string()
+            + "England,France,4,2\n"
+            + "France,Italy,3,1\n"
+            + "Poland,Spain,2,0\n"
+            + "Germany,England,2,1\n";
+        results
+    }
+
+    #[test]
+    fn build_scores() {
+        let scores = build_scores_table(get_results());
+
+        let mut keys: Vec<&String> = scores.keys().collect();
+        keys.sort();
+        assert_eq!(
+            keys,
+            vec!["England", "France", "Germany", "Italy", "Poland", "Spain"]
+        );
+    }
+
+    #[test]
+    fn validate_team_score_1() {
+        let scores = build_scores_table(get_results());
+        let team = scores.get("England").unwrap();
+        assert_eq!(team.name, "England");
+        assert_eq!(team.goals_scored, 5);
+        assert_eq!(team.goals_conceded, 4);
+    }
+
+    #[test]
+    fn validate_team_score_2() {
+        let scores = build_scores_table(get_results());
+        let team = scores.get("Italy").unwrap();
+        assert_eq!(team.name, "Italy");
+        assert_eq!(team.goals_scored, 1);
+        assert_eq!(team.goals_conceded, 3);
+    }
+}
+`,
+  },
 ];
