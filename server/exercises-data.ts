@@ -1749,4 +1749,622 @@ mod tests {
 }
 `,
   },
+  
+  // Traits
+  {
+    id: "traits1",
+    name: "traits1",
+    path: "exercises/traits/traits1.rs",
+    topic: "traits",
+    mode: "test",
+    hint: "A trait is like an interface. To implement a trait for a type, use the impl TraitName for TypeName syntax.",
+    code: `// traits1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+trait AppendBar {
+    fn append_bar(self) -> Self;
+}
+
+impl AppendBar for String {
+    // TODO: Implement `AppendBar` for type `String`.
+    fn append_bar(self) -> Self {
+        todo!()
+    }
+}
+
+fn main() {
+    let s = String::from("Foo");
+    let s = s.append_bar();
+    println!("s: {}", s);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn is_foo_bar() {
+        assert_eq!(String::from("Foo").append_bar(), String::from("FooBar"));
+    }
+
+    #[test]
+    fn is_bar_bar() {
+        assert_eq!(
+            String::from("").append_bar().append_bar(),
+            String::from("BarBar")
+        );
+    }
+}
+`,
+  },
+  {
+    id: "traits2",
+    name: "traits2",
+    path: "exercises/traits/traits2.rs",
+    topic: "traits",
+    mode: "test",
+    hint: "What happens when you add a second impl block for the trait for the same type?",
+    code: `// traits2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+trait AppendBar {
+    fn append_bar(self) -> Self;
+}
+
+// TODO: Implement trait `AppendBar` for a vector of strings.
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn is_vec_pop_eq_bar() {
+        let mut foo = vec![String::from("Foo")].append_bar();
+        assert_eq!(foo.pop().unwrap(), String::from("Bar"));
+        assert_eq!(foo.pop().unwrap(), String::from("Foo"));
+    }
+}
+`,
+  },
+  {
+    id: "traits3",
+    name: "traits3",
+    path: "exercises/traits/traits3.rs",
+    topic: "traits",
+    mode: "compile",
+    hint: "Traits can have a default implementation for functions. Structs that implement the trait can use the default version or override it.",
+    code: `// traits3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+pub trait Licensed {
+    fn licensing_info(&self) -> String {
+        String::from("Some information")
+    }
+}
+
+struct SomeSoftware {
+    version_number: i32,
+}
+
+struct OtherSoftware {
+    version_number: String,
+}
+
+impl Licensed for SomeSoftware {} // Don't edit this line
+impl Licensed for OtherSoftware {} // Don't edit this line
+
+fn compare_license_types(software: ???, software_two: ???) -> bool {
+    software.licensing_info() == software_two.licensing_info()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn compare_license_information() {
+        let some_software = SomeSoftware { version_number: 1 };
+        let other_software = OtherSoftware {
+            version_number: "v2.0.0".to_string(),
+        };
+
+        assert!(compare_license_types(some_software, other_software));
+    }
+
+    #[test]
+    fn compare_license_information_backwards() {
+        let some_software = SomeSoftware { version_number: 1 };
+        let other_software = OtherSoftware {
+            version_number: "v2.0.0".to_string(),
+        };
+
+        assert!(compare_license_types(other_software, some_software));
+    }
+}
+`,
+  },
+  {
+    id: "traits4",
+    name: "traits4",
+    path: "exercises/traits/traits4.rs",
+    topic: "traits",
+    mode: "compile",
+    hint: "Instead of using concrete types as parameters, you can use trait bounds. This is a way to say that the function takes any type that implements a specific trait.",
+    code: `// traits4.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+pub trait Licensed {
+    fn licensing_info(&self) -> String {
+        "some information".to_string()
+    }
+}
+
+struct SomeSoftware {}
+struct OtherSoftware {}
+
+impl Licensed for SomeSoftware {}
+impl Licensed for OtherSoftware {}
+
+// YOU MAY ONLY CHANGE THE NEXT LINE
+fn compare_license_types(software: ???, software_two: ???) -> bool {
+    software.licensing_info() == software_two.licensing_info()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn compare_license_information() {
+        let some_software = SomeSoftware {};
+        let other_software = OtherSoftware {};
+
+        assert!(compare_license_types(some_software, other_software));
+    }
+
+    #[test]
+    fn compare_license_information_backwards() {
+        let some_software = SomeSoftware {};
+        let other_software = OtherSoftware {};
+
+        assert!(compare_license_types(other_software, some_software));
+    }
+}
+`,
+  },
+  {
+    id: "traits5",
+    name: "traits5",
+    path: "exercises/traits/traits5.rs",
+    topic: "traits",
+    mode: "compile",
+    hint: "To implement multiple traits at once, use the + operator in the trait bounds.",
+    code: `// traits5.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+pub trait SomeTrait {
+    fn some_function(&self) -> bool {
+        true
+    }
+}
+
+pub trait OtherTrait {
+    fn other_function(&self) -> bool {
+        true
+    }
+}
+
+struct SomeStruct {}
+struct OtherStruct {}
+
+impl SomeTrait for SomeStruct {}
+impl OtherTrait for SomeStruct {}
+impl SomeTrait for OtherStruct {}
+impl OtherTrait for OtherStruct {}
+
+// YOU MAY ONLY CHANGE THE NEXT LINE
+fn some_func(item: ???) -> bool {
+    item.some_function() && item.other_function()
+}
+
+fn main() {
+    some_func(SomeStruct {});
+    some_func(OtherStruct {});
+}
+`,
+  },
+  
+  // Generics
+  {
+    id: "generics1",
+    name: "generics1",
+    path: "exercises/generics/generics1.rs",
+    topic: "generics",
+    mode: "compile",
+    hint: "Vectors in Rust can hold values of only one type. Use a generic type parameter to make the function work with any type.",
+    code: `// generics1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+fn main() {
+    let mut shopping_list: Vec<?> = Vec::new();
+    shopping_list.push("milk");
+}
+`,
+  },
+  {
+    id: "generics2",
+    name: "generics2",
+    path: "exercises/generics/generics2.rs",
+    topic: "generics",
+    mode: "test",
+    hint: "Use angle brackets to declare generic type parameters for structs.",
+    code: `// generics2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+// This powerful wrapper provides the ability to store a positive integer value.
+// Rewrite it using generics so that it supports wrapping ANY type.
+
+// TODO: Fix me.
+struct Wrapper {
+    value: u32,
+}
+
+impl Wrapper {
+    pub fn new(value: u32) -> Self {
+        Wrapper { value }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn store_u32_in_wrapper() {
+        assert_eq!(Wrapper::new(42).value, 42);
+    }
+
+    #[test]
+    fn store_str_in_wrapper() {
+        assert_eq!(Wrapper::new("Foo").value, "Foo");
+    }
+}
+`,
+  },
+  
+  // Iterators advanced exercises
+  {
+    id: "iterators2",
+    name: "iterators2",
+    path: "exercises/iterators/iterators2.rs",
+    topic: "iterators",
+    mode: "test",
+    hint: "Step 1: First, capitalize the first letter of the string. Step 2: Apply the 'capitalize_first' function to a slice of strings. Try using the 'map' function.",
+    code: `// iterators2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+// Step 1.
+// Complete the `capitalize_first` function.
+// "hello" -> "Hello"
+pub fn capitalize_first(input: &str) -> String {
+    let mut c = input.chars();
+    match c.next() {
+        None => String::new(),
+        Some(first) => ???,
+    }
+}
+
+// Step 2.
+// Apply the `capitalize_first` function to a slice of string slices.
+// Return a vector of strings.
+// ["hello", "world"] -> ["Hello", "World"]
+pub fn capitalize_words_vector(words: &[&str]) -> Vec<String> {
+    vec![]
+}
+
+// Step 3.
+// Apply the `capitalize_first` function again to a slice of string slices.
+// Return a single string with all the strings joined.
+// ["hello", " ", "world"] -> "Hello World"
+pub fn capitalize_words_string(words: &[&str]) -> String {
+    String::new()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_success() {
+        assert_eq!(capitalize_first("hello"), "Hello");
+    }
+
+    #[test]
+    fn test_empty() {
+        assert_eq!(capitalize_first(""), "");
+    }
+
+    #[test]
+    fn test_iterate_string_vec() {
+        let words = vec!["hello", "world"];
+        assert_eq!(capitalize_words_vector(&words), ["Hello", "World"]);
+    }
+
+    #[test]
+    fn test_iterate_into_string() {
+        let words = vec!["hello", " ", "world"];
+        assert_eq!(capitalize_words_string(&words), "Hello World");
+    }
+}
+`,
+  },
+  {
+    id: "iterators3",
+    name: "iterators3",
+    path: "exercises/iterators/iterators3.rs",
+    topic: "iterators",
+    mode: "test",
+    hint: "The division method will be returning a Result. Map the values through a function before collecting them.",
+    code: `// iterators3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum DivisionError {
+    NotDivisible(NotDivisibleError),
+    DivideByZero,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct NotDivisibleError {
+    dividend: i32,
+    divisor: i32,
+}
+
+// Calculate `a` divided by `b` if `a` is evenly divisible by `b`.
+// Otherwise, return a suitable error.
+pub fn divide(a: i32, b: i32) -> Result<i32, DivisionError> {
+    if b == 0 {
+        return Err(DivisionError::DivideByZero);
+    }
+    if a % b != 0 {
+        return Err(DivisionError::NotDivisible(NotDivisibleError {
+            dividend: a,
+            divisor: b,
+        }));
+    }
+    Ok(a / b)
+}
+
+// Complete the function and return a value of the correct type so the test
+// passes.
+// Desired output: Ok([1, 11, 1426, 3])
+fn result_with_list() -> Result<Vec<i32>, DivisionError> {
+    let numbers = vec![27, 297, 38502, 81];
+    let division_results = numbers.into_iter().map(|n| divide(n, 27));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_success() {
+        assert_eq!(divide(81, 9), Ok(9));
+    }
+
+    #[test]
+    fn test_not_divisible() {
+        assert_eq!(
+            divide(81, 6),
+            Err(DivisionError::NotDivisible(NotDivisibleError {
+                dividend: 81,
+                divisor: 6
+            }))
+        );
+    }
+
+    #[test]
+    fn test_divide_by_0() {
+        assert_eq!(divide(81, 0), Err(DivisionError::DivideByZero));
+    }
+
+    #[test]
+    fn test_divide_0_by_something() {
+        assert_eq!(divide(0, 81), Ok(0));
+    }
+
+    #[test]
+    fn test_result_with_list() {
+        assert_eq!(result_with_list().unwrap(), vec![1, 11, 1426, 3]);
+    }
+}
+`,
+  },
+  {
+    id: "iterators4",
+    name: "iterators4",
+    path: "exercises/iterators/iterators4.rs",
+    topic: "iterators",
+    mode: "compile",
+    hint: "In an imperative language, you might write a for loop to iterate through a vector. In Rust you can use a combination of methods like 'iter' and 'fold'.",
+    code: `// iterators4.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+pub fn factorial(num: u64) -> u64 {
+    // Complete this function to return the factorial of num
+    // Do not use:
+    // - early returns (e.g., 'return')
+    // - imperative style loops (for, while)
+    // - additional variables
+    // For an extra challenge, don't use:
+    // - recursion
+    // Execute `rustlings hint iterators4` for hints.
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn factorial_of_0() {
+        assert_eq!(1, factorial(0));
+    }
+
+    #[test]
+    fn factorial_of_1() {
+        assert_eq!(1, factorial(1));
+    }
+    #[test]
+    fn factorial_of_2() {
+        assert_eq!(2, factorial(2));
+    }
+
+    #[test]
+    fn factorial_of_4() {
+        assert_eq!(24, factorial(4));
+    }
+}
+`,
+  },
+  {
+    id: "iterators5",
+    name: "iterators5",
+    path: "exercises/iterators/iterators5.rs",
+    topic: "iterators",
+    mode: "test",
+    hint: "Use the filter and map methods to transform the HashMap.",
+    code: `// iterators5.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+// Let's define a simple model to track Rustlings exercise progress.
+// The progress will be modelled using a hash map. The name of the exercise
+// is the key and the progress is the value. Two counting functions were
+// created to count the number of exercises with a given progress. These
+// counting functions use imperative style for loops. Recreate the counting
+// function using iterators.
+
+use std::collections::HashMap;
+
+#[derive(Copy, Clone, PartialEq, Eq)]
+enum Progress {
+    None,
+    Some,
+    Complete,
+}
+
+fn count_for(map: &HashMap<String, Progress>, value: Progress) -> usize {
+    let mut count = 0;
+    for val in map.values() {
+        if val == &value {
+            count += 1;
+        }
+    }
+    count
+}
+
+fn count_iterator(map: &HashMap<String, Progress>, value: Progress) -> usize {
+    // map is a hashmap with String keys and Progress values.
+    // map = { "variables1": Complete, "functions5": None, ... }
+    todo!();
+}
+
+fn count_collection_for(collection: &[HashMap<String, Progress>], value: Progress) -> usize {
+    let mut count = 0;
+    for map in collection {
+        for val in map.values() {
+            if val == &value {
+                count += 1;
+            }
+        }
+    }
+    count
+}
+
+fn count_collection_iterator(collection: &[HashMap<String, Progress>], value: Progress) -> usize {
+    // collection is a slice of hashmaps.
+    // collection = [{ "variables1": Complete, "functions5": None, ... },
+    //     { "variables2": Complete, ... }, ... ]
+    todo!();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn count_complete() {
+        let mut progress = HashMap::new();
+        progress.insert(String::from("variables1"), Progress::Complete);
+        progress.insert(String::from("functions5"), Progress::None);
+        progress.insert(String::from("loops3"), Progress::Some);
+        progress.insert(String::from("if2"), Progress::Complete);
+
+        assert_eq!(3, count_iterator(&progress, Progress::None));
+    }
+
+    #[test]
+    fn count_some() {
+        let mut progress = HashMap::new();
+        progress.insert(String::from("variables2"), Progress::Some);
+        progress.insert(String::from("functions3"), Progress::Some);
+        progress.insert(String::from("loops1"), Progress::None);
+        progress.insert(String::from("move_semantics2"), Progress::None);
+
+        assert_eq!(2, count_iterator(&progress, Progress::Some));
+    }
+
+    #[test]
+    fn count_collection_complete() {
+        let mut collection = vec![];
+        let mut progress = HashMap::new();
+        progress.insert(String::from("variables1"), Progress::Complete);
+        progress.insert(String::from("functions5"), Progress::None);
+        collection.push(progress);
+
+        let mut progress = HashMap::new();
+        progress.insert(String::from("loops3"), Progress::Some);
+        progress.insert(String::from("if2"), Progress::Complete);
+        collection.push(progress);
+
+        assert_eq!(
+            2,
+            count_collection_iterator(&collection, Progress::Complete)
+        );
+    }
+}
+`,
+  },
 ];
