@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
 import type { User } from "@shared/schema";
-import { RustWorkbookLogo } from "./RustWorkbookLogo";
+import logoUrl from "@/assets/logo.png";
 import { AboutModal } from "./AboutModal";
 import { DonationModal } from "./DonationModal";
 
@@ -76,8 +76,9 @@ export function IDEHeader({
   if (isMobile) {
     return (
       <header className="h-14 border-b border-border bg-background px-2 flex items-center justify-between flex-shrink-0" data-testid="header-ide">
-        <div className="flex items-center gap-1">
-          <RustWorkbookLogo className="h-8 w-32 text-primary" />
+        <div className="flex items-center gap-2">
+          <img src={logoUrl} alt="Rust Workbook" className="h-8 w-8" />
+          <span className="text-sm font-semibold">Rust Workbook</span>
         </div>
         
         <div className="flex items-center gap-1">
@@ -188,7 +189,10 @@ export function IDEHeader({
   return (
     <header className="h-14 border-b border-border bg-background px-6 flex items-center justify-between flex-shrink-0" data-testid="header-ide">
       <div className="flex items-center gap-4">
-        <RustWorkbookLogo className="h-9 w-48 text-primary" />
+        <div className="flex items-center gap-3">
+          <img src={logoUrl} alt="Rust Workbook" className="h-9 w-9" />
+          <span className="text-lg font-semibold">Rust Workbook</span>
+        </div>
         <div className="h-6 w-px bg-border" />
         <div className="flex items-center gap-2">
           <Button

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Code2, BookOpen, Trophy, Zap } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import logoUrl from "@/assets/logo.png";
 
 export default function Landing() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -20,9 +21,19 @@ export default function Landing() {
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <div className="space-y-4">
-            <h1 className="text-5xl font-bold tracking-tight">
+            <div className="flex items-center justify-center mb-6">
+              <img 
+                src={logoUrl} 
+                alt="Rust Workbook" 
+                className="h-20 w-20 mr-4"
+              />
+              <h1 className="text-4xl font-bold tracking-tight">
+                Rust Workbook
+              </h1>
+            </div>
+            <h2 className="text-3xl font-semibold tracking-tight">
               Learn Rust, Right in Your Browser
-            </h1>
+            </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Master Rust programming with interactive exercises. No setup required—just log in and start coding.
             </p>
@@ -72,19 +83,29 @@ export default function Landing() {
           </div>
 
           <div className="mt-16 p-8 bg-muted/50 rounded-lg">
-            <h2 className="text-2xl font-bold mb-4">Based on Rustlings</h2>
-            <p className="text-muted-foreground">
-              This platform is built on{" "}
+            <h2 className="text-2xl font-bold mb-4">About Rust Workbook</h2>
+            <p className="text-muted-foreground mb-4">
+              Rust Workbook uses exercises from the open-source{" "}
               <a
-                href="https://rustlings.rust-lang.org/"
+                href="https://github.com/rust-lang/rustlings"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline"
               >
-                Rustlings
+                Rustlings project
               </a>
               , a collection of small exercises designed to get you familiar with reading and writing Rust code.
             </p>
+            <div className="mt-6 p-4 bg-background/50 rounded border border-border">
+              <p className="text-sm text-muted-foreground font-semibold mb-2">Disclaimer:</p>
+              <p className="text-sm text-muted-foreground">
+                Rust Workbook is an independent learning platform and is <strong>not affiliated with</strong> the Rust Foundation, 
+                the official Rust project, the Rust Programming Language Book, or the Rustlings project maintainers. 
+                We use publicly available exercises from Rustlings under the MIT License. Rust and the Rust logo are 
+                trademarks of the Rust Foundation. This platform is created for educational purposes to help people 
+                learn Rust programming in an accessible, browser-based environment.
+              </p>
+            </div>
           </div>
         </div>
       </div>
