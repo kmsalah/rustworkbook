@@ -2914,4 +2914,1558 @@ mod tests {
 }
 `,
   },
+
+  // Lifetimes
+  {
+    id: "lifetimes1",
+    name: "lifetimes1",
+    path: "exercises/lifetimes/lifetimes1.rs",
+    topic: "lifetimes",
+    mode: "compile",
+    hint: "Let the compiler guide you! Also take a look at the book if you need help: https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html",
+    code: `// lifetimes1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// The Rust compiler needs to know how to check whether supplied references are
+// valid, so that it can let the programmer know if a reference is at risk
+// of going out of scope before it is used. Remember, references are borrows
+// and do not own their own data. What if their owner goes out of scope?
+
+fn longest(x: &str, y: &str) -> &str {
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
+}
+
+fn main() {
+    let string1 = String::from("abcd");
+    let string2 = "xyz";
+
+    let result = longest(string1.as_str(), string2);
+    println!("The longest string is '{}'", result);
+}
+`,
+  },
+  {
+    id: "lifetimes2",
+    name: "lifetimes2",
+    path: "exercises/lifetimes/lifetimes2.rs",
+    topic: "lifetimes",
+    mode: "compile",
+    hint: "Remember that lifetime annotations are generic parameters that specify the relationship between the lifetimes of multiple references. They don't change how long values live, they just describe the relationships. When implementing structs with lifetimes, you need to specify the lifetime in both the struct definition and the impl block.",
+    code: `// lifetimes2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// So if the compiler is just validating the references passed
+// to the annotated parameters and the return type, what do
+// we need to change?
+
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
+}
+
+fn main() {
+    let string1 = String::from("long string is long");
+    let result;
+    {
+        let string2 = String::from("xyz");
+        result = longest(string1.as_str(), string2.as_str());
+    }
+    println!("The longest string is '{}'", result);
+}
+`,
+  },
+  {
+    id: "lifetimes3",
+    name: "lifetimes3",
+    path: "exercises/lifetimes/lifetimes3.rs",
+    topic: "lifetimes",
+    mode: "compile",
+    hint: "Lifetimes are elided using one of the three rules described in the book. If you're stuck, try to apply each rule to see which one is applicable. The third rule is particularly relevant for methods.",
+    code: `// lifetimes3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// Lifetimes are also needed when structs hold references.
+
+struct Book {
+    author: &str,
+    title: &str,
+}
+
+fn main() {
+    let name = String::from("Jill Smith");
+    let title = String::from("Fish Flying");
+    let book = Book { author: &name, title: &title };
+
+    println!("{} by {}", book.title, book.author);
+}
+`,
+  },
+
+  // Tests
+  {
+    id: "tests1",
+    name: "tests1",
+    path: "exercises/tests/tests1.rs",
+    topic: "tests",
+    mode: "test",
+    hint: "You don't even need to write any code to test -- you can just test values and run that, even though you wouldn't do that in real life :) assert! is a macro that needs an argument. Depending on the value of the argument, assert! will do nothing (in which case the test will pass) or assert! will panic (in which case the test will fail). So try giving different values to assert! and see which ones compile, which ones pass, and which ones fail :)",
+    code: `// tests1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// Tests are important to ensure that your code does what you think it should do.
+// Tests can be run on this file with the following command:
+// rustlings run tests1
+// This command runs both tests in this file.
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn you_can_assert() {
+        assert!();
+    }
+}
+`,
+  },
+  {
+    id: "tests2",
+    name: "tests2",
+    path: "exercises/tests/tests2.rs",
+    topic: "tests",
+    mode: "test",
+    hint: "assert_ne! is a macro that panics if the two arguments are equal. When using it, you'll compare two values that should NOT be equal. For this test to pass, find two values that are different!",
+    code: `// tests2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// This test has a problem with it -- make the test compile! Make the test
+// pass! Make the test fail!
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn you_can_assert_eq() {
+        assert_eq!();
+    }
+}
+`,
+  },
+  {
+    id: "tests3",
+    name: "tests3",
+    path: "exercises/tests/tests3.rs",
+    topic: "tests",
+    mode: "test",
+    hint: "You can call a function right where you're passing arguments to assert!. So you could do something like assert!(having_fun()). If you want to check that you indeed get false, you can negate the result of what you're doing using !. For example, assert!(!having_fun()).",
+    code: `// tests3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// This test isn't testing our function -- make it do that in such a way that
+// the test passes. Then write a second test that tests whether we get the result
+// we expect to get when we call \`is_even(5)\`.
+
+pub fn is_even(num: i32) -> bool {
+    num % 2 == 0
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn is_true_when_even() {
+        assert!();
+    }
+
+    #[test]
+    fn is_false_when_odd() {
+        assert!();
+    }
+}
+`,
+  },
+  {
+    id: "tests4",
+    name: "tests4",
+    path: "exercises/tests/tests4.rs",
+    topic: "tests",
+    mode: "test",
+    hint: "We expect the method Rectangle::new to panic for negative values. To handle that, you should add a special attribute to the test function. You can refer to the docs here: https://doc.rust-lang.org/stable/book/ch11-01-writing-tests.html#checking-for-panics-with-should_panic",
+    code: `// tests4.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// Make sure that we're testing for the correct conditions!
+
+struct Rectangle {
+    width: i32,
+    height: i32
+}
+
+impl Rectangle {
+    // Only change the test functions themselves
+    pub fn new(width: i32, height: i32) -> Self {
+        if width <= 0 || height <= 0 {
+            panic!("Rectangle width and height cannot be negative!")
+        }
+        Rectangle {width, height}
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn correct_width_and_height() {
+        // This test should check if the rectangle is the size that we pass into its constructor
+        let rect = Rectangle::new(10, 20);
+        assert_eq!(???, 10); // check width
+        assert_eq!(???, 20); // check height
+    }
+
+    #[test]
+    fn negative_width() {
+        // This test should check if program panics when we try to create rectangle with negative width
+        let _rect = Rectangle::new(-10, 10);
+    }
+
+    #[test]
+    fn negative_height() {
+        // This test should check if program panics when we try to create rectangle with negative height
+        let _rect = Rectangle::new(10, -10);
+    }
+}
+`,
+  },
+
+  // Threads
+  {
+    id: "threads1",
+    name: "threads1",
+    path: "exercises/threads/threads1.rs",
+    topic: "threads",
+    mode: "compile",
+    hint: "JoinHandles are a return type of thread::spawn. Look at the docs for https://doc.rust-lang.org/std/thread/fn.spawn.html",
+    code: `// threads1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// This program spawns multiple threads that each run for at least 250ms,
+// and each thread returns how much time they took to complete.
+// The program should wait until all the spawned threads have finished and
+// should collect their return values into a vector.
+
+use std::thread;
+use std::time::{Duration, Instant};
+
+fn main() {
+    let mut handles = vec![];
+    for i in 0..10 {
+        handles.push(thread::spawn(move || {
+            let start = Instant::now();
+            thread::sleep(Duration::from_millis(250));
+            println!("thread {} is complete", i);
+            start.elapsed().as_millis()
+        }));
+    }
+
+    let mut results: Vec<u128> = vec![];
+    for handle in handles {
+        // TODO: a struct is returned from thread::spawn, use it
+    }
+
+    if results.len() != 10 {
+        panic!("Oh no! All the spawned threads did not finish!");
+    }
+
+    println!();
+    for (i, result) in results.into_iter().enumerate() {
+        println!("thread {} took {}ms", i, result);
+    }
+}
+`,
+  },
+  {
+    id: "threads2",
+    name: "threads2",
+    path: "exercises/threads/threads2.rs",
+    topic: "threads",
+    mode: "compile",
+    hint: "Arc is an atomic reference counter, which is a thread-safe version of Rc. To increment a value in Arc, you need to wrap it in a type that provides interior mutability through thread-safe operations. Try using Arc<Mutex<T>> or Arc<AtomicUsize>!",
+    code: `// threads2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// Building on the last exercise, we want all of the threads to complete their work but this time
+// the spawned threads need to be in charge of updating a shared value: JobStatus.jobs_completed
+
+use std::sync::Arc;
+use std::thread;
+use std::time::Duration;
+
+struct JobStatus {
+    jobs_completed: u32,
+}
+
+fn main() {
+    let status = Arc::new(JobStatus { jobs_completed: 0 });
+    let mut handles = vec![];
+    for _ in 0..10 {
+        let status_shared = Arc::clone(&status);
+        let handle = thread::spawn(move || {
+            thread::sleep(Duration::from_millis(250));
+            // TODO: You must take an action before you update a shared value
+            status_shared.jobs_completed += 1;
+        });
+        handles.push(handle);
+    }
+    for handle in handles {
+        handle.join().unwrap();
+        // TODO: Print the value of the JobStatus.jobs_completed. Did you notice anything
+        // interesting in the output? Do you have to 'join' on all the handles?
+        println!("jobs completed {}", ???);
+    }
+}
+`,
+  },
+  {
+    id: "threads3",
+    name: "threads3",
+    path: "exercises/threads/threads3.rs",
+    topic: "threads",
+    mode: "test",
+    hint: "The mpsc module provides multi-producer, single-consumer channels for message passing. You have a tx (sender) that you can clone and send to multiple threads. Have a look at https://doc.rust-lang.org/stable/book/ch16-02-message-passing.html for more info.",
+    code: `// threads3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// Execute \`rustlings hint threads3\` or use the \`hint\` watch subcommand for a hint.
+
+use std::sync::mpsc;
+use std::sync::Arc;
+use std::thread;
+use std::time::Duration;
+
+struct Queue {
+    length: u32,
+    first_half: Vec<u32>,
+    second_half: Vec<u32>,
+}
+
+impl Queue {
+    fn new() -> Self {
+        Queue {
+            length: 10,
+            first_half: vec![1, 2, 3, 4, 5],
+            second_half: vec![6, 7, 8, 9, 10],
+        }
+    }
+}
+
+fn send_tx(q: Queue, tx: mpsc::Sender<u32>) -> () {
+    let qc = Arc::new(q);
+    let qc1 = Arc::clone(&qc);
+    let qc2 = Arc::clone(&qc);
+
+    thread::spawn(move || {
+        for val in &qc1.first_half {
+            println!("sending {:?}", val);
+            tx.send(*val).unwrap();
+            thread::sleep(Duration::from_secs(1));
+        }
+    });
+
+    thread::spawn(move || {
+        for val in &qc2.second_half {
+            println!("sending {:?}", val);
+            tx.send(*val).unwrap();
+            thread::sleep(Duration::from_secs(1));
+        }
+    });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_queue_length() {
+        let queue = Queue::new();
+        assert_eq!(queue.length, 10);
+    }
+}
+`,
+  },
+
+  // Smart Pointers
+  {
+    id: "box1",
+    name: "box1",
+    path: "exercises/smart_pointers/box1.rs",
+    topic: "smart_pointers",
+    mode: "compile",
+    hint: "At compile time, the size of a recursive type (like List) cannot be determined. Wrapping the recursive part of the List definition in a Box (a heap-allocated smart pointer) allows it to have a defined size.",
+    code: `// box1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// At compile time, Rust needs to know how much space a type takes up. This becomes problematic
+// for recursive types, where a value can have as part of itself another value of the same type.
+// To get around the issue, we can use a \`Box\` - a smart pointer used to store data on the heap,
+// which also allows us to wrap a recursive type.
+//
+// The recursive type we're implementing in this exercise is the cons list - a data structure
+// frequently found in functional programming languages. Each item in a cons list contains two
+// elements: the value of the current item and the next item. The last item is a value called \`Nil\`.
+//
+// Step 1: use a \`Box\` in the enum definition to make the code compile
+// Step 2: create both empty and non-empty cons lists by replacing \`todo!()\`
+
+#[derive(PartialEq, Debug)]
+pub enum List {
+    Cons(i32, List),
+    Nil,
+}
+
+fn main() {
+    println!("This is an empty cons list: {:?}", create_empty_list());
+    println!(
+        "This is a non-empty cons list: {:?}",
+        create_non_empty_list()
+    );
+}
+
+pub fn create_empty_list() -> List {
+    todo!()
+}
+
+pub fn create_non_empty_list() -> List {
+    todo!()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_create_empty_list() {
+        assert_eq!(List::Nil, create_empty_list())
+    }
+
+    #[test]
+    fn test_create_non_empty_list() {
+        assert_ne!(create_empty_list(), create_non_empty_list())
+    }
+}
+`,
+  },
+  {
+    id: "rc1",
+    name: "rc1",
+    path: "exercises/smart_pointers/rc1.rs",
+    topic: "smart_pointers",
+    mode: "compile",
+    hint: "Rc::clone() increments the reference counter for the value. This is different from making a deep copy of the value. Read more at https://doc.rust-lang.org/book/ch15-04-rc.html",
+    code: `// rc1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// In this exercise, we want to express the concept of multiple owners via the Rc<T> type.
+// This is a model of our solar system - there is a Sun type and multiple Planets.
+// The Planets take ownership of the sun, indicating that they revolve around the sun.
+
+use std::rc::Rc;
+
+#[derive(Debug)]
+struct Sun {}
+
+#[derive(Debug)]
+enum Planet {
+    Mercury(Rc<Sun>),
+    Venus(Rc<Sun>),
+    Earth(Rc<Sun>),
+    Mars(Rc<Sun>),
+    Jupiter(Rc<Sun>),
+    Saturn(Rc<Sun>),
+    Uranus(Rc<Sun>),
+    Neptune(Rc<Sun>),
+}
+
+impl Planet {
+    fn details(&self) {
+        println!("Hi from {:?}!", self)
+    }
+}
+
+fn main() {
+    let sun = Rc::new(Sun {});
+    println!("reference count = {}", Rc::strong_count(&sun)); // 1 reference
+
+    let mercury = Planet::Mercury(Rc::clone(&sun));
+    println!("reference count = {}", Rc::strong_count(&sun)); // 2 references
+    mercury.details();
+
+    let venus = Planet::Venus(Rc::clone(&sun));
+    println!("reference count = {}", Rc::strong_count(&sun)); // 3 references
+    venus.details();
+
+    let earth = Planet::Earth(Rc::clone(&sun));
+    println!("reference count = {}", Rc::strong_count(&sun)); // 4 references
+    earth.details();
+
+    let mars = Planet::Mars(Rc::clone(&sun));
+    println!("reference count = {}", Rc::strong_count(&sun)); // 5 references
+    mars.details();
+
+    let jupiter = Planet::Jupiter(Rc::clone(&sun));
+    println!("reference count = {}", Rc::strong_count(&sun)); // 6 references
+    jupiter.details();
+
+    // TODO: Fix the compiler errors by using the correct method to clone the \`sun\`.
+    let saturn = Planet::Saturn(sun.clone());
+    println!("reference count = {}", Rc::strong_count(&sun)); // 7 references
+    saturn.details();
+
+    let uranus = Planet::Uranus(sun.clone());
+    println!("reference count = {}", Rc::strong_count(&sun)); // 8 references
+    uranus.details();
+
+    let neptune = Planet::Neptune(sun.clone());
+    println!("reference count = {}", Rc::strong_count(&sun)); // 9 references
+    neptune.details();
+
+    assert_eq!(Rc::strong_count(&sun), 9);
+
+    drop(neptune);
+    println!("reference count = {}", Rc::strong_count(&sun)); // 8 references
+
+    drop(uranus);
+    println!("reference count = {}", Rc::strong_count(&sun)); // 7 references
+
+    drop(saturn);
+    println!("reference count = {}", Rc::strong_count(&sun)); // 6 references
+
+    drop(jupiter);
+    println!("reference count = {}", Rc::strong_count(&sun)); // 5 references
+
+    drop(mars);
+    println!("reference count = {}", Rc::strong_count(&sun)); // 4 references
+
+    drop(earth);
+    println!("reference count = {}", Rc::strong_count(&sun)); // 3 references
+
+    drop(venus);
+    println!("reference count = {}", Rc::strong_count(&sun)); // 2 references
+
+    drop(mercury);
+    println!("reference count = {}", Rc::strong_count(&sun)); // 1 reference
+
+    assert_eq!(Rc::strong_count(&sun), 1);
+}
+`,
+  },
+  {
+    id: "arc1",
+    name: "arc1",
+    path: "exercises/smart_pointers/arc1.rs",
+    topic: "smart_pointers",
+    mode: "compile",
+    hint: "Arc is basically Rc, but thread-safe. It's the atomically reference counted version. Try using Arc::clone() to share the numbers between threads. Read more at https://doc.rust-lang.org/std/sync/struct.Arc.html",
+    code: `// arc1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// In this exercise, we are given a Vec of u32 called "numbers" with values ranging
+// from 0 to 99 -- [ 0, 1, 2, ..., 98, 99 ]
+// We would like to use this set of numbers within 8 different threads simultaneously.
+// Each thread is going to get the sum of every eighth value, with an offset.
+// The first thread (offset 0), will sum 0, 8, 16, ...
+// The second thread (offset 1), will sum 1, 9, 17, ...
+// The third thread (offset 2), will sum 2, 10, 18, ...
+// ...
+// The eighth thread (offset 7), will sum 7, 15, 23, ...
+//
+// Because we are using threads, our values need to be thread-safe.  Therefore,
+// we are using Arc.  We need to make a change in each of the two TODOs.
+
+#![forbid(unused_imports)] // Do not change this, (or the next) line.
+use std::sync::Arc;
+use std::thread;
+
+fn main() {
+    let numbers: Vec<_> = (0..100u32).collect();
+    let shared_numbers = // TODO: Use Arc to share the numbers between threads
+    let mut joinhandles = Vec::new();
+
+    for offset in 0..8 {
+        let child_numbers = // TODO: Clone the Arc to share with the thread
+        joinhandles.push(thread::spawn(move || {
+            let sum: u32 = child_numbers.iter().filter(|n| *n % 8 == offset).sum();
+            println!("Sum of offset {} is {}", offset, sum);
+        }));
+    }
+    for handle in joinhandles.into_iter() {
+        handle.join().unwrap();
+    }
+}
+`,
+  },
+
+  // Macros
+  {
+    id: "macros1",
+    name: "macros1",
+    path: "exercises/macros/macros1.rs",
+    topic: "macros",
+    mode: "compile",
+    hint: "When you call a macro, you need to add something special compared to a regular function call. If you're stuck, take a look at what's inside the vec! brackets for a clue.",
+    code: `// macros1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+macro_rules! my_macro {
+    () => {
+        println!("Check out my macro!");
+    };
+}
+
+fn main() {
+    my_macro();
+}
+`,
+  },
+  {
+    id: "macros2",
+    name: "macros2",
+    path: "exercises/macros/macros2.rs",
+    topic: "macros",
+    mode: "compile",
+    hint: "Macros don't quite work like functions. It might help to look at the Rust Book section on macros: https://doc.rust-lang.org/book/ch19-06-macros.html",
+    code: `// macros2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+fn main() {
+    my_macro!();
+}
+
+macro_rules! my_macro {
+    () => {
+        println!("Check out my macro!");
+    };
+}
+`,
+  },
+  {
+    id: "macros3",
+    name: "macros3",
+    path: "exercises/macros/macros3.rs",
+    topic: "macros",
+    mode: "compile",
+    hint: "In order to use a macro outside of its module, you need to do something special to the module to lift the macro out into its parent. The same trick also works on 'extern crate' statements for crates that have exported macros.",
+    code: `// macros3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// Make me compile, without taking the macro out of the module!
+
+mod macros {
+    macro_rules! my_macro {
+        () => {
+            println!("Check out my macro!");
+        };
+    }
+}
+
+fn main() {
+    my_macro!();
+}
+`,
+  },
+  {
+    id: "macros4",
+    name: "macros4",
+    path: "exercises/macros/macros4.rs",
+    topic: "macros",
+    mode: "compile",
+    hint: "You only need to add a single character to make this compile. The way macros are written, it wants to see something between each arm's matcher and its expansion.",
+    code: `// macros4.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+macro_rules! my_macro {
+    () => {
+        println!("Check out my macro!");
+    }
+    ($val:expr) => {
+        println!("Look at this other macro: {}", $val);
+    }
+}
+
+fn main() {
+    my_macro!();
+    my_macro!(7777);
+}
+`,
+  },
+
+  // Conversions
+  {
+    id: "from_into",
+    name: "from_into",
+    path: "exercises/conversions/from_into.rs",
+    topic: "conversions",
+    mode: "test",
+    hint: "Follow the steps provided right before the From implementation. You can also use the example at https://doc.rust-lang.org/std/convert/trait.From.html to help you.",
+    code: `// from_into.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// The From trait is used for value-to-value conversions.
+// If From is implemented correctly for a type, the Into trait should work conversely.
+// You can read more about it at https://doc.rust-lang.org/std/convert/trait.From.html
+
+#[derive(Debug)]
+struct Person {
+    name: String,
+    age: usize,
+}
+
+// We implement the Default trait to use it as a fallback
+// when the provided string is not convertible into a Person object
+impl Default for Person {
+    fn default() -> Person {
+        Person {
+            name: String::from("John"),
+            age: 30,
+        }
+    }
+}
+
+// Your task is to complete this implementation
+// in order for the line \`let p = Person::from("Mark,20")\` to compile
+// Please note that you'll need to parse the age component into a \`usize\`
+// with something like \`"4".parse::<usize>()\`.
+// This will need to be handled with a fallback method.
+// Result<T, E> implements the \`unwrap_or\` method which you can use to return a default value.
+
+impl From<&str> for Person {
+    fn from(s: &str) -> Person {
+    }
+}
+
+fn main() {
+    // Use the \`from\` function
+    let p1 = Person::from("Mark,20");
+    // Since From is implemented for Person, we should be able to use Into
+    let p2: Person = "Gerald,70".into();
+    println!("{:?}", p1);
+    println!("{:?}", p2);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_default() {
+        // Test that the default person is 30 year old John
+        let dp = Person::default();
+        assert_eq!(dp.name, "John");
+        assert_eq!(dp.age, 30);
+    }
+    #[test]
+    fn test_bad_convert() {
+        // Test that John is returned when bad string is provided
+        let p = Person::from("");
+        assert_eq!(p.name, "John");
+        assert_eq!(p.age, 30);
+    }
+    #[test]
+    fn test_good_convert() {
+        // Test that "Mark,20" works
+        let p = Person::from("Mark,20");
+        assert_eq!(p.name, "Mark");
+        assert_eq!(p.age, 20);
+    }
+    #[test]
+    fn test_bad_age() {
+        // Test that "Mark,twenty" will default to the default person due to an error in parsing age
+        let p = Person::from("Mark,twenty");
+        assert_eq!(p.name, "John");
+        assert_eq!(p.age, 30);
+    }
+
+    #[test]
+    fn test_missing_comma_and_age() {
+        let p: Person = Person::from("Mark");
+        assert_eq!(p.name, "John");
+        assert_eq!(p.age, 30);
+    }
+
+    #[test]
+    fn test_missing_age() {
+        let p: Person = Person::from("Mark,");
+        assert_eq!(p.name, "John");
+        assert_eq!(p.age, 30);
+    }
+
+    #[test]
+    fn test_missing_name() {
+        let p: Person = Person::from(",1");
+        assert_eq!(p.name, "John");
+        assert_eq!(p.age, 30);
+    }
+
+    #[test]
+    fn test_missing_name_and_age() {
+        let p: Person = Person::from(",");
+        assert_eq!(p.name, "John");
+        assert_eq!(p.age, 30);
+    }
+
+    #[test]
+    fn test_missing_name_and_invalid_age() {
+        let p: Person = Person::from(",one");
+        assert_eq!(p.name, "John");
+        assert_eq!(p.age, 30);
+    }
+
+    #[test]
+    fn test_trailing_comma() {
+        let p: Person = Person::from("Mike,32,");
+        assert_eq!(p.name, "John");
+        assert_eq!(p.age, 30);
+    }
+
+    #[test]
+    fn test_trailing_comma_and_some_string() {
+        let p: Person = Person::from("Mike,32,man");
+        assert_eq!(p.name, "John");
+        assert_eq!(p.age, 30);
+    }
+}
+`,
+  },
+  {
+    id: "from_str",
+    name: "from_str",
+    path: "exercises/conversions/from_str.rs",
+    topic: "conversions",
+    mode: "test",
+    hint: "The implementation of FromStr should return an Ok with a Person object, or an Err with an error if the string is not valid. This is almost like the From trait, but returns a Result instead of being infallible.",
+    code: `// from_str.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// This is similar to from_into.rs, but uses the FromStr trait.
+// Additionally, upon implementing FromStr, you can use the \`parse\` method
+// on strings to generate an object of the implementor type.
+// You can read more about it at https://doc.rust-lang.org/std/str/trait.FromStr.html
+
+use std::num::ParseIntError;
+use std::str::FromStr;
+
+#[derive(Debug, PartialEq)]
+struct Person {
+    name: String,
+    age: usize,
+}
+
+// We will use this error type for the \`FromStr\` implementation.
+#[derive(Debug, PartialEq)]
+enum ParsePersonError {
+    // Empty input string
+    Empty,
+    // Incorrect number of fields
+    BadLen,
+    // Empty name field
+    NoName,
+    // Wrapped error from parse::<usize>()
+    ParseInt(ParseIntError),
+}
+
+// Steps:
+// 1. If the length of the provided string is 0, an error should be returned
+// 2. Split the given string on the commas present in it
+// 3. Only 2 elements should be returned from the split, otherwise return an error
+// 4. Extract the first element from the split operation and use it as the name
+// 5. Extract the other element from the split operation and parse it into a \`usize\` as the age
+//    with something like \`"4".parse::<usize>()\`
+// 6. If while extracting the name and the age something goes wrong, an error should be returned
+// If everything goes well, then return a Result of a Person object
+//
+// As an aside: \`Box<dyn Error>\` implements \`From<&'_ str>\`. This means that if you want to return a
+// string error message, you can do so via just using return Err("my error message".into()).
+
+impl FromStr for Person {
+    type Err = ParsePersonError;
+    fn from_str(s: &str) -> Result<Person, Self::Err> {
+    }
+}
+
+fn main() {
+    let p = "Mark,20".parse::<Person>().unwrap();
+    println!("{:?}", p);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn empty_input() {
+        assert_eq!("".parse::<Person>(), Err(ParsePersonError::Empty));
+    }
+    #[test]
+    fn good_input() {
+        let p = "John,32".parse::<Person>();
+        assert!(p.is_ok());
+        let p = p.unwrap();
+        assert_eq!(p.name, "John");
+        assert_eq!(p.age, 32);
+    }
+    #[test]
+    fn missing_age() {
+        assert!(matches!(
+            "John,".parse::<Person>(),
+            Err(ParsePersonError::ParseInt(_))
+        ));
+    }
+
+    #[test]
+    fn invalid_age() {
+        assert!(matches!(
+            "John,twenty".parse::<Person>(),
+            Err(ParsePersonError::ParseInt(_))
+        ));
+    }
+
+    #[test]
+    fn missing_comma_and_age() {
+        assert_eq!("John".parse::<Person>(), Err(ParsePersonError::BadLen));
+    }
+
+    #[test]
+    fn missing_name() {
+        assert_eq!(",1".parse::<Person>(), Err(ParsePersonError::NoName));
+    }
+
+    #[test]
+    fn missing_name_and_age() {
+        assert!(matches!(
+            ",".parse::<Person>(),
+            Err(ParsePersonError::NoName | ParsePersonError::ParseInt(_))
+        ));
+    }
+
+    #[test]
+    fn missing_name_and_invalid_age() {
+        assert!(matches!(
+            ",one".parse::<Person>(),
+            Err(ParsePersonError::NoName | ParsePersonError::ParseInt(_))
+        ));
+    }
+
+    #[test]
+    fn trailing_comma() {
+        assert_eq!("John,32,".parse::<Person>(), Err(ParsePersonError::BadLen));
+    }
+
+    #[test]
+    fn trailing_comma_and_some_string() {
+        assert_eq!(
+            "John,32,man".parse::<Person>(),
+            Err(ParsePersonError::BadLen)
+        );
+    }
+}
+`,
+  },
+  {
+    id: "try_from_into",
+    name: "try_from_into",
+    path: "exercises/conversions/try_from_into.rs",
+    topic: "conversions",
+    mode: "test",
+    hint: "Follow the steps provided right before the TryFrom implementation. You can also use the example at https://doc.rust-lang.org/std/convert/trait.TryFrom.html Reminder: You can use the \`?\" operator in functions that return Result to propagate errors.",
+    code: `// try_from_into.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// TryFrom is a simple and safe type conversion that may fail in a controlled way under some circumstances.
+// Basically, this is the same as From. The main difference is that this should return a Result type
+// instead of the target type itself.
+// You can read more about it at https://doc.rust-lang.org/std/convert/trait.TryFrom.html
+
+use std::convert::{TryFrom, TryInto};
+
+#[derive(Debug, PartialEq)]
+struct Color {
+    red: u8,
+    green: u8,
+    blue: u8,
+}
+
+// We will use this error type for these \`TryFrom\` conversions.
+#[derive(Debug, PartialEq)]
+enum IntoColorError {
+    // Incorrect length of slice
+    BadLen,
+    // Integer conversion error
+    IntConversion,
+}
+
+// Your task is to complete this implementation
+// and return an Ok result of inner type Color.
+// You need to create an implementation for a tuple of three integers,
+// an array of three integers, and a slice of integers.
+//
+// Note that the implementation for tuple and array will be checked at compile time,
+// but the slice implementation needs to check the slice length!
+// Also note that correct RGB color values must be integers in the 0..=255 range.
+
+// Tuple implementation
+impl TryFrom<(i16, i16, i16)> for Color {
+    type Error = IntoColorError;
+    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+    }
+}
+
+// Array implementation
+impl TryFrom<[i16; 3]> for Color {
+    type Error = IntoColorError;
+    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+    }
+}
+
+// Slice implementation
+impl TryFrom<&[i16]> for Color {
+    type Error = IntoColorError;
+    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+    }
+}
+
+fn main() {
+    // Use the \`from\` function
+    let c1 = Color::try_from((183, 65, 14));
+    println!("{:?}", c1);
+
+    // Since TryFrom is implemented for Color, we should be able to use TryInto
+    let c2: Result<Color, _> = [183, 65, 14].try_into();
+    println!("{:?}", c2);
+
+    let v = vec![183, 65, 14];
+    // With slice we should use \`try_from\` function
+    let c3 = Color::try_from(&v[..]);
+    println!("{:?}", c3);
+    // or take slice within round brackets and use TryInto
+    let c4: Result<Color, _> = (&v[..]).try_into();
+    println!("{:?}", c4);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_tuple_out_of_range_positive() {
+        assert_eq!(
+            Color::try_from((256, 1000, 10000)),
+            Err(IntoColorError::IntConversion)
+        );
+    }
+    #[test]
+    fn test_tuple_out_of_range_negative() {
+        assert_eq!(
+            Color::try_from((-1, -10, -256)),
+            Err(IntoColorError::IntConversion)
+        );
+    }
+    #[test]
+    fn test_tuple_sum() {
+        assert_eq!(
+            Color::try_from((-1, 255, 255)),
+            Err(IntoColorError::IntConversion)
+        );
+    }
+    #[test]
+    fn test_tuple_correct() {
+        let c: Result<Color, _> = (183, 65, 14).try_into();
+        assert!(c.is_ok());
+        assert_eq!(
+            c.unwrap(),
+            Color {
+                red: 183,
+                green: 65,
+                blue: 14
+            }
+        );
+    }
+    #[test]
+    fn test_array_out_of_range_positive() {
+        let c: Result<Color, _> = [1000, 10000, 256].try_into();
+        assert_eq!(c, Err(IntoColorError::IntConversion));
+    }
+    #[test]
+    fn test_array_out_of_range_negative() {
+        let c: Result<Color, _> = [-10, -256, -1].try_into();
+        assert_eq!(c, Err(IntoColorError::IntConversion));
+    }
+    #[test]
+    fn test_array_sum() {
+        let c: Result<Color, _> = [-1, 255, 255].try_into();
+        assert_eq!(c, Err(IntoColorError::IntConversion));
+    }
+    #[test]
+    fn test_array_correct() {
+        let c: Result<Color, _> = [183, 65, 14].try_into();
+        assert!(c.is_ok());
+        assert_eq!(
+            c.unwrap(),
+            Color {
+                red: 183,
+                green: 65,
+                blue: 14
+            }
+        );
+    }
+    #[test]
+    fn test_slice_out_of_range_positive() {
+        let arr = [10000, 256, 1000];
+        assert_eq!(
+            Color::try_from(&arr[..]),
+            Err(IntoColorError::IntConversion)
+        );
+    }
+    #[test]
+    fn test_slice_out_of_range_negative() {
+        let arr = [-256, -1, -10];
+        assert_eq!(
+            Color::try_from(&arr[..]),
+            Err(IntoColorError::IntConversion)
+        );
+    }
+    #[test]
+    fn test_slice_sum() {
+        let arr = [-1, 255, 255];
+        assert_eq!(
+            Color::try_from(&arr[..]),
+            Err(IntoColorError::IntConversion)
+        );
+    }
+    #[test]
+    fn test_slice_correct() {
+        let v = vec![183, 65, 14];
+        let c: Result<Color, _> = Color::try_from(&v[..]);
+        assert!(c.is_ok());
+        assert_eq!(
+            c.unwrap(),
+            Color {
+                red: 183,
+                green: 65,
+                blue: 14
+            }
+        );
+    }
+    #[test]
+    fn test_slice_excess_length() {
+        let v = vec![0, 0, 0, 0];
+        assert_eq!(Color::try_from(&v[..]), Err(IntoColorError::BadLen));
+    }
+    #[test]
+    fn test_slice_insufficient_length() {
+        let v = vec![0, 0];
+        assert_eq!(Color::try_from(&v[..]), Err(IntoColorError::BadLen));
+    }
+}
+`,
+  },
+  {
+    id: "as_ref_mut",
+    name: "as_ref_mut",
+    path: "exercises/conversions/as_ref_mut.rs",
+    topic: "conversions",
+    mode: "test",
+    hint: "Add AsRef<str> or AsMut<u32> as a trait bound to the functions.",
+    code: `// as_ref_mut.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// AsRef and AsMut allow for cheap reference-to-reference conversions.
+// Read more about them at https://doc.rust-lang.org/std/convert/trait.AsRef.html
+// and https://doc.rust-lang.org/std/convert/trait.AsMut.html, respectively.
+
+// Obtain the number of bytes (not characters) in the given argument.
+// TODO: Add the AsRef trait appropriately as a trait bound.
+fn byte_counter<T>(arg: T) -> usize {
+    arg.as_ref().as_bytes().len()
+}
+
+// Obtain the number of characters (not bytes) in the given argument.
+// TODO: Add the AsRef trait appropriately as a trait bound.
+fn char_counter<T>(arg: T) -> usize {
+    arg.as_ref().chars().count()
+}
+
+// Squares a number using as_mut().
+// TODO: Add the appropriate trait bound.
+fn num_sq<T>(arg: &mut T) {
+    // TODO: Implement the function body.
+    ???
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn different_counts() {
+        let s = "Café au lait";
+        assert_ne!(char_counter(s), byte_counter(s));
+    }
+
+    #[test]
+    fn same_counts() {
+        let s = "Cafe au lait";
+        assert_eq!(char_counter(s), byte_counter(s));
+    }
+
+    #[test]
+    fn different_counts_using_string() {
+        let s = String::from("Café au lait");
+        assert_ne!(char_counter(s.clone()), byte_counter(s));
+    }
+
+    #[test]
+    fn same_counts_using_string() {
+        let s = String::from("Cafe au lait");
+        assert_eq!(char_counter(s.clone()), byte_counter(s));
+    }
+
+    #[test]
+    fn mult_box() {
+        let mut num: Box<u32> = Box::new(3);
+        num_sq(&mut num);
+        assert_eq!(*num, 9);
+    }
+}
+`,
+  },
+
+  // Clippy
+  {
+    id: "clippy1",
+    name: "clippy1",
+    path: "exercises/clippy/clippy1.rs",
+    topic: "clippy",
+    mode: "compile",
+    hint: "Not every floating point value can be represented exactly in binary. Take a look at the description of f32 to know more: https://doc.rust-lang.org/stable/std/primitive.f32.html",
+    code: `// clippy1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// The Clippy tool is a collection of lints to analyze your code
+// so you can catch common mistakes and improve your Rust code.
+//
+// For these exercises the code will fail to compile when there are clippy warnings
+// check clippy's suggestions from the output to solve the exercise.
+
+use std::f32;
+
+fn main() {
+    let pi = 3.14f32;
+    let radius = 5.00f32;
+
+    let area = pi * f32::powi(radius, 2);
+
+    println!(
+        "The area of a circle with radius {:.2} is {:.5}!",
+        radius, area
+    )
+}
+`,
+  },
+  {
+    id: "clippy2",
+    name: "clippy2",
+    path: "exercises/clippy/clippy2.rs",
+    topic: "clippy",
+    mode: "compile",
+    hint: "clippy::needless_if is a lint https://rust-lang.github.io/rust-clippy/master/#needless_if",
+    code: `// clippy2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+
+fn main() {
+    let mut res = 42;
+    let option = Some(12);
+    for x in option {
+        res += x;
+    }
+    println!("{}", res);
+}
+`,
+  },
+  {
+    id: "clippy3",
+    name: "clippy3",
+    path: "exercises/clippy/clippy3.rs",
+    topic: "clippy",
+    mode: "compile",
+    hint: "clippy::almost_swapped, clippy::manual_swap and clippy::almost_complete_range are related lints",
+    code: `// clippy3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// Here's a couple more easy Clippy fixes, so you can see its utility.
+
+#[allow(unused_variables, unused_assignments)]
+fn main() {
+    let my_option: Option<()> = None;
+    if my_option.is_none() {
+        my_option.unwrap();
+    }
+
+    let my_arr = &[
+        -1, -2, -3
+        -4, -5, -6
+    ];
+    println!("My array! Here it is: {:?}", my_arr);
+
+    let my_empty_vec = vec![1, 2, 3, 4, 5].resize(0, 5);
+    println!("This Vec is empty, see? {:?}", my_empty_vec);
+
+    let mut value_a = 45;
+    let mut value_b = 66;
+    // Let's swap these two!
+    value_a = value_b;
+    value_b = value_a;
+    println!("value a: {}; value b: {}", value_a, value_b);
+}
+`,
+  },
+
+  // Quizzes
+  {
+    id: "quiz1",
+    name: "quiz1",
+    path: "exercises/quiz1.rs",
+    topic: "quiz",
+    mode: "test",
+    hint: "No hints this time :)",
+    code: `// quiz1.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// This is a quiz for the following sections:
+// - Variables
+// - Functions
+// - If
+
+// Mary is buying apples. The price of an apple is calculated as follows:
+// - An apple costs 2 rustbucks.
+// - If Mary buys more than 40 apples, each apple only costs 1 rustbuck!
+// Write a function that calculates the price of an order of apples given
+// the quantity bought. No hints this time!
+
+// Put your function here!
+// fn calculate_price_of_apples {
+
+// Don't modify this function!
+#[test]
+fn verify_test() {
+    let price1 = calculate_price_of_apples(40);
+    let price2 = calculate_price_of_apples(41);
+
+    assert_eq!(80, price1);
+    assert_eq!(41, price2);
+}
+`,
+  },
+  {
+    id: "quiz2",
+    name: "quiz2",
+    path: "exercises/quiz2.rs",
+    topic: "quiz",
+    mode: "compile",
+    hint: "No hints this time :)",
+    code: `// quiz2.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// This is a quiz for the following sections:
+// - Strings
+// - Vecs
+// - Move semantics
+// - Modules
+// - Enums
+
+// Let's build a little machine in the form of a function.
+// As input, we're going to give a list of strings and commands. These commands
+// determine what action is going to be applied to the string. It can either be:
+// - Uppercase the string
+// - Trim the string
+// - Append "bar" to the string a specified amount of times
+// The exact form of this will be:
+// - The input is going to be a vector of a 2-length tuple,
+//   the first element is the string, the second one is the command.
+// - The output element is going to be a vector of strings.
+
+pub enum Command {
+    Uppercase,
+    Trim,
+    Append(usize),
+}
+
+mod my_module {
+    use super::Command;
+
+    // TODO: Complete the function signature!
+    pub fn transformer(input: ???) -> ??? {
+        // TODO: Complete the output declaration!
+        let mut output: ??? = vec![];
+        for (string, command) in input.iter() {
+            // TODO: Complete the function body. You can do it!
+        }
+        output
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    // TODO: What do we need to import to have \`transformer\` in scope?
+    use ???;
+    use super::Command;
+
+    #[test]
+    fn it_works() {
+        let output = transformer(vec![
+            ("hello".into(), Command::Uppercase),
+            (" all roads lead to rome! ".into(), Command::Trim),
+            ("foo".into(), Command::Append(1)),
+            ("bar".into(), Command::Append(5)),
+        ]);
+        assert_eq!(output[0], "HELLO");
+        assert_eq!(output[1], "all roads lead to rome!");
+        assert_eq!(output[2], "foobar");
+        assert_eq!(output[3], "barbarbarbarbarbar");
+    }
+}
+`,
+  },
+  {
+    id: "quiz3",
+    name: "quiz3",
+    path: "exercises/quiz3.rs",
+    topic: "quiz",
+    mode: "test",
+    hint: "To find the average of two numbers, you need to add them and divide by 2.0. Use as casting to convert usize to f64.",
+    code: `// quiz3.rs
+// This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
+// Licensed under the MIT License
+// Copyright (c) 2015 Carol (Nichols || Goulding)
+//
+// This quiz tests:
+// - Generics
+// - Traits
+//
+// An imaginary magical school has a new report card generation system written in Rust!
+// Currently the system only supports creating report cards where the student's grade 
+// is represented numerically (e.g. 1.0 -> 5.5).
+// However, the school also issues alphabetical grades (A+ -> F-) and needs 
+// to be able to print both types of report card!
+
+// Make the necessary code changes in the struct ReportCard and the impl block
+// to support alphabetical report cards. Change the Grade in the second test to \`"A+"\`
+// to show that your changes are working.
+// Execute \`rustlings hint quiz3\` or use the \`hint\` watch subcommand for a hint.
+
+pub struct ReportCard {
+    pub grade: f32,
+    pub student_name: String,
+    pub student_age: u8,
+}
+
+impl ReportCard {
+    pub fn print(&self) -> String {
+        format!("{} ({}) - achieved a grade of {}",
+            &self.student_name, &self.student_age, &self.grade)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn generate_numeric_report_card() {
+        let report_card = ReportCard {
+            grade: 2.1,
+            student_name: "Tom Wriggle".to_string(),
+            student_age: 12,
+        };
+        assert_eq!(
+            report_card.print(),
+            "Tom Wriggle (12) - achieved a grade of 2.1"
+        );
+    }
+
+    #[test]
+    fn generate_alphabetic_report_card() {
+        // TODO: Make sure to change the grade here after you finish the exercise.
+        let report_card = ReportCard {
+            grade: 2.1,
+            student_name: "Gary Plotter".to_string(),
+            student_age: 11,
+        };
+        assert_eq!(
+            report_card.print(),
+            "Gary Plotter (11) - achieved a grade of A+"
+        );
+    }
+}
+`,
+  },
 ];
