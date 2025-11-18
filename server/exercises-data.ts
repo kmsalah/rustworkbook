@@ -1769,7 +1769,7 @@ trait AppendBar {
 }
 
 impl AppendBar for String {
-    // TODO: Implement `AppendBar` for type `String`.
+    // TODO: Implement AppendBar for type String.
     fn append_bar(self) -> Self {
         todo!()
     }
@@ -1817,7 +1817,7 @@ trait AppendBar {
     fn append_bar(self) -> Self;
 }
 
-// TODO: Implement trait `AppendBar` for a vector of strings.
+// TODO: Implement trait AppendBar for a vector of strings.
 
 #[cfg(test)]
 mod tests {
@@ -2068,7 +2068,7 @@ mod tests {
 //
 
 // Step 1.
-// Complete the `capitalize_first` function.
+// Complete the capitalize_first function.
 // "hello" -> "Hello"
 pub fn capitalize_first(input: &str) -> String {
     let mut c = input.chars();
@@ -2079,7 +2079,7 @@ pub fn capitalize_first(input: &str) -> String {
 }
 
 // Step 2.
-// Apply the `capitalize_first` function to a slice of string slices.
+// Apply the capitalize_first function to a slice of string slices.
 // Return a vector of strings.
 // ["hello", "world"] -> ["Hello", "World"]
 pub fn capitalize_words_vector(words: &[&str]) -> Vec<String> {
@@ -2087,7 +2087,7 @@ pub fn capitalize_words_vector(words: &[&str]) -> Vec<String> {
 }
 
 // Step 3.
-// Apply the `capitalize_first` function again to a slice of string slices.
+// Apply the capitalize_first function again to a slice of string slices.
 // Return a single string with all the strings joined.
 // ["hello", " ", "world"] -> "Hello World"
 pub fn capitalize_words_string(words: &[&str]) -> String {
@@ -2147,7 +2147,7 @@ pub struct NotDivisibleError {
     divisor: i32,
 }
 
-// Calculate `a` divided by `b` if `a` is evenly divisible by `b`.
+// Calculate a divided by b if a is evenly divisible by b.
 // Otherwise, return a suitable error.
 pub fn divide(a: i32, b: i32) -> Result<i32, DivisionError> {
     if b == 0 {
@@ -2228,7 +2228,7 @@ pub fn factorial(num: u64) -> u64 {
     // - additional variables
     // For an extra challenge, don't use:
     // - recursion
-    // Execute `rustlings hint iterators4` for hints.
+    // Execute rustlings hint iterators4 for hints.
 }
 
 #[cfg(test)]
