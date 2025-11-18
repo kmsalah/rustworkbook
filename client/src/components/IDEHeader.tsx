@@ -23,6 +23,8 @@ import type { User } from "@shared/schema";
 import logoUrl from "@/assets/logo.png";
 import { AboutModal } from "./AboutModal";
 import { DonationModal } from "./DonationModal";
+import { CompletionBadge } from "./CompletionBadge";
+import { useQuery } from "@tanstack/react-query";
 
 interface IDEHeaderProps {
   exerciseName: string;
@@ -54,6 +56,22 @@ export function IDEHeader({
   isMobile = false,
 }: IDEHeaderProps) {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
+
+  // Fetch exercises to get total count
+  const { data: exercises } = useQuery<any[]>({
+    queryKey: ["/api/exercises"],
+  });
+
+  // Fetch user progress if authenticated
+  const { data: progressData } = useQuery<{ completedExercises: string[] }>({
+    queryKey: ["/api/progress"],
+    enabled: !!user,
+  });
+
+  // Calculate if user has completed all exercises
+  const totalExercises = exercises?.length || 0;
+  const userCompletedCount = progressData?.completedExercises?.length || 0;
+  const hasCompletedAll = user && totalExercises > 0 && userCompletedCount >= totalExercises;
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
@@ -140,8 +158,11 @@ export function IDEHeader({
               
               {user ? (
                 <>
-                  <DropdownMenuLabel className="text-xs">
-                    {user.firstName || user.email || "User"}
+                  <DropdownMenuLabel className="text-xs flex items-center gap-2">
+                    <span>{user.firstName || user.email || "User"}</span>
+                    {hasCompletedAll && (
+                      <CompletionBadge className="h-4 w-4 text-red-500" />
+                    )}
                   </DropdownMenuLabel>
                   <DropdownMenuItem
                     onClick={() => window.location.href = "/api/logout"}
@@ -305,8 +326,11 @@ export function IDEHeader({
             <DropdownMenuContent align="end" data-testid="menu-user">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               {user.email && (
-                <DropdownMenuLabel className="font-normal text-xs text-muted-foreground">
-                  {user.email}
+                <DropdownMenuLabel className="font-normal text-xs text-muted-foreground flex items-center gap-2">
+                  <span>{user.email}</span>
+                  {hasCompletedAll && (
+                    <CompletionBadge className="h-4 w-4 text-red-500" />
+                  )}
                 </DropdownMenuLabel>
               )}
               <DropdownMenuSeparator />
