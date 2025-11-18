@@ -66,6 +66,7 @@ export function IDEHeader({
   const { data: progressData } = useQuery<{ completedExercises: string[] }>({
     queryKey: ["/api/progress"],
     enabled: !!user,
+    retry: false, // Don't retry on 401 errors
   });
 
   // Calculate if user has completed all exercises

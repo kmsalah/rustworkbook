@@ -2683,13 +2683,13 @@ mod test {
 `,
   },
   {
-    id: "hashmaps1",
-    name: "hashmaps1",
-    path: "exercises/hashmaps/hashmaps1.rs",
+    id: "hashmaps4",
+    name: "hashmaps4",
+    path: "exercises/hashmaps/hashmaps4.rs",
     topic: "hashmaps",
     mode: "test",
     hint: "Take a look at the return type of the function to figure out what type the basket should be.",
-    code: `// hashmaps1.rs
+    code: `// hashmaps4.rs
 // This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
@@ -2917,13 +2917,13 @@ mod tests {
 
   // Lifetimes
   {
-    id: "lifetimes1",
-    name: "lifetimes1",
-    path: "exercises/lifetimes/lifetimes1.rs",
+    id: "lifetimes4",
+    name: "lifetimes4",
+    path: "exercises/lifetimes/lifetimes4.rs",
     topic: "lifetimes",
     mode: "compile",
     hint: "Let the compiler guide you! Also take a look at the book if you need help: https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html",
-    code: `// lifetimes1.rs
+    code: `// lifetimes4.rs
 // This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
@@ -3016,13 +3016,13 @@ fn main() {
 
   // Tests
   {
-    id: "tests1",
-    name: "tests1",
-    path: "exercises/tests/tests1.rs",
+    id: "tests5",
+    name: "tests5",
+    path: "exercises/tests/tests5.rs",
     topic: "tests",
     mode: "test",
     hint: "You don't even need to write any code to test -- you can just test values and run that, even though you wouldn't do that in real life :) assert! is a macro that needs an argument. Depending on the value of the argument, assert! will do nothing (in which case the test will pass) or assert! will panic (in which case the test will fail). So try giving different values to assert! and see which ones compile, which ones pass, and which ones fail :)",
-    code: `// tests1.rs
+    code: `// tests5.rs
 // This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
@@ -3159,13 +3159,13 @@ mod tests {
 
   // Threads
   {
-    id: "threads1",
-    name: "threads1",
-    path: "exercises/threads/threads1.rs",
+    id: "threads4",
+    name: "threads4",
+    path: "exercises/threads/threads4.rs",
     topic: "threads",
     mode: "compile",
     hint: "JoinHandles are a return type of thread::spawn. Look at the docs for https://doc.rust-lang.org/std/thread/fn.spawn.html",
-    code: `// threads1.rs
+    code: `// threads4.rs
 // This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
@@ -3321,13 +3321,13 @@ mod tests {
 
   // Smart Pointers
   {
-    id: "box1",
-    name: "box1",
-    path: "exercises/smart_pointers/box1.rs",
+    id: "box2",
+    name: "box2",
+    path: "exercises/smart_pointers/box2.rs",
     topic: "smart_pointers",
     mode: "compile",
     hint: "At compile time, the size of a recursive type (like List) cannot be determined. Wrapping the recursive part of the List definition in a Box (a heap-allocated smart pointer) allows it to have a defined size.",
-    code: `// box1.rs
+    code: `// box2.rs
 // This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
@@ -3538,13 +3538,13 @@ fn main() {
 
   // Macros
   {
-    id: "macros1",
-    name: "macros1",
-    path: "exercises/macros/macros1.rs",
+    id: "macros5",
+    name: "macros5",
+    path: "exercises/macros/macros5.rs",
     topic: "macros",
     mode: "compile",
     hint: "When you call a macro, you need to add something special compared to a regular function call. If you're stuck, take a look at what's inside the vec! brackets for a clue.",
-    code: `// macros1.rs
+    code: `// macros5.rs
 // This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
@@ -3643,13 +3643,13 @@ fn main() {
 
   // Conversions
   {
-    id: "from_into",
-    name: "from_into",
-    path: "exercises/conversions/from_into.rs",
+    id: "from_into2",
+    name: "from_into2",
+    path: "exercises/conversions/from_into2.rs",
     topic: "conversions",
     mode: "test",
     hint: "Follow the steps provided right before the From implementation. You can also use the example at https://doc.rust-lang.org/std/convert/trait.From.html to help you.",
-    code: `// from_into.rs
+    code: `// from_into2.rs
 // This exercise is from the Rustlings project (https://github.com/rust-lang/rustlings)
 // Licensed under the MIT License
 // Copyright (c) 2015 Carol (Nichols || Goulding)
