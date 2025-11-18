@@ -25,8 +25,8 @@ export default function Home() {
   const { toast } = useToast();
 
   // Media queries for responsive design
-  const isMobile = useMediaQuery("(max-width: 768px)");
-  const isTablet = useMediaQuery("(min-width: 769px) and (max-width: 1024px)");
+  const isMobile = useMediaQuery("(max-width: 767px)");
+  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1024px)");
   const isDesktop = useMediaQuery("(min-width: 1025px)");
   
   // Mobile tab state
