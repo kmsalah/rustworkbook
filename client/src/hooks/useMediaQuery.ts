@@ -40,7 +40,7 @@ export function useMediaQuery(query: string): boolean {
         media.removeListener(listener);
       }
     };
-  }, [query, matches]);
+  }, [query]); // Removed 'matches' from dependency array for better performance
 
   return matches;
 }

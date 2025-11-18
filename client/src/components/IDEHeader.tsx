@@ -1,4 +1,4 @@
-import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn } from "lucide-react";
+import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -36,6 +36,7 @@ interface IDEHeaderProps {
   hasPreviousExercise?: boolean;
   hasNextExercise?: boolean;
   user?: User;
+  isMobile?: boolean;
 }
 
 export function IDEHeader({
@@ -50,6 +51,7 @@ export function IDEHeader({
   hasPreviousExercise = false,
   hasNextExercise = false,
   user,
+  isMobile = false,
 }: IDEHeaderProps) {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
@@ -70,6 +72,119 @@ export function IDEHeader({
     document.documentElement.classList.toggle("dark", newTheme === "dark");
   };
 
+  // Mobile header - simplified with essential controls
+  if (isMobile) {
+    return (
+      <header className="h-14 border-b border-border bg-background px-2 flex items-center justify-between flex-shrink-0" data-testid="header-ide">
+        <div className="flex items-center gap-1">
+          <RustWorkbookLogo className="h-8 w-32 text-primary" />
+        </div>
+        
+        <div className="flex items-center gap-1">
+          <Button
+            onClick={onRunCode}
+            disabled={isCompiling || !exerciseName}
+            size="sm"
+            className="gap-1"
+            data-testid="button-run-code"
+          >
+            <Play className="h-3 w-3" />
+            {isCompiling ? "..." : "Run"}
+          </Button>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-8 w-8"
+                data-testid="button-menu"
+              >
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {exerciseName && (
+                <>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      const dialogButton = document.querySelector('[data-testid="button-show-hint"]') as HTMLButtonElement;
+                      dialogButton?.click();
+                    }}
+                    data-testid="menuitem-hint"
+                  >
+                    <HelpCircle className="mr-2 h-4 w-4" />
+                    Show Hint
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={onReset}
+                    data-testid="menuitem-reset"
+                  >
+                    <RotateCcw className="mr-2 h-4 w-4" />
+                    Reset Code
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </>
+              )}
+              
+              <DropdownMenuItem
+                onClick={toggleTheme}
+                data-testid="menuitem-theme"
+              >
+                {theme === "dark" ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
+                {theme === "dark" ? "Light Mode" : "Dark Mode"}
+              </DropdownMenuItem>
+              
+              <DropdownMenuSeparator />
+              
+              {user ? (
+                <>
+                  <DropdownMenuLabel className="text-xs">
+                    {user.firstName || user.email || "User"}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem
+                    onClick={() => window.location.href = "/api/logout"}
+                    data-testid="menuitem-logout"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log Out
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <DropdownMenuItem
+                  onClick={() => window.location.href = "/api/login"}
+                  data-testid="menuitem-login"
+                >
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Sign In
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        
+        {/* Hidden hint dialog that can be triggered from menu */}
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              className="hidden"
+              data-testid="button-show-hint"
+            />
+          </DialogTrigger>
+          <DialogContent data-testid="dialog-hint">
+            <DialogHeader>
+              <DialogTitle>Exercise Hint</DialogTitle>
+            </DialogHeader>
+            <div className="text-sm mt-4 whitespace-pre-wrap text-muted-foreground">
+              {hint || "No hint available for this exercise."}
+            </div>
+          </DialogContent>
+        </Dialog>
+      </header>
+    );
+  }
+
+  // Desktop header - full controls
   return (
     <header className="h-14 border-b border-border bg-background px-6 flex items-center justify-between flex-shrink-0" data-testid="header-ide">
       <div className="flex items-center gap-4">

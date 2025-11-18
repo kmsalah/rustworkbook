@@ -413,6 +413,7 @@ export default function Home() {
           hasPreviousExercise={hasPreviousExercise}
           hasNextExercise={hasNextExercise}
           user={user}
+          isMobile={true}
         />
         
         <div className="flex-1 overflow-hidden">
