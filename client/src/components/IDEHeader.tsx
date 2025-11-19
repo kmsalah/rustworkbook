@@ -25,6 +25,7 @@ import { AboutModal } from "./AboutModal";
 import { DonationModal } from "./DonationModal";
 import { CompletionBadge } from "./CompletionBadge";
 import { useQuery } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 
 interface IDEHeaderProps {
   exerciseName: string;
@@ -63,16 +64,19 @@ export function IDEHeader({
   });
 
   // Fetch user progress if authenticated
-  const { data: progressData } = useQuery<{ completedExercises: string[] }>({
+  const { data: progressData, error: progressError } = useQuery<{ completedExercises: string[] }>({
     queryKey: ["/api/progress"],
     enabled: !!user,
     retry: false, // Don't retry on 401 errors
+    staleTime: 0, // Always refetch on mount
+    gcTime: 0, // Don't cache between mounts
   });
 
   // Calculate if user has completed all exercises
+  // Only check completion if user is logged in and we have valid progress data (no errors)
   const totalExercises = exercises?.length || 0;
   const userCompletedCount = progressData?.completedExercises?.length || 0;
-  const hasCompletedAll = user && totalExercises > 0 && userCompletedCount >= totalExercises;
+  const hasCompletedAll = user && !progressError && totalExercises > 0 && userCompletedCount >= totalExercises;
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
@@ -166,7 +170,11 @@ export function IDEHeader({
                     )}
                   </DropdownMenuLabel>
                   <DropdownMenuItem
-                    onClick={() => window.location.href = "/api/logout"}
+                    onClick={() => {
+                      // Clear all query cache before logging out to ensure fresh state
+                      queryClient.clear();
+                      window.location.href = "/api/logout";
+                    }}
                     data-testid="menuitem-logout"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
@@ -336,7 +344,11 @@ export function IDEHeader({
               )}
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => window.location.href = "/api/logout"}
+                onClick={() => {
+                  // Clear all query cache before logging out to ensure fresh state
+                  queryClient.clear();
+                  window.location.href = "/api/logout";
+                }}
                 data-testid="menuitem-logout"
               >
                 <LogOut className="mr-2 h-4 w-4" />

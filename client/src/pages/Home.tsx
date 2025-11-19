@@ -20,7 +20,7 @@ import { saveExerciseCode, loadExerciseCode, clearExerciseCode } from "@/lib/loc
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 export default function Home() {
-  const { isAuthenticated, isLoading, user: authUser } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, user: authUser } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
@@ -56,7 +56,8 @@ export default function Home() {
     return [];
   });
   const filterInputRef = useRef<HTMLInputElement>(null);
-  const user = authUser as User | undefined;
+  // Only set user when auth is not loading and user is authenticated
+  const user = (!authLoading && isAuthenticated) ? (authUser as User | undefined) : undefined;
 
   const { data: exercises, isLoading: exercisesLoading } = useQuery<Exercise[]>({
     queryKey: ["/api/exercises"],
