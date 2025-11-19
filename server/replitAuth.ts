@@ -31,19 +31,27 @@ export function getSession() {
   
   const isProduction = process.env.NODE_ENV === "production";
   
+  // Determine cookie domain for production
+  let cookieOptions: any = {
+    httpOnly: true,
+    secure: isProduction,
+    maxAge: sessionTtl,
+    sameSite: 'lax', // Lax allows navigation from external sites
+  };
+  
+  // In production, ALWAYS set cookie domain to work across all rustworkbook.com subdomains
+  // This ensures sessions persist across www.rustworkbook.com and rustworkbook.com
+  if (isProduction || process.env.REPLIT_DEPLOYMENT === '1') {
+    console.log('[Auth] Production mode detected, setting cookie domain to .rustworkbook.com');
+    cookieOptions.domain = '.rustworkbook.com';
+  }
+  
   return session({
     secret: process.env.SESSION_SECRET!,
     store: sessionStore,
     resave: false,
     saveUninitialized: true, // Changed to true to ensure sessions are saved
-    cookie: {
-      httpOnly: true,
-      secure: isProduction,
-      maxAge: sessionTtl,
-      sameSite: 'lax', // Lax allows navigation from external sites
-      // Remove domain setting to allow cookies to work on any domain
-      // The cookie will be set for the current domain automatically
-    },
+    cookie: cookieOptions,
   });
 }
 
@@ -127,16 +135,32 @@ export async function setupAuth(app: Express) {
   });
 
   app.get("/api/login", (req, res, next) => {
+    // Use the actual request hostname for the callback URL
+    const protocol = req.protocol;
+    const host = req.get("host");
+    const callbackURL = `${protocol}://${host}/api/callback`;
+    
+    console.log(`[Auth] Login initiated from ${protocol}://${host}, callback URL: ${callbackURL}`);
+    
     passport.authenticate("replitauth", {
       prompt: "login consent",
       scope: ["openid", "email", "profile", "offline_access"],
+      callbackURL: callbackURL, // Dynamic callback URL based on request
     })(req, res, next);
   });
 
   app.get("/api/callback", (req, res, next) => {
+    // Use the actual request hostname for validation
+    const protocol = req.protocol;
+    const host = req.get("host");
+    const callbackURL = `${protocol}://${host}/api/callback`;
+    
+    console.log(`[Auth] Callback received at ${protocol}://${host}`);
+    
     passport.authenticate("replitauth", {
       successReturnToOrRedirect: "/ide",
       failureRedirect: "/api/login",
+      callbackURL: callbackURL, // Dynamic callback URL for validation
     })(req, res, next);
   });
 

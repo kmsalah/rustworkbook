@@ -21,7 +21,10 @@ app.use((req, res, next) => {
   const host = req.get('host');
   const isProduction = process.env.NODE_ENV === 'production';
   
-  if (isProduction && host && !host.includes('rustworkbook.com')) {
+  // In production, force all traffic to exactly rustworkbook.com (no www, no other domains)
+  if (isProduction && host && host !== 'rustworkbook.com') {
+    // Log the redirect for debugging
+    console.log(`[Domain Redirect] Redirecting from ${host} to rustworkbook.com`);
     // Redirect to rustworkbook.com while preserving the path and query
     const redirectUrl = `https://rustworkbook.com${req.originalUrl}`;
     return res.redirect(301, redirectUrl);
