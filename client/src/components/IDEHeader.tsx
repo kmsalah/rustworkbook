@@ -1,4 +1,4 @@
-import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn, MoreVertical, Shuffle } from "lucide-react";
+import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -36,10 +36,8 @@ interface IDEHeaderProps {
   isCompiling: boolean;
   onPreviousExercise?: () => void;
   onNextExercise?: () => void;
-  onShuffleExercise?: () => void;
   hasPreviousExercise?: boolean;
   hasNextExercise?: boolean;
-  hasIncompleteExercises?: boolean;
   user?: User;
   isMobile?: boolean;
 }
@@ -53,10 +51,8 @@ export function IDEHeader({
   isCompiling,
   onPreviousExercise,
   onNextExercise,
-  onShuffleExercise,
   hasPreviousExercise = false,
   hasNextExercise = false,
-  hasIncompleteExercises = false,
   user,
   isMobile = false,
 }: IDEHeaderProps) {
@@ -134,15 +130,6 @@ export function IDEHeader({
             <DropdownMenuContent align="end" className="w-48">
               {exerciseName && (
                 <>
-                  {hasIncompleteExercises && (
-                    <DropdownMenuItem
-                      onClick={onShuffleExercise}
-                      data-testid="menuitem-shuffle"
-                    >
-                      <Shuffle className="mr-2 h-4 w-4" />
-                      Random Exercise
-                    </DropdownMenuItem>
-                  )}
                   <DropdownMenuItem
                     onClick={() => {
                       const dialogButton = document.querySelector('[data-testid="button-show-hint"]') as HTMLButtonElement;
@@ -265,17 +252,6 @@ export function IDEHeader({
             data-testid="button-next-exercise"
           >
             <ChevronRight className="h-4 w-4" />
-          </Button>
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={onShuffleExercise}
-            disabled={!hasIncompleteExercises}
-            className="h-8 w-8"
-            title="Go to a random incomplete exercise"
-            data-testid="button-shuffle-exercise"
-          >
-            <Shuffle className="h-4 w-4" />
           </Button>
         </div>
       </div>

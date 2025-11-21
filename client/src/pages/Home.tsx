@@ -387,34 +387,6 @@ export default function Home() {
     }
   };
 
-  const handleShuffleExercise = () => {
-    if (!exercises) return;
-    
-    // Find all incomplete exercises
-    const incompleteExercises = exercises.filter(ex => !completedExercises.includes(ex.id));
-    
-    if (incompleteExercises.length === 0) return;
-    
-    // If there's only one incomplete exercise, select it
-    if (incompleteExercises.length === 1) {
-      setCurrentExercise(incompleteExercises[0]);
-      localStorage.setItem("rustlings-last-exercise", incompleteExercises[0].id);
-      return;
-    }
-    
-    // Get a random exercise that's not the current one
-    let randomExercise;
-    do {
-      const randomIndex = Math.floor(Math.random() * incompleteExercises.length);
-      randomExercise = incompleteExercises[randomIndex];
-    } while (currentExercise && randomExercise.id === currentExercise.id && incompleteExercises.length > 1);
-    
-    setCurrentExercise(randomExercise);
-    localStorage.setItem("rustlings-last-exercise", randomExercise.id);
-  };
-
-  const hasIncompleteExercises = exercises ? exercises.some(ex => !completedExercises.includes(ex.id)) : false;
-
   if (dataLoading) {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-background" data-testid="loading-app">
@@ -439,10 +411,8 @@ export default function Home() {
           isCompiling={compileMutation.isPending}
           onPreviousExercise={handlePreviousExercise}
           onNextExercise={handleNextExercise}
-          onShuffleExercise={handleShuffleExercise}
           hasPreviousExercise={hasPreviousExercise}
           hasNextExercise={hasNextExercise}
-          hasIncompleteExercises={hasIncompleteExercises}
           user={user}
           isMobile={true}
         />
@@ -522,10 +492,8 @@ export default function Home() {
           isCompiling={compileMutation.isPending}
           onPreviousExercise={handlePreviousExercise}
           onNextExercise={handleNextExercise}
-          onShuffleExercise={handleShuffleExercise}
           hasPreviousExercise={hasPreviousExercise}
           hasNextExercise={hasNextExercise}
-          hasIncompleteExercises={hasIncompleteExercises}
           user={user}
         />
 
@@ -600,10 +568,8 @@ export default function Home() {
         isCompiling={compileMutation.isPending}
         onPreviousExercise={handlePreviousExercise}
         onNextExercise={handleNextExercise}
-        onShuffleExercise={handleShuffleExercise}
         hasPreviousExercise={hasPreviousExercise}
         hasNextExercise={hasNextExercise}
-        hasIncompleteExercises={hasIncompleteExercises}
         user={user}
       />
 
