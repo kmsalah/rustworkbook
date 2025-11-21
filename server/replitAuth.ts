@@ -29,7 +29,8 @@ export function getSession() {
     tableName: "sessions",
   });
   
-  const isProduction = process.env.NODE_ENV === "production";
+  // Only treat as production if explicitly set AND deployed
+  const isProduction = process.env.NODE_ENV === "production" && process.env.REPLIT_DEPLOYMENT === '1';
   
   // Determine cookie domain for production
   let cookieOptions: any = {
@@ -39,10 +40,10 @@ export function getSession() {
     sameSite: 'lax', // Lax allows navigation from external sites
   };
   
-  // In production, ALWAYS set cookie domain to work across all rustworkbook.com subdomains
-  // This ensures sessions persist across www.rustworkbook.com and rustworkbook.com
-  if (isProduction || process.env.REPLIT_DEPLOYMENT === '1') {
-    console.log('[Auth] Production mode detected, setting cookie domain to .rustworkbook.com');
+  // Only set cookie domain in actual production deployment
+  // In development, let the browser handle cookies normally for replit.dev domains
+  if (isProduction) {
+    console.log('[Auth] Actual production deployment detected, setting cookie domain to .rustworkbook.com');
     cookieOptions.domain = '.rustworkbook.com';
   }
   
@@ -50,7 +51,7 @@ export function getSession() {
     secret: process.env.SESSION_SECRET!,
     store: sessionStore,
     resave: false,
-    saveUninitialized: true, // Changed to true to ensure sessions are saved
+    saveUninitialized: false, // Only save sessions that have been modified
     cookie: cookieOptions,
   });
 }
