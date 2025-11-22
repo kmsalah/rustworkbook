@@ -1,4 +1,4 @@
-name: Automated Tests
+name: Regression Tests
 
 on:
   push:
@@ -12,10 +12,11 @@ jobs:
     
     services:
       postgres:
-        image: postgres:15
+        image: postgres:16-alpine
         env:
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
+          POSTGRES_DB: rustworkbook_test
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -25,13 +26,20 @@ jobs:
           - 5432:5432
 
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rustworkbook_test
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: rustworkbook_test
       NODE_ENV: test
-      SESSION_SECRET: test-secret-key-for-ci
+      SESSION_SECRET: test-secret-key-for-ci-${{ github.run_id }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -40,7 +48,14 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Verify database connectivity
+        run: |
+          until pg_isready -h localhost -p 5432; do
+            echo "Waiting for PostgreSQL..."
+            sleep 1
+          done
 
       - name: Run database migrations
         run: npm run db:push
@@ -48,14 +63,21 @@ jobs:
       - name: Run TypeScript check
         run: npm run check
 
-      - name: Run tests
-        run: npm test
+      - name: Run test suite
+        run: npx vitest run --reporter=verbose
 
-      - name: Upload test results
-        if: always()
+      - name: Build application
+        run: npm run build
+
+      - name: Test Summary
+        if: success()
+        run: echo "✅ All checks passed - regression protection successful!"
+
+      - name: Upload test results on failure
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: test-failures
           path: |
             coverage/
             test-results/
