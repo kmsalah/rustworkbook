@@ -45,18 +45,68 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(userData)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
-          ...userData,
-          updatedAt: new Date(),
-        },
-      })
-      .returning();
-    return user;
+    try {
+      const userId = userData.id;
+      
+      // Must have an ID to upsert
+      if (!userId) {
+        throw new Error("User ID is required for upsert");
+      }
+      
+      // First, try to find user by ID
+      const existingUser = await this.getUser(userId);
+      
+      if (existingUser) {
+        // Update existing user by ID
+        const [user] = await db
+          .update(users)
+          .set({
+            email: userData.email,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            profileImageUrl: userData.profileImageUrl,
+            updatedAt: new Date(),
+          })
+          .where(eq(users.id, userId))
+          .returning();
+        return user;
+      } else {
+        // Check if email already exists (different user with same email)
+        if (userData.email) {
+          const [existingByEmail] = await db
+            .select()
+            .from(users)
+            .where(eq(users.email, userData.email));
+          
+          if (existingByEmail) {
+            // Update existing user by email (user might have changed their ID)
+            const [user] = await db
+              .update(users)
+              .set({
+                id: userId, // Update to new ID
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                profileImageUrl: userData.profileImageUrl,
+                updatedAt: new Date(),
+              })
+              .where(eq(users.email, userData.email))
+              .returning();
+            return user;
+          }
+        }
+        
+        // Insert new user
+        const [user] = await db
+          .insert(users)
+          .values(userData)
+          .returning();
+        return user;
+      }
+    } catch (error: any) {
+      // If we still get a unique constraint error, log and rethrow
+      console.error("Error upserting user:", error?.message || error);
+      throw error;
+    }
   }
 
   // Progress tracking

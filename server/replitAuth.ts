@@ -29,30 +29,16 @@ export function getSession() {
     tableName: "sessions",
   });
   
-  // Only treat as production if explicitly set AND deployed
-  const isProduction = process.env.NODE_ENV === "production" && process.env.REPLIT_DEPLOYMENT === '1';
-  
-  // Determine cookie domain for production
-  let cookieOptions: any = {
-    httpOnly: true,
-    secure: isProduction,
-    maxAge: sessionTtl,
-    sameSite: 'lax', // Lax allows navigation from external sites
-  };
-  
-  // Only set cookie domain in actual production deployment
-  // In development, let the browser handle cookies normally for replit.dev domains
-  if (isProduction) {
-    console.log('[Auth] Actual production deployment detected, setting cookie domain to .rustworkbook.com');
-    cookieOptions.domain = '.rustworkbook.com';
-  }
-  
   return session({
     secret: process.env.SESSION_SECRET!,
     store: sessionStore,
     resave: false,
-    saveUninitialized: false, // Only save sessions that have been modified
-    cookie: cookieOptions,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: true,
+      maxAge: sessionTtl,
+    },
   });
 }
 
@@ -96,82 +82,57 @@ export async function setupAuth(app: Express) {
     verified(null, user);
   };
 
-  // Get canonical host from environment
-  const replitDomains = process.env.REPLIT_DOMAINS?.split(',') || [];
-  const isProduction = process.env.NODE_ENV === 'production';
-  
-  // Find the best host to use for callbacks
-  let callbackHost;
-  if (isProduction && replitDomains.includes('rustworkbook.com')) {
-    // Prefer rustworkbook.com if it's configured
-    callbackHost = 'rustworkbook.com';
-  } else if (replitDomains.length > 0) {
-    // Use first available domain
-    callbackHost = replitDomains[0];
-  } else {
-    // Fallback to repl.co domain
-    callbackHost = process.env.REPL_SLUG + '.' + process.env.REPL_OWNER + '.repl.co';
-  }
-  
-  // Register strategy with the callback URL
-  const strategy = new Strategy(
-    {
-      name: "replitauth",
-      config,
-      scope: "openid email profile offline_access",
-      callbackURL: `https://${callbackHost}/api/callback`,
-    },
-    verify,
-  );
-  passport.use(strategy);
+  // Keep track of registered strategies per domain
+  const registeredStrategies = new Set<string>();
 
-  passport.serializeUser((user: any, cb) => {
-    // Persist the entire user object including claims
-    cb(null, user);
-  });
-  
-  passport.deserializeUser((user: any, cb) => {
-    // Restore the user object from session
-    cb(null, user);
-  });
+  // Helper function to ensure strategy exists for a domain
+  const ensureStrategy = (domain: string) => {
+    const strategyName = `replitauth:${domain}`;
+    if (!registeredStrategies.has(strategyName)) {
+      console.log(`[Auth] Registering strategy for domain: ${domain}`);
+      const strategy = new Strategy(
+        {
+          name: strategyName,
+          config,
+          scope: "openid email profile offline_access",
+          callbackURL: `https://${domain}/api/callback`,
+        },
+        verify,
+      );
+      passport.use(strategy);
+      registeredStrategies.add(strategyName);
+    }
+  };
+
+  passport.serializeUser((user: Express.User, cb) => cb(null, user));
+  passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
   app.get("/api/login", (req, res, next) => {
-    // Use the actual request hostname for the callback URL
-    const protocol = req.protocol;
-    const host = req.get("host");
-    const callbackURL = `${protocol}://${host}/api/callback`;
-    
-    console.log(`[Auth] Login initiated from ${protocol}://${host}, callback URL: ${callbackURL}`);
-    
-    passport.authenticate("replitauth", {
+    const hostname = req.hostname;
+    console.log(`[Auth] Login initiated from hostname: ${hostname}`);
+    ensureStrategy(hostname);
+    passport.authenticate(`replitauth:${hostname}`, {
       prompt: "login consent",
       scope: ["openid", "email", "profile", "offline_access"],
-      callbackURL: callbackURL, // Dynamic callback URL based on request
-    })(req, res, next);
+    } as any)(req, res, next);
   });
 
   app.get("/api/callback", (req, res, next) => {
-    // Use the actual request hostname for validation
-    const protocol = req.protocol;
-    const host = req.get("host");
-    const callbackURL = `${protocol}://${host}/api/callback`;
-    
-    console.log(`[Auth] Callback received at ${protocol}://${host}`);
-    
-    passport.authenticate("replitauth", {
+    const hostname = req.hostname;
+    console.log(`[Auth] Callback received at hostname: ${hostname}`);
+    ensureStrategy(hostname);
+    passport.authenticate(`replitauth:${hostname}`, {
       successReturnToOrRedirect: "/ide",
       failureRedirect: "/api/login",
-      callbackURL: callbackURL, // Dynamic callback URL for validation
-    })(req, res, next);
+    } as any)(req, res, next);
   });
 
   app.get("/api/logout", (req, res) => {
-    const origin = `${req.protocol}://${req.get("host")}`;
     req.logout(() => {
       res.redirect(
         client.buildEndSessionUrl(config, {
           client_id: process.env.REPL_ID!,
-          post_logout_redirect_uri: origin,
+          post_logout_redirect_uri: `${req.protocol}://${req.hostname}`,
         }).href
       );
     });
