@@ -1,4 +1,4 @@
-import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn, MoreVertical } from "lucide-react";
+import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn, MoreVertical, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -157,6 +157,16 @@ export function IDEHeader({
               >
                 {theme === "dark" ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
                 {theme === "dark" ? "Light Mode" : "Dark Mode"}
+              </DropdownMenuItem>
+              
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuItem
+                onClick={() => window.location.href = "/educators"}
+                data-testid="menuitem-educators-mobile"
+              >
+                <GraduationCap className="mr-2 h-4 w-4" />
+                For Educators
               </DropdownMenuItem>
               
               <DropdownMenuSeparator />
@@ -343,6 +353,13 @@ export function IDEHeader({
                 </DropdownMenuLabel>
               )}
               <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => window.location.href = "/educators"}
+                data-testid="menuitem-educators"
+              >
+                <GraduationCap className="mr-2 h-4 w-4" />
+                For Educators
+              </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
                   // Clear all query cache before logging out to ensure fresh state
