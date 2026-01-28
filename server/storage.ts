@@ -3,7 +3,14 @@ import type { Exercise, User, UpsertUser } from "@shared/schema";
 import { users, userProgress } from "@shared/schema";
 import { exercises } from "./exercises-data";
 import { db } from "./db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql, gte, not, like, or } from "drizzle-orm";
+
+export interface UserStats {
+  totalUsers: number;
+  monthlyUsers: number;
+  dailyUsers: number;
+  topReferrers: { referrer: string; count: number }[];
+}
 
 export interface IStorage {
   // Exercise operations (still in-memory)
@@ -18,6 +25,9 @@ export interface IStorage {
   getUserProgress(userId: string): Promise<string[]>;
   markExerciseComplete(userId: string, exerciseId: string): Promise<void>;
   isExerciseComplete(userId: string, exerciseId: string): Promise<boolean>;
+  
+  // Stats
+  getUserStats(): Promise<UserStats>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -140,6 +150,60 @@ export class DatabaseStorage implements IStorage {
       );
     
     return !!result;
+  }
+
+  // Get user statistics excluding test accounts
+  async getUserStats(): Promise<UserStats> {
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    // Filter out test accounts: exclude @example.com, @rustlings.dev emails and test_ IDs
+    const isRealUser = and(
+      not(like(users.email, '%@example.com')),
+      not(like(users.email, '%@rustlings.dev')),
+      not(like(users.id, 'test_%'))
+    );
+
+    // Total real users
+    const [totalResult] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(users)
+      .where(isRealUser);
+
+    // Monthly users (signed up this month)
+    const [monthlyResult] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(users)
+      .where(and(isRealUser, gte(users.createdAt, startOfMonth)));
+
+    // Daily users (signed up today)
+    const [dailyResult] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(users)
+      .where(and(isRealUser, gte(users.createdAt, startOfDay)));
+
+    // Top referrers
+    const referrerResults = await db
+      .select({
+        referrer: users.referrer,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(users)
+      .where(and(isRealUser, sql`${users.referrer} IS NOT NULL AND ${users.referrer} != ''`))
+      .groupBy(users.referrer)
+      .orderBy(sql`count(*) DESC`)
+      .limit(10);
+
+    return {
+      totalUsers: totalResult?.count ?? 0,
+      monthlyUsers: monthlyResult?.count ?? 0,
+      dailyUsers: dailyResult?.count ?? 0,
+      topReferrers: referrerResults.map(r => ({
+        referrer: r.referrer || 'unknown',
+        count: r.count,
+      })),
+    };
   }
 }
 

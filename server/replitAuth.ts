@@ -54,6 +54,7 @@ function updateUserSession(
 
 async function upsertUser(
   claims: any,
+  referrer?: string,
 ) {
   await storage.upsertUser({
     id: claims["sub"],
@@ -61,6 +62,7 @@ async function upsertUser(
     firstName: claims["first_name"],
     lastName: claims["last_name"],
     profileImageUrl: claims["profile_image_url"],
+    referrer: referrer || undefined,
   });
 }
 
@@ -70,15 +72,40 @@ export async function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
+  // Capture referrer on first visit (before login)
+  app.use((req: any, res, next) => {
+    if (!req.session.referrer) {
+      // Check for UTM source first, then document referrer header
+      const utmSource = req.query.utm_source || req.query.ref;
+      const httpReferrer = req.get('Referer');
+      
+      if (utmSource) {
+        req.session.referrer = String(utmSource);
+      } else if (httpReferrer) {
+        // Extract domain from referrer URL
+        try {
+          const url = new URL(httpReferrer);
+          req.session.referrer = url.hostname;
+        } catch {
+          req.session.referrer = httpReferrer;
+        }
+      }
+    }
+    next();
+  });
+
   const config = await getOidcConfig();
 
+  // Store referrer from session for the verify callback
+  let pendingReferrer: string | undefined;
+  
   const verify: VerifyFunction = async (
     tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
     verified: passport.AuthenticateCallback
   ) => {
     const user = {};
     updateUserSession(user, tokens);
-    await upsertUser(tokens.claims());
+    await upsertUser(tokens.claims(), pendingReferrer);
     verified(null, user);
   };
 
@@ -107,9 +134,11 @@ export async function setupAuth(app: Express) {
   passport.serializeUser((user: Express.User, cb) => cb(null, user));
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
-  app.get("/api/login", (req, res, next) => {
+  app.get("/api/login", (req: any, res, next) => {
     const hostname = req.hostname;
     console.log(`[Auth] Login initiated from hostname: ${hostname}`);
+    // Capture referrer from session for the verify callback
+    pendingReferrer = req.session?.referrer;
     ensureStrategy(hostname);
     passport.authenticate(`replitauth:${hostname}`, {
       prompt: "login consent",
