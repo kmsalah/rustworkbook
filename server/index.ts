@@ -70,8 +70,15 @@ app.use((req, res, next) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
-    res.status(status).json({ message });
-    throw err;
+    console.error(`[Error Handler] ${status}: ${message}`, err.stack || '');
+    
+    if (!res.headersSent) {
+      res.status(status).json({ 
+        error: message,
+        status,
+        timestamp: new Date().toISOString()
+      });
+    }
   });
 
   // importantly only setup vite in development and after
@@ -94,5 +101,33 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+  });
+
+  // Graceful shutdown handling
+  const gracefulShutdown = (signal: string) => {
+    log(`${signal} received, shutting down gracefully...`);
+    server.close(() => {
+      log('HTTP server closed');
+      process.exit(0);
+    });
+
+    // Force shutdown after 30 seconds
+    setTimeout(() => {
+      log('Forcing shutdown after timeout');
+      process.exit(1);
+    }, 30000);
+  };
+
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+  // Handle uncaught exceptions gracefully
+  process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    gracefulShutdown('uncaughtException');
+  });
+
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   });
 })();

@@ -1,15 +1,49 @@
 // Referenced from Replit Auth blueprint
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { compileRequestSchema } from "@shared/schema";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { compileRateLimiter, anonymousRateLimiter, SecurityMonitor } from "./security";
 import { pistonClient } from "./piston";
+import { checkDatabaseHealth } from "./db";
+
+const startTime = Date.now();
+
+function asyncHandler(fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware - must be called first
   await setupAuth(app);
+
+  app.get('/api/health', asyncHandler(async (req, res) => {
+    const dbHealth = await checkDatabaseHealth();
+    const uptime = Math.floor((Date.now() - startTime) / 1000);
+    
+    const status = dbHealth.healthy ? 'healthy' : 'degraded';
+    const statusCode = dbHealth.healthy ? 200 : 503;
+    
+    res.status(statusCode).json({
+      status,
+      uptime,
+      timestamp: new Date().toISOString(),
+      database: dbHealth,
+      version: '1.0.0'
+    });
+  }));
+
+  app.get('/api/ready', asyncHandler(async (req, res) => {
+    const dbHealth = await checkDatabaseHealth();
+    if (dbHealth.healthy) {
+      res.json({ ready: true });
+    } else {
+      res.status(503).json({ ready: false, reason: 'database unavailable' });
+    }
+  }));
 
   // Auth routes - return user data or authentication status
   app.get('/api/auth/user', async (req: any, res) => {
