@@ -5,8 +5,8 @@
 Rust Workbook (rustworkbook.com) is an online Rust coding workbook - an interactive web-based learning platform for Rust programming. It provides a browser-based integrated development environment where users can work through 94 original exercises, compile and run Rust code in real-time, and track their progress. The application features a three-panel IDE layout with exercise navigation, a Monaco code editor, and a console output panel for compilation results. Users who complete all exercises receive a special red crab badge displayed next to their name.
 
 ### Routes
-- `/` - Landing page with stats badge and "For Educators" section (authenticated users redirect to /ide)
-- `/ide` - Main IDE interface for coding exercises
+- `/` - Main IDE interface for coding exercises
+- `/ide` - Main IDE interface for coding exercises (alias)
 
 ## User Preferences
 

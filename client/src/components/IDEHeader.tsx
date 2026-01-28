@@ -1,4 +1,4 @@
-import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn, MoreVertical } from "lucide-react";
+import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn, MoreVertical, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -24,6 +24,7 @@ import logoUrl from "@/assets/logo.png";
 import { AboutModal } from "./AboutModal";
 import { DonationModal } from "./DonationModal";
 import { CompletionBadge } from "./CompletionBadge";
+import { EducatorsDialog } from "./EducatorsDialog";
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 
@@ -57,6 +58,7 @@ export function IDEHeader({
   isMobile = false,
 }: IDEHeaderProps) {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
+  const [showEducatorsDialog, setShowEducatorsDialog] = useState(false);
 
   // Fetch exercises to get total count
   const { data: exercises } = useQuery<any[]>({
@@ -305,6 +307,21 @@ export function IDEHeader({
         <AboutModal />
         
         <DonationModal />
+        
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={() => setShowEducatorsDialog(true)}
+          title="For Educators"
+          data-testid="button-educators"
+        >
+          <GraduationCap className="h-4 w-4" />
+        </Button>
+        
+        <EducatorsDialog
+          open={showEducatorsDialog}
+          onOpenChange={setShowEducatorsDialog}
+        />
 
         <Button
           size="icon"
