@@ -1,4 +1,4 @@
-import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn, MoreVertical, GraduationCap } from "lucide-react";
+import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn, MoreVertical, GraduationCap, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -59,6 +59,7 @@ export function IDEHeader({
 }: IDEHeaderProps) {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [showEducatorsDialog, setShowEducatorsDialog] = useState(false);
+  const [showInfoDialog, setShowInfoDialog] = useState(false);
 
   // Fetch exercises to get total count
   const { data: exercises } = useQuery<any[]>({
@@ -110,6 +111,15 @@ export function IDEHeader({
         <div className="flex items-center gap-2">
           <img src={logoUrl} alt="Rust Workbook" className="h-8 w-8" />
           <span className="text-sm font-semibold">Rust Workbook</span>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-6 w-6"
+            onClick={() => setShowInfoDialog(true)}
+            data-testid="button-info-mobile"
+          >
+            <Info className="h-3 w-3" />
+          </Button>
         </div>
         
         <div className="flex items-center gap-1">
@@ -219,6 +229,50 @@ export function IDEHeader({
             </div>
           </DialogContent>
         </Dialog>
+        
+        {/* Info dialog */}
+        <Dialog open={showInfoDialog} onOpenChange={setShowInfoDialog}>
+          <DialogContent data-testid="dialog-info">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <img src={logoUrl} alt="Rust Workbook" className="h-6 w-6" />
+                Rust Workbook
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 text-sm">
+              <p className="text-muted-foreground">
+                An interactive coding workbook for learning Rust. Work through {totalExercises} exercises covering variables, functions, ownership, lifetimes, and more.
+              </p>
+              
+              {stats && stats.totalUsers > 0 && (
+                <p className="text-muted-foreground">
+                  <span className="font-medium text-foreground">{stats.totalUsers.toLocaleString()}</span> people have used this workbook.
+                </p>
+              )}
+              
+              <div className="pt-2 border-t space-y-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setShowInfoDialog(false);
+                    setShowEducatorsDialog(true);
+                  }}
+                  data-testid="button-educators-from-info"
+                >
+                  <GraduationCap className="mr-2 h-4 w-4" />
+                  For Educators
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+        
+        <EducatorsDialog
+          open={showEducatorsDialog}
+          onOpenChange={setShowEducatorsDialog}
+        />
       </header>
     );
   }
