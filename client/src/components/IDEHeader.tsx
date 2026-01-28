@@ -29,6 +29,9 @@ import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { useI18n } from "@/lib/i18n";
 
+// Feature flag for Arabic localization - set to true to re-enable language toggle
+const ENABLE_ARABIC_LOCALIZATION = false;
+
 interface IDEHeaderProps {
   exerciseName: string;
   exerciseMode: "compile" | "test";
@@ -183,13 +186,15 @@ export function IDEHeader({
                 {theme === "dark" ? t("lightMode") : t("darkMode")}
               </DropdownMenuItem>
               
-              <DropdownMenuItem
-                onClick={toggleLocale}
-                data-testid="menuitem-language"
-              >
-                <Languages className="me-2 h-4 w-4" />
-                {locale === "en" ? t("arabic") : t("english")}
-              </DropdownMenuItem>
+              {ENABLE_ARABIC_LOCALIZATION && (
+                <DropdownMenuItem
+                  onClick={toggleLocale}
+                  data-testid="menuitem-language"
+                >
+                  <Languages className="me-2 h-4 w-4" />
+                  {locale === "en" ? t("arabic") : t("english")}
+                </DropdownMenuItem>
+              )}
               
               <DropdownMenuSeparator />
               
@@ -411,15 +416,17 @@ export function IDEHeader({
           {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </Button>
         
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={toggleLocale}
-          title={t("language")}
-          data-testid="button-language-toggle"
-        >
-          <Languages className="h-4 w-4" />
-        </Button>
+        {ENABLE_ARABIC_LOCALIZATION && (
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={toggleLocale}
+            title={t("language")}
+            data-testid="button-language-toggle"
+          >
+            <Languages className="h-4 w-4" />
+          </Button>
+        )}
 
         <div className="h-6 w-px bg-border mx-1" />
         
