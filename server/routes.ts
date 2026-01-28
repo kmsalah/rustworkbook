@@ -52,17 +52,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Public stats endpoint
-  app.get('/api/stats', async (req, res) => {
-    try {
-      const stats = await storage.getUserStats();
-      res.json(stats);
-    } catch (error) {
-      console.error("Error fetching stats:", error);
-      res.status(500).json({ error: "Failed to fetch stats" });
-    }
-  });
-
   // Get all exercises
   app.get("/api/exercises", async (req, res) => {
     try {
