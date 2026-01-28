@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { GraduationCap } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 interface EducatorsDialogProps {
   open: boolean;
@@ -8,23 +9,25 @@ interface EducatorsDialogProps {
 }
 
 export function EducatorsDialog({ open, onOpenChange }: EducatorsDialogProps) {
+  const { t } = useI18n();
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md" data-testid="dialog-educators">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <GraduationCap className="h-5 w-5" />
-            For Educators
+            {t("forEducators")}
           </DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4 text-sm">
           <p className="text-muted-foreground">
-            Rust Workbook runs in the browser with no setup. Learners can start coding right away.
+            {t("educatorsDescription")}
           </p>
           
           <p className="text-muted-foreground">
-            94 exercises from basics to advanced topics. Uses the real Rust compiler.
+            {t("educatorsExercises")}
           </p>
           
           <div className="pt-3 border-t">
@@ -35,7 +38,7 @@ export function EducatorsDialog({ open, onOpenChange }: EducatorsDialogProps) {
               onClick={() => window.location.href = "mailto:hello@rustworkbook.com?subject=Rust%20Workbook%20for%20Educators"}
               data-testid="button-contact-educators"
             >
-              Get in touch
+              {t("getInTouch")}
             </Button>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn, MoreVertical, GraduationCap, Info } from "lucide-react";
+import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn, MoreVertical, GraduationCap, Info, Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -27,6 +27,7 @@ import { CompletionBadge } from "./CompletionBadge";
 import { EducatorsDialog } from "./EducatorsDialog";
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
+import { useI18n } from "@/lib/i18n";
 
 interface IDEHeaderProps {
   exerciseName: string;
@@ -60,6 +61,11 @@ export function IDEHeader({
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [showEducatorsDialog, setShowEducatorsDialog] = useState(false);
   const [showInfoDialog, setShowInfoDialog] = useState(false);
+  const { t, locale, setLocale } = useI18n();
+
+  const toggleLocale = () => {
+    setLocale(locale === "en" ? "ar-JO" : "en");
+  };
 
   // Fetch exercises to get total count
   const { data: exercises } = useQuery<any[]>({
@@ -110,7 +116,7 @@ export function IDEHeader({
       <header className="h-14 border-b border-border bg-background px-2 flex items-center justify-between flex-shrink-0" data-testid="header-ide">
         <div className="flex items-center gap-2">
           <img src={logoUrl} alt="Rust Workbook" className="h-8 w-8" />
-          <span className="text-sm font-semibold">Rust Workbook</span>
+          <span className="text-sm font-semibold">{t("rustWorkbook")}</span>
           <Button
             size="icon"
             variant="ghost"
@@ -131,7 +137,7 @@ export function IDEHeader({
             data-testid="button-run-code"
           >
             <Play className="h-3 w-3" />
-            {isCompiling ? "..." : "Run"}
+            {isCompiling ? "..." : t("run")}
           </Button>
           
           <DropdownMenu>
@@ -155,15 +161,15 @@ export function IDEHeader({
                     }}
                     data-testid="menuitem-hint"
                   >
-                    <HelpCircle className="mr-2 h-4 w-4" />
-                    Show Hint
+                    <HelpCircle className="me-2 h-4 w-4" />
+                    {t("showHint")}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={onReset}
                     data-testid="menuitem-reset"
                   >
-                    <RotateCcw className="mr-2 h-4 w-4" />
-                    Reset Code
+                    <RotateCcw className="me-2 h-4 w-4" />
+                    {t("resetCode")}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                 </>
@@ -173,8 +179,16 @@ export function IDEHeader({
                 onClick={toggleTheme}
                 data-testid="menuitem-theme"
               >
-                {theme === "dark" ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
-                {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                {theme === "dark" ? <Sun className="me-2 h-4 w-4" /> : <Moon className="me-2 h-4 w-4" />}
+                {theme === "dark" ? t("lightMode") : t("darkMode")}
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem
+                onClick={toggleLocale}
+                data-testid="menuitem-language"
+              >
+                <Languages className="me-2 h-4 w-4" />
+                {locale === "en" ? t("arabic") : t("english")}
               </DropdownMenuItem>
               
               <DropdownMenuSeparator />
@@ -195,8 +209,8 @@ export function IDEHeader({
                     }}
                     data-testid="menuitem-logout"
                   >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Log Out
+                    <LogOut className="me-2 h-4 w-4" />
+                    {t("logOut")}
                   </DropdownMenuItem>
                 </>
               ) : (
@@ -204,8 +218,8 @@ export function IDEHeader({
                   onClick={() => window.location.href = "/api/login"}
                   data-testid="menuitem-login"
                 >
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Sign In
+                  <LogIn className="me-2 h-4 w-4" />
+                  {t("signIn")}
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>
@@ -222,10 +236,10 @@ export function IDEHeader({
           </DialogTrigger>
           <DialogContent data-testid="dialog-hint">
             <DialogHeader>
-              <DialogTitle>Exercise Hint</DialogTitle>
+              <DialogTitle>{t("exerciseHint")}</DialogTitle>
             </DialogHeader>
             <div className="text-sm mt-4 whitespace-pre-wrap text-muted-foreground">
-              {hint || "No hint available for this exercise."}
+              {hint || t("noHintAvailable")}
             </div>
           </DialogContent>
         </Dialog>
@@ -236,17 +250,17 @@ export function IDEHeader({
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <img src={logoUrl} alt="Rust Workbook" className="h-6 w-6" />
-                Rust Workbook
+                {t("rustWorkbook")}
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4 text-sm">
               <p className="text-muted-foreground">
-                An interactive coding workbook for learning Rust. Work through {totalExercises} exercises covering variables, functions, ownership, lifetimes, and more.
+                {t("infoDescription", { count: totalExercises })}
               </p>
               
               {stats && stats.totalUsers > 0 && (
                 <p className="text-muted-foreground">
-                  <span className="font-medium text-foreground">{stats.totalUsers.toLocaleString()}</span> people have used this workbook.
+                  {t("peopleUsed", { count: stats.totalUsers.toLocaleString() })}
                 </p>
               )}
               
@@ -261,8 +275,8 @@ export function IDEHeader({
                   }}
                   data-testid="button-educators-from-info"
                 >
-                  <GraduationCap className="mr-2 h-4 w-4" />
-                  For Educators
+                  <GraduationCap className="me-2 h-4 w-4" />
+                  {t("forEducators")}
                 </Button>
               </div>
             </div>
@@ -283,10 +297,10 @@ export function IDEHeader({
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-3">
           <img src={logoUrl} alt="Rust Workbook" className="h-9 w-9" />
-          <span className="text-lg font-semibold">Rust Workbook</span>
+          <span className="text-lg font-semibold">{t("rustWorkbook")}</span>
           {stats && stats.totalUsers > 0 && (
             <span className="text-xs text-muted-foreground" data-testid="text-user-count">
-              {stats.totalUsers.toLocaleString()} users
+              {stats.totalUsers.toLocaleString()} {t("users")}
             </span>
           )}
         </div>
@@ -303,7 +317,7 @@ export function IDEHeader({
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <h2 className="text-sm font-medium text-foreground truncate max-w-xs" data-testid="text-exercise-name">
-            {exerciseName || "No exercise selected"}
+            {exerciseName || t("noExerciseSelected")}
           </h2>
           {exerciseName && (
             <Badge variant="outline" className="text-xs capitalize" data-testid="badge-mode">
@@ -331,7 +345,7 @@ export function IDEHeader({
           data-testid="button-run-code"
         >
           <Play className="h-4 w-4" />
-          {isCompiling ? "Compiling..." : "Run Code"}
+          {isCompiling ? t("compiling") : t("runCode")}
         </Button>
 
         <Dialog>
@@ -343,14 +357,14 @@ export function IDEHeader({
               data-testid="button-show-hint"
             >
               <HelpCircle className="h-4 w-4" />
-              Hint
+              {t("hint")}
             </Button>
           </DialogTrigger>
           <DialogContent data-testid="dialog-hint">
             <DialogHeader>
-              <DialogTitle>Exercise Hint</DialogTitle>
+              <DialogTitle>{t("exerciseHint")}</DialogTitle>
               <DialogDescription className="text-sm mt-4 whitespace-pre-wrap">
-                {hint || "No hint available for this exercise."}
+                {hint || t("noHintAvailable")}
               </DialogDescription>
             </DialogHeader>
           </DialogContent>
@@ -364,7 +378,7 @@ export function IDEHeader({
           data-testid="button-reset-code"
         >
           <RotateCcw className="h-4 w-4" />
-          Reset
+          {t("reset")}
         </Button>
 
         <div className="h-6 w-px bg-border mx-1" />
@@ -396,6 +410,16 @@ export function IDEHeader({
         >
           {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </Button>
+        
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={toggleLocale}
+          title={t("language")}
+          data-testid="button-language-toggle"
+        >
+          <Languages className="h-4 w-4" />
+        </Button>
 
         <div className="h-6 w-px bg-border mx-1" />
         
@@ -415,7 +439,7 @@ export function IDEHeader({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" data-testid="menu-user">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("myAccount")}</DropdownMenuLabel>
               {user.email && (
                 <DropdownMenuLabel className="font-normal text-xs text-muted-foreground flex items-center gap-2">
                   <span>{user.email}</span>
@@ -433,8 +457,8 @@ export function IDEHeader({
                 }}
                 data-testid="menuitem-logout"
               >
-                <LogOut className="mr-2 h-4 w-4" />
-                Log Out
+                <LogOut className="me-2 h-4 w-4" />
+                {t("logOut")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -449,7 +473,7 @@ export function IDEHeader({
             data-testid="button-login"
           >
             <LogIn className="h-4 w-4" />
-            <span className="text-sm">Sign In</span>
+            <span className="text-sm">{t("signIn")}</span>
           </Button>
         )}
       </div>
