@@ -18,11 +18,13 @@ import { useToast } from "@/hooks/use-toast";
 import LoginModal from "@/components/LoginModal";
 import { saveExerciseCode, loadExerciseCode, clearExerciseCode } from "@/lib/localStorage";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useI18n } from "@/lib/i18n";
 
 export default function Home({ showInfoOnMount = false }: { showInfoOnMount?: boolean }) {
   const { isAuthenticated, isLoading: authLoading, user: authUser } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { locale } = useI18n();
 
   // Media queries for responsive design
   const isMobile = useMediaQuery("(max-width: 767px)");
@@ -60,7 +62,12 @@ export default function Home({ showInfoOnMount = false }: { showInfoOnMount?: bo
   const user = (!authLoading && isAuthenticated) ? (authUser as User | undefined) : undefined;
 
   const { data: exercises, isLoading: exercisesLoading } = useQuery<Exercise[]>({
-    queryKey: ["/api/exercises"],
+    queryKey: ["/api/exercises", locale],
+    queryFn: async () => {
+      const response = await fetch(`/api/exercises?locale=${locale}`);
+      if (!response.ok) throw new Error("Failed to fetch exercises");
+      return response.json();
+    },
   });
 
   // Load user progress from database - only when authenticated

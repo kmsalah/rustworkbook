@@ -72,7 +72,12 @@ export function IDEHeader({
 
   // Fetch exercises to get total count
   const { data: exercises } = useQuery<any[]>({
-    queryKey: ["/api/exercises"],
+    queryKey: ["/api/exercises", locale],
+    queryFn: async () => {
+      const response = await fetch(`/api/exercises?locale=${locale}`);
+      if (!response.ok) throw new Error("Failed to fetch exercises");
+      return response.json();
+    },
   });
 
   // Fetch public stats

@@ -7,6 +7,7 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 import { compileRateLimiter, anonymousRateLimiter, SecurityMonitor } from "./security";
 import { pistonClient } from "./piston";
 import { checkDatabaseHealth } from "./db";
+import { getLocalizedExercise, type SupportedLocale } from "./exercise-translations";
 
 const startTime = Date.now();
 
@@ -104,41 +105,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get all exercises
+  // Get all exercises with optional localization
   app.get("/api/exercises", async (req, res) => {
     try {
+      const locale = (req.query.locale as SupportedLocale) || "en";
       const exercises = await storage.getAllExercises();
-      res.json(exercises);
+      
+      // Apply localization if requested
+      const localizedExercises = exercises.map(exercise => {
+        const localized = getLocalizedExercise(exercise.id, locale, exercise.hint, exercise.code);
+        return {
+          ...exercise,
+          hint: localized.hint,
+          code: localized.code,
+        };
+      });
+      
+      res.json(localizedExercises);
     } catch (error) {
       console.error("Error fetching exercises:", error);
       res.status(500).json({ error: "Failed to fetch exercises" });
     }
   });
 
-  // Get specific exercise
+  // Get specific exercise with optional localization
   app.get("/api/exercises/:id", async (req, res) => {
     try {
+      const locale = (req.query.locale as SupportedLocale) || "en";
       const exercise = await storage.getExerciseById(req.params.id);
       if (!exercise) {
         res.status(404).json({ error: "Exercise not found" });
         return;
       }
-      res.json(exercise);
+      
+      // Apply localization
+      const localized = getLocalizedExercise(exercise.id, locale, exercise.hint, exercise.code);
+      res.json({
+        ...exercise,
+        hint: localized.hint,
+        code: localized.code,
+      });
     } catch (error) {
       console.error("Error fetching exercise:", error);
       res.status(500).json({ error: "Failed to fetch exercise" });
     }
   });
 
-  // Get hint for specific exercise
+  // Get hint for specific exercise with optional localization
   app.get("/api/hint/:id", async (req, res) => {
     try {
+      const locale = (req.query.locale as SupportedLocale) || "en";
       const exercise = await storage.getExerciseById(req.params.id);
       if (!exercise) {
         res.status(404).json({ error: "Exercise not found" });
         return;
       }
-      res.json({ hint: exercise.hint });
+      
+      // Apply localization
+      const localized = getLocalizedExercise(exercise.id, locale, exercise.hint, exercise.code);
+      res.json({ hint: localized.hint });
     } catch (error) {
       console.error("Error fetching hint:", error);
       res.status(500).json({ error: "Failed to fetch hint" });
