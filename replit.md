@@ -2,7 +2,11 @@
 
 ## Overview
 
-Rust Workbook (rustworkbook.com) is an online Rust coding workbook - an interactive web-based learning platform for Rust programming. It provides a browser-based integrated development environment where users can work through the complete Rustlings exercise catalog (96 exercises), compile and run Rust code in real-time, and track their progress. The application features a three-panel IDE layout with exercise navigation, a Monaco code editor, and a console output panel for compilation results. Users who complete all 96 exercises receive a special red crab badge displayed next to their name.
+Rust Workbook (rustworkbook.com) is an online Rust coding workbook - an interactive web-based learning platform for Rust programming. It provides a browser-based integrated development environment where users can work through 94 original exercises, compile and run Rust code in real-time, and track their progress. The application features a three-panel IDE layout with exercise navigation, a Monaco code editor, and a console output panel for compilation results. Users who complete all exercises receive a special red crab badge displayed next to their name.
+
+### Routes
+- `/` - Landing page with stats badge and "For Educators" section (authenticated users redirect to /ide)
+- `/ide` - Main IDE interface for coding exercises
 
 ## User Preferences
 
@@ -66,6 +70,9 @@ Preferred communication style: Simple, everyday language.
 - `GET /api/exercises/:id` - Get specific exercise
 - `GET /api/hint/:id` - Retrieve exercise hint
 - `POST /api/compile` - Execute Rust code compilation
+- `GET /api/stats` - Public endpoint returning user statistics (totalUsers, monthlyUsers, dailyUsers, topReferrers)
+- `GET /api/progress` - Get authenticated user's completed exercises
+- `POST /api/progress/:id` - Mark exercise as complete for authenticated user
 
 **Code Execution Strategy**: Server-side Rust compilation using Node.js child_process
 - Temporary file creation in OS temp directory with unique identifiers
@@ -135,6 +142,12 @@ Preferred communication style: Simple, everyday language.
 - **Custom Domain Handling**: rustworkbook.com is prioritized as canonical domain
 - **Domain Redirect**: Automatic 301 redirect from replit.app domains to rustworkbook.com
 - **Session Cookie Configuration**: Domain-scoped cookies for rustworkbook.com with SameSite=lax
+
+**Referrer Tracking**:
+- Captures UTM source params (`utm_source`, `ref`) or HTTP Referer header on first visit
+- Stored in session, then persisted to user record on signup
+- Cleared after successful use to prevent reuse across logins
+- Available in `/api/stats` topReferrers for growth analytics
 
 **Key Architectural Decisions**:
 - **Why Replit Auth**: Managed authentication with zero setup for users
