@@ -65,6 +65,12 @@ export function IDEHeader({
     queryKey: ["/api/exercises"],
   });
 
+  // Fetch public stats
+  const { data: stats } = useQuery<{ totalUsers: number; monthlyUsers: number; dailyUsers: number }>({
+    queryKey: ["/api/stats"],
+    staleTime: 60000, // Cache for 1 minute
+  });
+
   // Fetch user progress if authenticated
   const { data: progressData, error: progressError } = useQuery<{ completedExercises: string[] }>({
     queryKey: ["/api/progress"],
@@ -224,6 +230,11 @@ export function IDEHeader({
         <div className="flex items-center gap-3">
           <img src={logoUrl} alt="Rust Workbook" className="h-9 w-9" />
           <span className="text-lg font-semibold">Rust Workbook</span>
+          {stats && stats.totalUsers > 0 && (
+            <span className="text-xs text-muted-foreground" data-testid="text-user-count">
+              {stats.totalUsers.toLocaleString()} users
+            </span>
+          )}
         </div>
         <div className="h-6 w-px bg-border" />
         <div className="flex items-center gap-2">
