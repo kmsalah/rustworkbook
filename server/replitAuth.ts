@@ -95,9 +95,6 @@ export async function setupAuth(app: Express) {
   });
 
   const config = await getOidcConfig();
-
-  // Store referrer from session for the verify callback
-  let pendingReferrer: string | undefined;
   
   const verify: VerifyFunction = async (
     tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
@@ -105,7 +102,8 @@ export async function setupAuth(app: Express) {
   ) => {
     const user = {};
     updateUserSession(user, tokens);
-    await upsertUser(tokens.claims(), pendingReferrer);
+    // Initial upsert without referrer - referrer is added in callback handler
+    await upsertUser(tokens.claims());
     verified(null, user);
   };
 
@@ -137,8 +135,6 @@ export async function setupAuth(app: Express) {
   app.get("/api/login", (req: any, res, next) => {
     const hostname = req.hostname;
     console.log(`[Auth] Login initiated from hostname: ${hostname}`);
-    // Capture referrer from session for the verify callback
-    pendingReferrer = req.session?.referrer;
     ensureStrategy(hostname);
     passport.authenticate(`replitauth:${hostname}`, {
       prompt: "login consent",
@@ -146,14 +142,45 @@ export async function setupAuth(app: Express) {
     } as any)(req, res, next);
   });
 
-  app.get("/api/callback", (req, res, next) => {
+  app.get("/api/callback", (req: any, res, next) => {
     const hostname = req.hostname;
     console.log(`[Auth] Callback received at hostname: ${hostname}`);
     ensureStrategy(hostname);
-    passport.authenticate(`replitauth:${hostname}`, {
-      successReturnToOrRedirect: "/ide",
-      failureRedirect: "/api/login",
-    } as any)(req, res, next);
+    
+    // Use custom callback to handle referrer after successful auth
+    passport.authenticate(`replitauth:${hostname}`, async (err: any, user: any, info: any) => {
+      if (err) {
+        console.error("[Auth] Authentication error:", err);
+        return res.redirect("/api/login");
+      }
+      if (!user) {
+        console.log("[Auth] No user returned, redirecting to login");
+        return res.redirect("/api/login");
+      }
+      
+      // Log the user in
+      req.login(user, async (loginErr: any) => {
+        if (loginErr) {
+          console.error("[Auth] Login error:", loginErr);
+          return res.redirect("/api/login");
+        }
+        
+        // Now update the user with referrer from session (request-scoped, no race)
+        const referrer = req.session?.referrer;
+        if (referrer && user.claims?.sub) {
+          try {
+            await upsertUser(user.claims, referrer);
+            console.log(`[Auth] Updated user ${user.claims.sub} with referrer: ${referrer}`);
+            // Clear the referrer after successful use to prevent reuse
+            delete req.session.referrer;
+          } catch (e) {
+            console.error("[Auth] Failed to update referrer:", e);
+          }
+        }
+        
+        res.redirect("/ide");
+      });
+    })(req, res, next);
   });
 
   app.get("/api/logout", (req, res) => {

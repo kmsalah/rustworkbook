@@ -159,9 +159,15 @@ export class DatabaseStorage implements IStorage {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
     // Filter out test accounts: exclude @example.com, @rustlings.dev emails and test_ IDs
+    // Handle NULL emails correctly (they should be counted as real users)
     const isRealUser = and(
-      not(like(users.email, '%@example.com')),
-      not(like(users.email, '%@rustlings.dev')),
+      or(
+        sql`${users.email} IS NULL`,
+        and(
+          not(like(users.email, '%@example.com')),
+          not(like(users.email, '%@rustlings.dev'))
+        )
+      ),
       not(like(users.id, 'test_%'))
     );
 

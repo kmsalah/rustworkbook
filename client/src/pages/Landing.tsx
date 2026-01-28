@@ -1,14 +1,28 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Code2, BookOpen, Trophy, Zap } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Code2, BookOpen, Trophy, Zap, Users, GraduationCap, CheckCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import logoUrl from "@/assets/logo.png";
+
+interface Stats {
+  totalUsers: number;
+  monthlyUsers: number;
+  dailyUsers: number;
+}
 
 export default function Landing() {
   const { isAuthenticated, isLoading } = useAuth();
   const [, setLocation] = useLocation();
+
+  // Fetch user stats
+  const { data: stats } = useQuery<Stats>({
+    queryKey: ["/api/stats"],
+    staleTime: 60000, // Refresh every minute
+  });
 
   // Redirect authenticated users to IDE
   useEffect(() => {
@@ -37,6 +51,15 @@ export default function Landing() {
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Master Rust programming with interactive exercises. No setup required—just log in and start coding.
             </p>
+            
+            {stats && stats.totalUsers > 0 && (
+              <div className="flex justify-center gap-4 mt-4">
+                <Badge variant="secondary" className="text-sm px-4 py-1.5" data-testid="badge-users">
+                  <Users className="h-4 w-4 mr-2" />
+                  {stats.totalUsers} learners and counting
+                </Badge>
+              </div>
+            )}
           </div>
 
           <div className="flex justify-center gap-4">
@@ -80,6 +103,48 @@ export default function Landing() {
                 </CardDescription>
               </CardHeader>
             </Card>
+          </div>
+
+          <div className="mt-16 p-8 bg-primary/5 border border-primary/20 rounded-lg" data-testid="section-educators">
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <GraduationCap className="h-8 w-8 text-primary" />
+              <h2 className="text-2xl font-bold">For Educators</h2>
+            </div>
+            <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+              Rust Workbook is designed for classroom and self-paced learning. Use it to supplement your Rust curriculum or as a standalone practice tool.
+            </p>
+            <div className="grid md:grid-cols-3 gap-4 text-left max-w-3xl mx-auto">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-medium">No Setup Required</p>
+                  <p className="text-sm text-muted-foreground">Students start coding immediately - no install, no configuration</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-medium">94 Progressive Exercises</p>
+                  <p className="text-sm text-muted-foreground">From variables to lifetimes, covering all core Rust concepts</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-medium">Real Compiler Feedback</p>
+                  <p className="text-sm text-muted-foreground">Students learn from authentic rustc error messages</p>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 text-center">
+              <Button
+                variant="outline"
+                onClick={() => window.location.href = "mailto:hello@rustworkbook.com?subject=Rust%20Workbook%20for%20Educators"}
+                data-testid="button-contact-educators"
+              >
+                Contact Us for Classroom Use
+              </Button>
+            </div>
           </div>
 
           <div className="mt-16 p-8 bg-muted/50 rounded-lg">
