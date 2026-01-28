@@ -1,6 +1,38 @@
 // Piston API client for secure, sandboxed Rust code execution
 // Docs: https://piston.readthedocs.io/en/latest/api-v2/
 
+// Circuit breaker for handling API outages gracefully
+class CircuitBreaker {
+  private failures = 0;
+  private lastFailure = 0;
+  private readonly threshold = 5;
+  private readonly resetTimeout = 60000; // 1 minute
+
+  isOpen(): boolean {
+    if (this.failures >= this.threshold) {
+      if (Date.now() - this.lastFailure > this.resetTimeout) {
+        this.failures = 0;
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  recordSuccess(): void {
+    this.failures = 0;
+  }
+
+  recordFailure(): void {
+    this.failures++;
+    this.lastFailure = Date.now();
+  }
+
+  getStatus(): { isOpen: boolean; failures: number; threshold: number } {
+    return { isOpen: this.isOpen(), failures: this.failures, threshold: this.threshold };
+  }
+}
+
 export interface PistonExecuteRequest {
   language: string;
   version: string;
@@ -37,8 +69,16 @@ export interface PistonExecuteResponse {
 
 export class PistonClient {
   private baseUrl = 'https://emkc.org/api/v2/piston';
+  private circuitBreaker = new CircuitBreaker();
+
+  getCircuitBreakerStatus() {
+    return this.circuitBreaker.getStatus();
+  }
 
   async execute(request: PistonExecuteRequest): Promise<PistonExecuteResponse> {
+    if (this.circuitBreaker.isOpen()) {
+      throw new Error('Compilation service temporarily unavailable (circuit breaker open)');
+    }
     // Retry logic for transient failures
     const maxRetries = 2;
     let lastError: Error | null = null;
@@ -59,9 +99,11 @@ export class PistonClient {
           throw new Error(`Piston API error: ${response.status} ${response.statusText} - ${errorText}`);
         }
 
+        this.circuitBreaker.recordSuccess();
         return await response.json();
       } catch (error) {
         lastError = error instanceof Error ? error : new Error('Unknown error');
+        this.circuitBreaker.recordFailure();
         
         // Don't retry on last attempt
         if (attempt < maxRetries) {

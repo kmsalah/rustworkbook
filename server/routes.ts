@@ -22,16 +22,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/health', asyncHandler(async (req, res) => {
     const dbHealth = await checkDatabaseHealth();
+    const pistonStatus = pistonClient.getCircuitBreakerStatus();
     const uptime = Math.floor((Date.now() - startTime) / 1000);
     
-    const status = dbHealth.healthy ? 'healthy' : 'degraded';
-    const statusCode = dbHealth.healthy ? 200 : 503;
+    const isHealthy = dbHealth.healthy && !pistonStatus.isOpen;
+    const status = isHealthy ? 'healthy' : 'degraded';
+    const statusCode = isHealthy ? 200 : 503;
     
     res.status(statusCode).json({
       status,
       uptime,
       timestamp: new Date().toISOString(),
       database: dbHealth,
+      piston: {
+        healthy: !pistonStatus.isOpen,
+        failures: pistonStatus.failures,
+        threshold: pistonStatus.threshold
+      },
       version: '1.0.0'
     });
   }));
