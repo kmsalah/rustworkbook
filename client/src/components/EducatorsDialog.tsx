@@ -20,7 +20,7 @@ export function EducatorsDialog({ open, onOpenChange }: EducatorsDialogProps) {
         
         <div className="space-y-4 text-sm">
           <p className="text-muted-foreground">
-            Rust Workbook runs in the browser with no setup. Students can start coding right away.
+            Rust Workbook runs in the browser with no setup. Learners can start coding right away.
           </p>
           
           <p className="text-muted-foreground">
