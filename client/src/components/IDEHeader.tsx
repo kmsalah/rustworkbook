@@ -27,10 +27,10 @@ import { CompletionBadge } from "./CompletionBadge";
 import { EducatorsDialog } from "./EducatorsDialog";
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, localeNames, type Locale } from "@/lib/i18n";
 
-// Feature flag for Arabic localization - set to true to re-enable language toggle
-const ENABLE_ARABIC_LOCALIZATION = false;
+// Feature flag for multi-language support
+const ENABLE_LOCALIZATION = true;
 
 interface IDEHeaderProps {
   exerciseName: string;
@@ -68,9 +68,7 @@ export function IDEHeader({
   const [showInfoDialog, setShowInfoDialog] = useState(showInfoOnMount);
   const { t, locale, setLocale } = useI18n();
 
-  const toggleLocale = () => {
-    setLocale(locale === "en" ? "ar-JO" : "en");
-  };
+  const availableLocales: Locale[] = ["en", "ar", "fr", "es"];
 
   // Fetch exercises to get total count
   const { data: exercises } = useQuery<any[]>({
@@ -195,14 +193,22 @@ export function IDEHeader({
                 {theme === "dark" ? t("lightMode") : t("darkMode")}
               </DropdownMenuItem>
               
-              {ENABLE_ARABIC_LOCALIZATION && (
-                <DropdownMenuItem
-                  onClick={toggleLocale}
-                  data-testid="menuitem-language"
-                >
-                  <Languages className="me-2 h-4 w-4" />
-                  {locale === "en" ? t("arabic") : t("english")}
-                </DropdownMenuItem>
+              {ENABLE_LOCALIZATION && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel className="text-xs">{t("language")}</DropdownMenuLabel>
+                  {availableLocales.map((loc) => (
+                    <DropdownMenuItem
+                      key={loc}
+                      onClick={() => setLocale(loc)}
+                      data-testid={`menuitem-language-${loc}`}
+                      className={locale === loc ? "bg-accent" : ""}
+                    >
+                      <Languages className="me-2 h-4 w-4" />
+                      {localeNames[loc]}
+                    </DropdownMenuItem>
+                  ))}
+                </>
               )}
               
               <DropdownMenuSeparator />
@@ -425,16 +431,33 @@ export function IDEHeader({
           {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </Button>
         
-        {ENABLE_ARABIC_LOCALIZATION && (
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={toggleLocale}
-            title={t("language")}
-            data-testid="button-language-toggle"
-          >
-            <Languages className="h-4 w-4" />
-          </Button>
+        {ENABLE_LOCALIZATION && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                title={t("language")}
+                data-testid="button-language-toggle"
+              >
+                <Languages className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>{t("selectLanguage")}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {availableLocales.map((loc) => (
+                <DropdownMenuItem
+                  key={loc}
+                  onClick={() => setLocale(loc)}
+                  data-testid={`menuitem-language-${loc}`}
+                  className={locale === loc ? "bg-accent" : ""}
+                >
+                  {localeNames[loc]}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
 
         <div className="h-6 w-px bg-border mx-1" />
