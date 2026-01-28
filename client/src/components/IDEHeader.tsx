@@ -45,6 +45,7 @@ interface IDEHeaderProps {
   hasNextExercise?: boolean;
   user?: User;
   isMobile?: boolean;
+  showInfoOnMount?: boolean;
 }
 
 export function IDEHeader({
@@ -60,10 +61,11 @@ export function IDEHeader({
   hasNextExercise = false,
   user,
   isMobile = false,
+  showInfoOnMount = false,
 }: IDEHeaderProps) {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [showEducatorsDialog, setShowEducatorsDialog] = useState(false);
-  const [showInfoDialog, setShowInfoDialog] = useState(false);
+  const [showInfoDialog, setShowInfoDialog] = useState(showInfoOnMount);
   const { t, locale, setLocale } = useI18n();
 
   const toggleLocale = () => {
@@ -105,6 +107,13 @@ export function IDEHeader({
       document.documentElement.classList.add("dark");
     }
   }, []);
+
+  // Open info dialog when showInfoOnMount changes to true
+  useEffect(() => {
+    if (showInfoOnMount) {
+      setShowInfoDialog(true);
+    }
+  }, [showInfoOnMount]);
 
   const toggleTheme = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
@@ -484,6 +493,45 @@ export function IDEHeader({
           </Button>
         )}
       </div>
+      
+      {/* Info dialog for desktop - triggered by /contact route */}
+      <Dialog open={showInfoDialog} onOpenChange={setShowInfoDialog}>
+        <DialogContent data-testid="dialog-info">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <img src={logoUrl} alt={t("rustWorkbook")} className="h-6 w-6" />
+              {t("rustWorkbook")}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 text-sm">
+            <p className="text-muted-foreground">
+              {t("infoDescription", { count: totalExercises })}
+            </p>
+            
+            {stats && stats.totalUsers > 0 && (
+              <p className="text-muted-foreground">
+                {t("peopleUsed", { count: stats.totalUsers.toLocaleString() })}
+              </p>
+            )}
+            
+            <div className="pt-2 border-t space-y-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full justify-start"
+                onClick={() => {
+                  setShowInfoDialog(false);
+                  setShowEducatorsDialog(true);
+                }}
+                data-testid="button-educators-from-info"
+              >
+                <GraduationCap className="me-2 h-4 w-4" />
+                {t("forEducators")}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 }

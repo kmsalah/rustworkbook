@@ -19,7 +19,7 @@ import LoginModal from "@/components/LoginModal";
 import { saveExerciseCode, loadExerciseCode, clearExerciseCode } from "@/lib/localStorage";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-export default function Home() {
+export default function Home({ showInfoOnMount = false }: { showInfoOnMount?: boolean }) {
   const { isAuthenticated, isLoading: authLoading, user: authUser } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -415,6 +415,7 @@ export default function Home() {
           hasNextExercise={hasNextExercise}
           user={user}
           isMobile={true}
+          showInfoOnMount={showInfoOnMount}
         />
         
         <div className="flex-1 overflow-hidden">
@@ -495,6 +496,7 @@ export default function Home() {
           hasPreviousExercise={hasPreviousExercise}
           hasNextExercise={hasNextExercise}
           user={user}
+          showInfoOnMount={showInfoOnMount}
         />
 
         <div className="flex-1 flex">
@@ -571,6 +573,7 @@ export default function Home() {
         hasPreviousExercise={hasPreviousExercise}
         hasNextExercise={hasNextExercise}
         user={user}
+        showInfoOnMount={showInfoOnMount}
       />
 
       <ResizablePanelGroup direction="horizontal" className="flex-1" autoSaveId="rustlings-panel-layout">
