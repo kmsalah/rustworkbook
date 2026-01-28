@@ -115,7 +115,7 @@ export function IDEHeader({
     return (
       <header className="h-14 border-b border-border bg-background px-2 flex items-center justify-between flex-shrink-0" data-testid="header-ide">
         <div className="flex items-center gap-2">
-          <img src={logoUrl} alt="Rust Workbook" className="h-8 w-8" />
+          <img src={logoUrl} alt={t("rustWorkbook")} className="h-8 w-8" />
           <span className="text-sm font-semibold">{t("rustWorkbook")}</span>
           <Button
             size="icon"
@@ -196,7 +196,7 @@ export function IDEHeader({
               {user ? (
                 <>
                   <DropdownMenuLabel className="text-xs flex items-center gap-2">
-                    <span>{user.firstName || user.email || "User"}</span>
+                    <span>{user.firstName || user.email || t("user")}</span>
                     {hasCompletedAll && (
                       <CompletionBadge className="h-4 w-4 text-red-500" />
                     )}
@@ -249,7 +249,7 @@ export function IDEHeader({
           <DialogContent data-testid="dialog-info">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <img src={logoUrl} alt="Rust Workbook" className="h-6 w-6" />
+                <img src={logoUrl} alt={t("rustWorkbook")} className="h-6 w-6" />
                 {t("rustWorkbook")}
               </DialogTitle>
             </DialogHeader>
@@ -296,7 +296,7 @@ export function IDEHeader({
     <header className="h-14 border-b border-border bg-background px-6 flex items-center justify-between flex-shrink-0" data-testid="header-ide">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-3">
-          <img src={logoUrl} alt="Rust Workbook" className="h-9 w-9" />
+          <img src={logoUrl} alt={t("rustWorkbook")} className="h-9 w-9" />
           <span className="text-lg font-semibold">{t("rustWorkbook")}</span>
           {stats && stats.totalUsers > 0 && (
             <span className="text-xs text-muted-foreground" data-testid="text-user-count">
@@ -391,7 +391,7 @@ export function IDEHeader({
           size="icon"
           variant="ghost"
           onClick={() => setShowEducatorsDialog(true)}
-          title="For Educators"
+          title={t("forEducators")}
           data-testid="button-educators"
         >
           <GraduationCap className="h-4 w-4" />
@@ -428,13 +428,13 @@ export function IDEHeader({
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 px-2 gap-2" data-testid="button-user-menu">
                 <Avatar className="h-6 w-6">
-                  <AvatarImage src={user.profileImageUrl || undefined} alt={user.email || "User"} />
+                  <AvatarImage src={user.profileImageUrl || undefined} alt={user.email || t("user")} />
                   <AvatarFallback>
                     {user.firstName?.[0] || user.email?.[0] || "U"}
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-sm">
-                  {user.firstName || user.email || "User"}
+                  {user.firstName || user.email || t("user")}
                 </span>
               </Button>
             </DropdownMenuTrigger>

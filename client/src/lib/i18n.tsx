@@ -20,6 +20,7 @@ const translations = {
     "logOut": "Log Out",
     "myAccount": "My Account",
     "noExerciseSelected": "No exercise selected",
+    "user": "User",
     
     // Info dialog
     "infoDescription": "An interactive coding workbook for learning Rust. Work through {count} exercises covering variables, functions, ownership, lifetimes, and more.",
@@ -75,6 +76,7 @@ const translations = {
     "logOut": "تسجيل الخروج",
     "myAccount": "حسابي",
     "noExerciseSelected": "لم يتم اختيار تمرين",
+    "user": "مستخدم",
     
     // Info dialog
     "infoDescription": "كتاب تمارين تفاعلي لتعلم رست. اعمل على {count} تمرين تغطي المتغيرات والدوال والملكية وغيرها.",
