@@ -299,6 +299,18 @@ export function IDEHeader({
               )}
               
               <div className="pt-2 border-t space-y-2">
+                {!user && (
+                  <Button
+                    size="sm"
+                    className="w-full"
+                    onClick={() => {
+                      window.location.href = "/api/login";
+                    }}
+                    data-testid="button-signup-from-info"
+                  >
+                    {t("signIn")}
+                  </Button>
+                )}
                 <Button
                   variant="outline"
                   size="sm"
@@ -561,6 +573,18 @@ export function IDEHeader({
             )}
             
             <div className="pt-2 border-t space-y-2">
+              {!user && (
+                <Button
+                  size="sm"
+                  className="w-full"
+                  onClick={() => {
+                    window.location.href = "/api/login";
+                  }}
+                  data-testid="button-signup-from-info"
+                >
+                  {t("signIn")}
+                </Button>
+              )}
               <Button
                 variant="outline"
                 size="sm"
