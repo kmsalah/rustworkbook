@@ -158,6 +158,9 @@ export async function setupAuth(app: Express) {
         return res.redirect("/api/login");
       }
       
+      // Check if this is a new user before upserting
+      const isNewUser = user.claims?.sub ? await storage.isUserNew(user.claims.sub) : false;
+      
       // Log the user in
       req.login(user, async (loginErr: any) => {
         if (loginErr) {
@@ -178,7 +181,13 @@ export async function setupAuth(app: Express) {
           }
         }
         
-        res.redirect("/ide");
+        // Redirect new users to welcome page for conversion tracking
+        if (isNewUser) {
+          console.log(`[Auth] New user signup: ${user.claims?.sub}`);
+          res.redirect("/welcome");
+        } else {
+          res.redirect("/ide");
+        }
       });
     })(req, res, next);
   });

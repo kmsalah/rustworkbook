@@ -20,6 +20,7 @@ export interface IStorage {
   // User operations (required for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  isUserNew(id: string): Promise<boolean>;
   
   // Progress tracking (database-backed)
   getUserProgress(userId: string): Promise<string[]>;
@@ -117,6 +118,11 @@ export class DatabaseStorage implements IStorage {
       console.error("Error upserting user:", error?.message || error);
       throw error;
     }
+  }
+
+  async isUserNew(id: string): Promise<boolean> {
+    const user = await this.getUser(id);
+    return !user;
   }
 
   // Progress tracking
