@@ -283,6 +283,15 @@ export function IDEHeader({
                 {t("infoDescription", { count: totalExercises })}
               </p>
               
+              <div className="space-y-2">
+                <p className="font-medium">{t("perfectFor")}</p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                  <li>{t("useCase1")}</li>
+                  <li>{t("useCase2")}</li>
+                  <li>{t("useCase3")}</li>
+                </ul>
+              </div>
+              
               {stats && stats.totalUsers > 0 && (
                 <p className="text-muted-foreground">
                   {t("peopleUsed", { count: stats.totalUsers.toLocaleString() })}
@@ -535,6 +544,15 @@ export function IDEHeader({
             <p className="text-muted-foreground">
               {t("infoDescription", { count: totalExercises })}
             </p>
+            
+            <div className="space-y-2">
+              <p className="font-medium">{t("perfectFor")}</p>
+              <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                <li>{t("useCase1")}</li>
+                <li>{t("useCase2")}</li>
+                <li>{t("useCase3")}</li>
+              </ul>
+            </div>
             
             {stats && stats.totalUsers > 0 && (
               <p className="text-muted-foreground">

@@ -31,6 +31,10 @@ const translations = {
     
     // Info dialog
     "infoDescription": "An interactive coding workbook for learning Rust. Work through {count} exercises covering variables, functions, ownership, lifetimes, and more.",
+    "perfectFor": "Perfect for:",
+    "useCase1": "Learning to program",
+    "useCase2": "Learning Rust",
+    "useCase3": "Interview preparation",
     "peopleUsed": "{count} people have used this workbook.",
     "forEducators": "For Educators",
     "eduRates": "Educational institutions get special rates.",
@@ -116,6 +120,10 @@ const translations = {
     
     // Info dialog
     "infoDescription": "كتاب تمارين تفاعلي لتعلم رست. اعمل على {count} تمرين تغطي المتغيرات والدوال والملكية وغيرها.",
+    "perfectFor": "مثالي لـ:",
+    "useCase1": "تعلم البرمجة",
+    "useCase2": "تعلم رست",
+    "useCase3": "التحضير للمقابلات",
     "peopleUsed": "{count} شخص استخدم هذا الكتاب.",
     "forEducators": "للمعلمين",
     "eduRates": "المؤسسات التعليمية تحصل على أسعار خاصة.",
@@ -201,6 +209,10 @@ const translations = {
     
     // Info dialog
     "infoDescription": "Un cahier d'exercices interactif pour apprendre Rust. Travaillez sur {count} exercices couvrant les variables, fonctions, propriété, durées de vie, et plus.",
+    "perfectFor": "Idéal pour :",
+    "useCase1": "Apprendre à programmer",
+    "useCase2": "Apprendre Rust",
+    "useCase3": "Préparation aux entretiens",
     "peopleUsed": "{count} personnes ont utilisé ce cahier.",
     "forEducators": "Pour les enseignants",
     "eduRates": "Les établissements d'enseignement bénéficient de tarifs spéciaux.",
@@ -286,6 +298,10 @@ const translations = {
     
     // Info dialog
     "infoDescription": "Un cuaderno interactivo para aprender Rust. Trabaja en {count} ejercicios que cubren variables, funciones, propiedad, tiempos de vida y más.",
+    "perfectFor": "Perfecto para:",
+    "useCase1": "Aprender a programar",
+    "useCase2": "Aprender Rust",
+    "useCase3": "Preparación de entrevistas",
     "peopleUsed": "{count} personas han usado este cuaderno.",
     "forEducators": "Para educadores",
     "eduRates": "Las instituciones educativas obtienen tarifas especiales.",
