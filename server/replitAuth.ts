@@ -185,7 +185,7 @@ export async function setupAuth(app: Express) {
         if (isNewUser) {
           console.log(`[Auth] New user signup: ${user.claims?.sub}`);
         }
-        res.redirect("/ide");
+        res.redirect("/");
       });
     })(req, res, next);
   });

@@ -9,7 +9,7 @@ export default function About() {
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-4xl mx-auto">
         {/* Back to IDE Button */}
-        <Link href="/ide">
+        <Link href="/">
           <Button variant="ghost" className="mb-6" data-testid="button-back-to-ide">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to IDE

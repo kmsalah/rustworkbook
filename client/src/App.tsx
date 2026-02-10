@@ -13,7 +13,6 @@ function Router() {
   return (
     <Switch>
       <Route path="/">{() => <Home />}</Route>
-      <Route path="/ide">{() => <Home />}</Route>
       <Route path="/welcome">{() => <Home />}</Route>
       <Route path="/contact">{() => <Home showInfoOnMount />}</Route>
       <Route path="/learn">{() => <Learn />}</Route>
