@@ -240,12 +240,26 @@ export default function Home({ showInfoOnMount = false }: { showInfoOnMount?: bo
 
   useEffect(() => {
     if (exercises && exercises.length > 0 && !currentExercise) {
-      // Load last viewed exercise from localStorage (for session persistence)
-      const lastViewedId = localStorage.getItem("rustlings-last-exercise");
-      const lastExercise = lastViewedId
-        ? exercises.find(ex => ex.id === lastViewedId)
-        : null;
-      setCurrentExercise(lastExercise || exercises[0]);
+      const params = new URLSearchParams(window.location.search);
+      const topicParam = params.get("topic");
+      const exerciseParam = params.get("exercise");
+
+      let targetExercise: Exercise | undefined;
+
+      if (exerciseParam) {
+        targetExercise = exercises.find(ex => ex.id === exerciseParam);
+      } else if (topicParam) {
+        targetExercise = exercises.find(ex => ex.topic === topicParam);
+      }
+
+      if (!targetExercise) {
+        const lastViewedId = localStorage.getItem("rustlings-last-exercise");
+        targetExercise = lastViewedId
+          ? exercises.find(ex => ex.id === lastViewedId)
+          : undefined;
+      }
+
+      setCurrentExercise(targetExercise || exercises[0]);
     }
   }, [exercises, currentExercise]);
 
