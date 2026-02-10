@@ -61,12 +61,16 @@ export default function Leaderboard() {
       return `${entry.firstName} ${entry.lastName}`;
     }
     if (entry.firstName) return entry.firstName;
-    return t("anonymousUser");
+    const shortId = entry.userId.slice(-4);
+    return `Rustacean #${shortId}`;
   }
 
   function getInitials(entry: LeaderboardEntry) {
+    if (entry.firstName && entry.lastName) {
+      return `${entry.firstName[0]}${entry.lastName[0]}`.toUpperCase();
+    }
     if (entry.firstName) return entry.firstName[0].toUpperCase();
-    return "?";
+    return entry.userId.slice(-2).toUpperCase();
   }
 
   return (
