@@ -12,6 +12,15 @@ export interface UserStats {
   topReferrers: { referrer: string; count: number }[];
 }
 
+export interface LeaderboardEntry {
+  userId: string;
+  firstName: string | null;
+  lastName: string | null;
+  profileImageUrl: string | null;
+  completedCount: number;
+  lastCompletedAt: string | null;
+}
+
 export interface IStorage {
   // Exercise operations (still in-memory)
   getAllExercises(): Promise<Exercise[]>;
@@ -29,6 +38,9 @@ export interface IStorage {
   
   // Stats
   getUserStats(): Promise<UserStats>;
+  
+  // Leaderboard
+  getLeaderboard(): Promise<LeaderboardEntry[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -216,6 +228,37 @@ export class DatabaseStorage implements IStorage {
         count: r.count,
       })),
     };
+  }
+
+  async getLeaderboard(): Promise<LeaderboardEntry[]> {
+    const results = await db
+      .select({
+        userId: userProgress.userId,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        profileImageUrl: users.profileImageUrl,
+        completedCount: sql<number>`count(*)::int`,
+        lastCompletedAt: sql<string>`max(${userProgress.completedAt})::text`,
+      })
+      .from(userProgress)
+      .innerJoin(users, eq(userProgress.userId, users.id))
+      .where(
+        and(
+          or(
+            sql`${users.email} IS NULL`,
+            and(
+              not(like(users.email, '%@example.com')),
+              not(like(users.email, '%@rustlings.dev'))
+            )
+          ),
+          not(like(users.id, 'test_%'))
+        )
+      )
+      .groupBy(userProgress.userId, users.firstName, users.lastName, users.profileImageUrl)
+      .orderBy(sql`count(*) DESC`)
+      .limit(50);
+
+    return results;
   }
 }
 

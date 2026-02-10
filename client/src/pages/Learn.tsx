@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Code, BookOpen, Trophy, GraduationCap, Users, ArrowRight, Monitor, Zap } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { useOnlineCount } from "@/hooks/useOnlineCount";
 import logoUrl from "@/assets/logo.png";
 
 interface Stats {
@@ -16,6 +17,7 @@ interface Stats {
 export default function Learn() {
   const [, setLocation] = useLocation();
   const { t } = useI18n();
+  const onlineCount = useOnlineCount();
 
   const { data: stats } = useQuery<Stats>({
     queryKey: ["/api/stats"],
@@ -38,12 +40,20 @@ export default function Learn() {
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto" data-testid="text-learn-subtitle">
             {t("learnSubtitle")}
           </p>
-          {stats && stats.totalUsers > 0 && (
-            <div className="flex items-center justify-center gap-2 text-muted-foreground">
-              <Users className="h-4 w-4" />
-              <span data-testid="text-learn-users">{t("peopleUsed", { count: stats.totalUsers.toLocaleString() })}</span>
-            </div>
-          )}
+          <div className="flex items-center justify-center gap-4 text-muted-foreground">
+            {onlineCount > 0 && (
+              <span className="flex items-center gap-1 text-sm" data-testid="text-learn-online">
+                <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                {onlineCount} {t("online")}
+              </span>
+            )}
+            {stats && stats.totalUsers > 0 && (
+              <span className="flex items-center gap-1 text-sm" data-testid="text-learn-users">
+                <Users className="h-4 w-4" />
+                {stats.totalUsers.toLocaleString()} {t("learners")}
+              </span>
+            )}
+          </div>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button
               size="lg"

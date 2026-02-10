@@ -8,6 +8,7 @@ import { I18nProvider } from "@/lib/i18n";
 import Home from "@/pages/Home";
 import Learn from "@/pages/Learn";
 import Welcome from "@/pages/Welcome";
+import Leaderboard from "@/pages/Leaderboard";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/welcome">{() => <Welcome />}</Route>
       <Route path="/contact">{() => <Home showInfoOnMount />}</Route>
       <Route path="/learn">{() => <Learn />}</Route>
+      <Route path="/leaderboard">{() => <Leaderboard />}</Route>
       <Route component={NotFound} />
     </Switch>
   );

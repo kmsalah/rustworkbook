@@ -8,6 +8,7 @@ import { compileRateLimiter, anonymousRateLimiter, SecurityMonitor } from "./sec
 import { pistonClient } from "./piston";
 import { checkDatabaseHealth } from "./db";
 import { getLocalizedExercise, type SupportedLocale } from "./exercise-translations";
+import { setupWebSocket } from "./websocket";
 
 const startTime = Date.now();
 
@@ -241,6 +242,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get('/api/leaderboard', async (req, res) => {
+    try {
+      const leaderboard = await storage.getLeaderboard();
+      res.json(leaderboard);
+    } catch (error) {
+      console.error("Error fetching leaderboard:", error);
+      res.status(500).json({ error: "Failed to fetch leaderboard" });
+    }
+  });
+
   const httpServer = createServer(app);
+  setupWebSocket(httpServer);
   return httpServer;
 }

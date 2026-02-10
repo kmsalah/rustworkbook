@@ -1,4 +1,4 @@
-import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn, MoreVertical, GraduationCap, Info, Languages } from "lucide-react";
+import { Play, HelpCircle, RotateCcw, Moon, Sun, ChevronLeft, ChevronRight, LogOut, LogIn, MoreVertical, GraduationCap, Info, Languages, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -28,6 +28,8 @@ import { EducatorsDialog } from "./EducatorsDialog";
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { useI18n, localeNames, type Locale } from "@/lib/i18n";
+import { useOnlineCount } from "@/hooks/useOnlineCount";
+import { useLocation } from "wouter";
 
 // Feature flag for multi-language support
 const ENABLE_LOCALIZATION = true;
@@ -67,6 +69,8 @@ export function IDEHeader({
   const [showEducatorsDialog, setShowEducatorsDialog] = useState(false);
   const [showInfoDialog, setShowInfoDialog] = useState(showInfoOnMount);
   const { t, locale, setLocale } = useI18n();
+  const onlineCount = useOnlineCount();
+  const [, setLocation] = useLocation();
 
   const availableLocales: Locale[] = ["en", "ar", "fr", "es"];
 
@@ -135,11 +139,10 @@ export function IDEHeader({
           <Button
             size="icon"
             variant="ghost"
-            className="h-6 w-6"
             onClick={() => setShowInfoDialog(true)}
             data-testid="button-info-mobile"
           >
-            <Info className="h-3 w-3" />
+            <Info className="h-4 w-4" />
           </Button>
         </div>
         
@@ -189,6 +192,14 @@ export function IDEHeader({
                   <DropdownMenuSeparator />
                 </>
               )}
+              
+              <DropdownMenuItem
+                onClick={() => setLocation("/leaderboard")}
+                data-testid="menuitem-leaderboard"
+              >
+                <Trophy className="me-2 h-4 w-4" />
+                {t("leaderboard")}
+              </DropdownMenuItem>
               
               <DropdownMenuItem
                 onClick={toggleTheme}
@@ -344,11 +355,19 @@ export function IDEHeader({
         <div className="flex items-center gap-3">
           <img src={logoUrl} alt={t("rustWorkbook")} className="h-9 w-9" />
           <span className="text-lg font-semibold">{t("rustWorkbook")}</span>
-          {stats && stats.totalUsers > 0 && (
-            <span className="text-xs text-muted-foreground" data-testid="text-user-count">
-              {stats.totalUsers.toLocaleString()} {t("users")}
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            {onlineCount > 0 && (
+              <span className="text-xs text-muted-foreground flex items-center gap-1" data-testid="text-online-count">
+                <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                {onlineCount} {t("online")}
+              </span>
+            )}
+            {stats && stats.totalUsers > 0 && (
+              <span className="text-xs text-muted-foreground" data-testid="text-user-count">
+                {stats.totalUsers.toLocaleString()} {t("learners")}
+              </span>
+            )}
+          </div>
         </div>
         <div className="h-6 w-px bg-border" />
         <div className="flex items-center gap-2">
@@ -428,6 +447,16 @@ export function IDEHeader({
         </Button>
 
         <div className="h-6 w-px bg-border mx-1" />
+
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={() => setLocation("/leaderboard")}
+          title={t("leaderboard")}
+          data-testid="button-leaderboard"
+        >
+          <Trophy className="h-4 w-4" />
+        </Button>
 
         <AboutModal />
         
