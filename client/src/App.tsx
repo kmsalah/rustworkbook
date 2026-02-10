@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { I18nProvider } from "@/lib/i18n";
 import Home from "@/pages/Home";
-import Welcome from "@/pages/Welcome";
+import Learn from "@/pages/Learn";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -14,8 +14,9 @@ function Router() {
     <Switch>
       <Route path="/">{() => <Home />}</Route>
       <Route path="/ide">{() => <Home />}</Route>
+      <Route path="/welcome">{() => <Home />}</Route>
       <Route path="/contact">{() => <Home showInfoOnMount />}</Route>
-      <Route path="/welcome">{() => <Welcome />}</Route>
+      <Route path="/learn">{() => <Learn />}</Route>
       <Route component={NotFound} />
     </Switch>
   );

@@ -181,13 +181,11 @@ export async function setupAuth(app: Express) {
           }
         }
         
-        // Redirect new users to welcome page for conversion tracking
+        // Redirect all users to IDE after login
         if (isNewUser) {
           console.log(`[Auth] New user signup: ${user.claims?.sub}`);
-          res.redirect("/welcome");
-        } else {
-          res.redirect("/ide");
         }
+        res.redirect("/ide");
       });
     })(req, res, next);
   });

@@ -44,6 +44,24 @@ const translations = {
     "educatorsExercises": "94 exercises from basics to advanced topics. Uses the real Rust compiler.",
     "getInTouch": "Get in touch",
     
+    // Learn page
+    "learnPageTitle": "Learn Rust - Rust Workbook",
+    "learnSubtitle": "An interactive coding workbook for learning Rust",
+    "learnTryNow": "Try it now",
+    "learnWhyTitle": "Why Rust Workbook?",
+    "learnFeature1Title": "94 Interactive Exercises",
+    "learnFeature1Desc": "From basics to advanced topics like lifetimes, smart pointers, and macros.",
+    "learnFeature2Title": "No Setup Required",
+    "learnFeature2Desc": "Runs in the browser. No installation needed. Start coding in seconds.",
+    "learnFeature3Title": "Hints & Guidance",
+    "learnFeature3Desc": "Get help when you're stuck on any exercise.",
+    "learnFeature4Title": "Real Rust Compiler",
+    "learnFeature4Desc": "Compile and run real Rust code. Not a simulation.",
+    "eduBenefit1": "No setup required — students start coding immediately",
+    "eduBenefit2": "Progress tracking for each student",
+    "eduBenefit3": "94 exercises covering the full Rust curriculum",
+    "eduBenefit4": "Works on any device with a browser",
+    
     // Exercise hint dialog
     "exerciseHint": "Exercise Hint",
     "noHintAvailable": "No hint available for this exercise.",
@@ -132,6 +150,24 @@ const translations = {
     "educatorsDescription": "كتاب تمارين رست يعمل في المتصفح بدون إعداد. يمكن للمتعلمين البدء بالبرمجة فوراً.",
     "educatorsExercises": "٩٤ تمرين من الأساسيات إلى المواضيع المتقدمة. يستخدم مترجم رست الحقيقي.",
     "getInTouch": "تواصل معنا",
+    
+    // Learn page
+    "learnPageTitle": "تعلم رست - كتاب تمارين رست",
+    "learnSubtitle": "كتاب تمارين تفاعلي لتعلم لغة رست",
+    "learnTryNow": "جرّبه الآن",
+    "learnWhyTitle": "لماذا كتاب تمارين رست؟",
+    "learnFeature1Title": "٩٤ تمرين تفاعلي",
+    "learnFeature1Desc": "من الأساسيات إلى المواضيع المتقدمة مثل فترات الحياة والمؤشرات الذكية والماكرو.",
+    "learnFeature2Title": "لا حاجة للإعداد",
+    "learnFeature2Desc": "يعمل في المتصفح. لا حاجة للتثبيت. ابدأ البرمجة في ثوانٍ.",
+    "learnFeature3Title": "تلميحات وإرشادات",
+    "learnFeature3Desc": "احصل على المساعدة عندما تواجه صعوبة في أي تمرين.",
+    "learnFeature4Title": "مترجم رست حقيقي",
+    "learnFeature4Desc": "ترجمة وتشغيل كود رست حقيقي. ليس محاكاة.",
+    "eduBenefit1": "لا حاجة للإعداد — يبدأ الطلاب البرمجة فوراً",
+    "eduBenefit2": "تتبع التقدم لكل طالب",
+    "eduBenefit3": "٩٤ تمرين تغطي منهج رست الكامل",
+    "eduBenefit4": "يعمل على أي جهاز يحتوي على متصفح",
     
     // Exercise hint dialog
     "exerciseHint": "تلميح التمرين",
@@ -222,6 +258,24 @@ const translations = {
     "educatorsExercises": "94 exercices des bases aux sujets avancés. Utilise le vrai compilateur Rust.",
     "getInTouch": "Nous contacter",
     
+    // Learn page
+    "learnPageTitle": "Apprendre Rust - Cahier d'exercices Rust",
+    "learnSubtitle": "Un cahier d'exercices interactif pour apprendre Rust",
+    "learnTryNow": "Essayer maintenant",
+    "learnWhyTitle": "Pourquoi le cahier Rust ?",
+    "learnFeature1Title": "94 exercices interactifs",
+    "learnFeature1Desc": "Des bases aux sujets avancés comme les durées de vie, les pointeurs intelligents et les macros.",
+    "learnFeature2Title": "Aucune installation",
+    "learnFeature2Desc": "Fonctionne dans le navigateur. Aucune installation nécessaire. Commencez à coder en quelques secondes.",
+    "learnFeature3Title": "Indices et guidance",
+    "learnFeature3Desc": "Obtenez de l'aide quand vous êtes bloqué sur un exercice.",
+    "learnFeature4Title": "Vrai compilateur Rust",
+    "learnFeature4Desc": "Compilez et exécutez du vrai code Rust. Pas une simulation.",
+    "eduBenefit1": "Aucune configuration — les étudiants commencent à coder immédiatement",
+    "eduBenefit2": "Suivi de la progression pour chaque étudiant",
+    "eduBenefit3": "94 exercices couvrant tout le programme Rust",
+    "eduBenefit4": "Fonctionne sur tout appareil avec un navigateur",
+    
     // Exercise hint dialog
     "exerciseHint": "Indice de l'exercice",
     "noHintAvailable": "Aucun indice disponible pour cet exercice.",
@@ -310,6 +364,24 @@ const translations = {
     "educatorsDescription": "El cuaderno de Rust funciona en el navegador sin configuración. Los estudiantes pueden empezar a programar de inmediato.",
     "educatorsExercises": "94 ejercicios desde lo básico hasta temas avanzados. Usa el compilador real de Rust.",
     "getInTouch": "Contáctanos",
+    
+    // Learn page
+    "learnPageTitle": "Aprender Rust - Cuaderno de Rust",
+    "learnSubtitle": "Un cuaderno interactivo para aprender Rust",
+    "learnTryNow": "Pruébalo ahora",
+    "learnWhyTitle": "¿Por qué Cuaderno de Rust?",
+    "learnFeature1Title": "94 ejercicios interactivos",
+    "learnFeature1Desc": "Desde lo básico hasta temas avanzados como tiempos de vida, punteros inteligentes y macros.",
+    "learnFeature2Title": "Sin instalación",
+    "learnFeature2Desc": "Funciona en el navegador. Sin instalación necesaria. Empieza a programar en segundos.",
+    "learnFeature3Title": "Pistas y guía",
+    "learnFeature3Desc": "Obtén ayuda cuando estés atascado en cualquier ejercicio.",
+    "learnFeature4Title": "Compilador Rust real",
+    "learnFeature4Desc": "Compila y ejecuta código Rust real. No es una simulación.",
+    "eduBenefit1": "Sin configuración — los estudiantes empiezan a programar de inmediato",
+    "eduBenefit2": "Seguimiento del progreso de cada estudiante",
+    "eduBenefit3": "94 ejercicios que cubren todo el plan de estudios de Rust",
+    "eduBenefit4": "Funciona en cualquier dispositivo con navegador",
     
     // Exercise hint dialog
     "exerciseHint": "Pista del ejercicio",
