@@ -47,7 +47,7 @@ export default function Learn() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button
               size="lg"
-              onClick={() => setLocation("/welcome")}
+              onClick={() => setLocation("/")}
               data-testid="button-try-now"
             >
               {t("learnTryNow")}
@@ -157,7 +157,7 @@ export default function Learn() {
               </ul>
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <Button
-                  onClick={() => setLocation("/welcome")}
+                  onClick={() => setLocation("/")}
                   data-testid="button-educators-try"
                 >
                   {t("learnTryNow")}

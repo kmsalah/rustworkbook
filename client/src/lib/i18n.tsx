@@ -62,6 +62,21 @@ const translations = {
     "eduBenefit3": "94 exercises covering the full Rust curriculum",
     "eduBenefit4": "Works on any device with a browser",
     
+    // Welcome page
+    "welcomePageTitle": "Rust Workbook - Learn Rust by Doing",
+    "welcomeSubtitle": "Learn Rust through hands-on coding exercises. No setup, no installation — just open and start writing code.",
+    "welcomeStartCoding": "Start coding",
+    "welcomeHowItWorks": "How it works",
+    "welcomeStep1Title": "Open in your browser",
+    "welcomeStep1Desc": "No downloads or setup. Works on any device.",
+    "welcomeStep2Title": "Write Rust code",
+    "welcomeStep2Desc": "94 exercises from basics to advanced topics.",
+    "welcomeStep3Title": "Get instant feedback",
+    "welcomeStep3Desc": "Real compiler output tells you exactly what to fix.",
+    "welcomeWhatsInside": "What's inside",
+    "welcomeReadyTitle": "Ready to start?",
+    "welcomeReadyDesc": "Jump in and write your first Rust program in seconds.",
+
     // Exercise hint dialog
     "exerciseHint": "Exercise Hint",
     "noHintAvailable": "No hint available for this exercise.",
@@ -169,6 +184,21 @@ const translations = {
     "eduBenefit3": "٩٤ تمرين تغطي منهج رست الكامل",
     "eduBenefit4": "يعمل على أي جهاز يحتوي على متصفح",
     
+    // Welcome page
+    "welcomePageTitle": "كتاب تمارين رست - تعلم رست بالممارسة",
+    "welcomeSubtitle": "تعلم رست من خلال تمارين برمجية عملية. بدون إعداد، بدون تثبيت — فقط افتح وابدأ بكتابة الكود.",
+    "welcomeStartCoding": "ابدأ البرمجة",
+    "welcomeHowItWorks": "كيف يعمل",
+    "welcomeStep1Title": "افتح في متصفحك",
+    "welcomeStep1Desc": "بدون تنزيل أو إعداد. يعمل على أي جهاز.",
+    "welcomeStep2Title": "اكتب كود رست",
+    "welcomeStep2Desc": "٩٤ تمرين من الأساسيات إلى المواضيع المتقدمة.",
+    "welcomeStep3Title": "احصل على ملاحظات فورية",
+    "welcomeStep3Desc": "مخرجات المترجم الحقيقي تخبرك بالضبط ما يجب إصلاحه.",
+    "welcomeWhatsInside": "ماذا بالداخل",
+    "welcomeReadyTitle": "مستعد للبدء؟",
+    "welcomeReadyDesc": "انطلق واكتب أول برنامج رست في ثوانٍ.",
+
     // Exercise hint dialog
     "exerciseHint": "تلميح التمرين",
     "noHintAvailable": "لا يوجد تلميح لهذا التمرين.",
@@ -276,6 +306,21 @@ const translations = {
     "eduBenefit3": "94 exercices couvrant tout le programme Rust",
     "eduBenefit4": "Fonctionne sur tout appareil avec un navigateur",
     
+    // Welcome page
+    "welcomePageTitle": "Cahier Rust - Apprenez Rust en pratiquant",
+    "welcomeSubtitle": "Apprenez Rust grâce à des exercices de programmation pratiques. Sans configuration, sans installation — ouvrez et commencez à coder.",
+    "welcomeStartCoding": "Commencer à coder",
+    "welcomeHowItWorks": "Comment ça marche",
+    "welcomeStep1Title": "Ouvrez dans votre navigateur",
+    "welcomeStep1Desc": "Aucun téléchargement ni configuration. Fonctionne sur tout appareil.",
+    "welcomeStep2Title": "Écrivez du code Rust",
+    "welcomeStep2Desc": "94 exercices des bases aux sujets avancés.",
+    "welcomeStep3Title": "Obtenez un retour instantané",
+    "welcomeStep3Desc": "La sortie du vrai compilateur vous dit exactement quoi corriger.",
+    "welcomeWhatsInside": "Ce qu'il contient",
+    "welcomeReadyTitle": "Prêt à commencer ?",
+    "welcomeReadyDesc": "Lancez-vous et écrivez votre premier programme Rust en quelques secondes.",
+
     // Exercise hint dialog
     "exerciseHint": "Indice de l'exercice",
     "noHintAvailable": "Aucun indice disponible pour cet exercice.",
@@ -383,6 +428,21 @@ const translations = {
     "eduBenefit3": "94 ejercicios que cubren todo el plan de estudios de Rust",
     "eduBenefit4": "Funciona en cualquier dispositivo con navegador",
     
+    // Welcome page
+    "welcomePageTitle": "Cuaderno de Rust - Aprende Rust practicando",
+    "welcomeSubtitle": "Aprende Rust con ejercicios de programación prácticos. Sin configuración, sin instalación — solo abre y empieza a escribir código.",
+    "welcomeStartCoding": "Empezar a programar",
+    "welcomeHowItWorks": "Cómo funciona",
+    "welcomeStep1Title": "Abre en tu navegador",
+    "welcomeStep1Desc": "Sin descargas ni configuración. Funciona en cualquier dispositivo.",
+    "welcomeStep2Title": "Escribe código Rust",
+    "welcomeStep2Desc": "94 ejercicios desde lo básico hasta temas avanzados.",
+    "welcomeStep3Title": "Obtén retroalimentación instantánea",
+    "welcomeStep3Desc": "La salida del compilador real te dice exactamente qué corregir.",
+    "welcomeWhatsInside": "Qué incluye",
+    "welcomeReadyTitle": "Listo para empezar?",
+    "welcomeReadyDesc": "Salta y escribe tu primer programa en Rust en segundos.",
+
     // Exercise hint dialog
     "exerciseHint": "Pista del ejercicio",
     "noHintAvailable": "No hay pista disponible para este ejercicio.",
