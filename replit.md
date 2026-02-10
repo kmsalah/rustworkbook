@@ -7,6 +7,8 @@ Rust Workbook (rustworkbook.com) is an online Rust coding workbook - an interact
 ### Routes
 - `/` - Main IDE interface for coding exercises
 - `/ide` - Main IDE interface for coding exercises (alias)
+- `/leaderboard` - Public leaderboard showing users ranked by exercise completion count
+- `/learn` - Learn/landing page with platform info
 
 ## User Preferences
 
@@ -71,8 +73,10 @@ Preferred communication style: Simple, everyday language.
 - `GET /api/hint/:id` - Retrieve exercise hint
 - `POST /api/compile` - Execute Rust code compilation
 - `GET /api/stats` - Public endpoint returning user statistics (totalUsers, monthlyUsers, dailyUsers, topReferrers)
+- `GET /api/leaderboard` - Public endpoint returning top 50 users ranked by completed exercises with profile info
 - `GET /api/progress` - Get authenticated user's completed exercises
 - `POST /api/progress/:id` - Mark exercise as complete for authenticated user
+- `WebSocket /ws` - Real-time online user count tracking (broadcasts `{ type: "online_count", count: N }`)
 
 **Code Execution Strategy**: Server-side Rust compilation using Node.js child_process
 - Temporary file creation in OS temp directory with unique identifiers
