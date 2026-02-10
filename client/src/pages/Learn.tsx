@@ -56,10 +56,10 @@ export default function Learn() {
             <Button
               size="lg"
               variant="outline"
-              onClick={() => { window.location.href = "/api/login"; }}
-              data-testid="button-learn-signin"
+              onClick={() => setLocation("/")}
+              data-testid="button-learn-getstarted"
             >
-              {t("signIn")}
+              {t("getStarted")}
             </Button>
           </div>
         </section>
