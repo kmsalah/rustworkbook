@@ -6,7 +6,6 @@ import { CodeEditor } from "@/components/CodeEditor";
 import { ConsolePanel } from "@/components/ConsolePanel";
 import { IDEHeader } from "@/components/IDEHeader";
 import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
-// Removed CelebrationAnimation - using inline feedback instead
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Code, Terminal, List } from "lucide-react";
@@ -634,8 +633,6 @@ export default function Home({ showInfoOnMount = false }: { showInfoOnMount?: bo
         open={showShortcutsDialog}
         onOpenChange={setShowShortcutsDialog}
       />
-
-      {/* Celebration animation removed - using inline toast feedback instead */}
 
       <LoginModal
         open={showLoginModal}

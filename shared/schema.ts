@@ -33,14 +33,6 @@ export const compilationResultSchema = z.object({
 
 export type CompilationResult = z.infer<typeof compilationResultSchema>;
 
-// Progress tracking
-export const progressSchema = z.object({
-  completedExercises: z.array(z.string()),
-  currentExercise: z.string().optional(),
-});
-
-export type Progress = z.infer<typeof progressSchema>;
-
 // Request schemas
 export const compileRequestSchema = z.object({
   code: z.string(),
